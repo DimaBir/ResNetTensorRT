@@ -1,9 +1,18 @@
 # ResNet-50 Inference with TensorRT
+## Table of Contents
+1. [Overview](#overview)
+2. [Requirements](#requirements)
+3. [Steps to Run](#steps-to-run)
+4. [Example Command](#example-command)
+5. [Results](#results)
+   - [Example of Results](#example-of-results)
+   - [Explanation of Results](#explanation-of-results)
+6. [Author](#author)
+7. [References](#references)
+8. [Notes](#notes)
 
+## Overview
 This project demonstrates how to perform inference with a PyTorch model and optimize it using NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torchvision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
-
-## Author
-[DimaBir](https://github.com/DimaBir)
 
 ## Requirements
 - Docker
@@ -64,6 +73,9 @@ Average batch time: 7.25 ms
   - `Running Benchmark for CUDA` and `Average batch time: 41.02 ms` indicate the average batch time when running the model on CUDA.
   - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float32` and `Average batch time: 19.20 ms` show the average batch time when running the model with TensorRT using `float32` precision.
   - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float16` and `Average batch time: 7.25 ms` indicate the average batch time when running the model with TensorRT using `float16` precision.
+
+## Author
+[DimaBir](https://github.com/DimaBir)
 
 ## References
 - [ResNetTensorRT Project](https://github.com/DimaBir/ResNetTensorRT/tree/main)
