@@ -14,5 +14,3 @@ WORKDIR /workspace
 
 # Copy local project files to /workspace in the image
 COPY src /workspace/src
-
-CMD ["python3", "src/main.py"]
