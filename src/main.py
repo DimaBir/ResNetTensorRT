@@ -5,8 +5,6 @@ import torch
 import torch_tensorrt
 import logging
 import argparse
-import matplotlib.pyplot as plt
-from PIL import Image
 
 # Set up logging
 logging.basicConfig(filename='model.log', level=logging.INFO)
@@ -16,7 +14,6 @@ def main():
     parser = argparse.ArgumentParser(description='PyTorch Inference')
     parser.add_argument('--image_path', type=str, default='./inference/cat3.jpg', required=True, help='Path to the image to predict')
     parser.add_argument('--topk', type=int, default=1, help='Number of top predictions to show')
-    parser.add_argument('--show_image', action='store_true', help='Flag to decide whether to show the image or not')
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -24,13 +21,6 @@ def main():
 
     model_loader = ModelLoader(device=device)
     img_processor = ImageProcessor(img_path=args.image_path, device=device)
-
-    if args.show_image:
-        img = Image.open(args.image_path)
-        plt.imshow(img)
-        plt.axis('off')
-        plt.show()
-
     img_batch = img_processor.process_image()
 
     prob = model_loader.predict(img_batch)
@@ -55,7 +45,7 @@ def main():
         logging.info(f"Compiling and Running Inference Benchmark for TensorRT with precision: {precision}")
         trt_model = torch_tensorrt.compile(
             traced_model,
-            inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
+            inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=precision)],
             enabled_precisions={precision}
         )
         benchmark_trt = Benchmark(trt_model, device="cuda", dtype=precision)
