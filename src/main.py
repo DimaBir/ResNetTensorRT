@@ -9,7 +9,7 @@ from image_processor import ImageProcessor
 from benchmark import Benchmark
 
 # Configure logging
-logging.basicConfig(filename="model.log", level=logging.INFO)
+logging.basicConfig(filename='model.log', level=logging.INFO)
 
 
 def run_benchmark(model: torch.nn.Module, device: str, dtype: torch.dtype) -> None:
@@ -41,6 +41,9 @@ def make_prediction(
     :param categories: The list of categories to label the predictions.
     :param precision: The data type to be used for the predictions (typically torch.float32 or torch.float16).
     """
+    # Clone img_batch to avoid in-place modifications
+    img_batch = img_batch.clone().to(precision)
+
     model.eval()
     with torch.no_grad():
         outputs = model(img_batch.to(precision))
@@ -50,7 +53,7 @@ def make_prediction(
     for i in range(topk):
         probability = probs[i].item()
         class_label = categories[0][int(classes[i])]
-        print(f"%{int(probability * 100)} {class_label}")
+        logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
 
 
 def main() -> None:
@@ -79,6 +82,12 @@ def main() -> None:
     model_loader = ModelLoader(device=device)
     img_processor = ImageProcessor(img_path=args.image_path, device=device)
     img_batch = img_processor.process_image()
+
+    # Make and log predictions for CPU
+    print("Making prediction with CPU model")
+    make_prediction(
+        model_loader.model.to("cpu"), img_batch.to("cpu"), args.topk, model_loader.categories, torch.float32
+    )
 
     # Run benchmarks for CPU and CUDA
     run_benchmark(model_loader.model.to("cpu"), "cpu", torch.float32)
