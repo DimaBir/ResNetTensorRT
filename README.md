@@ -58,10 +58,10 @@ Average batch time: 7.25 ms
 ```
 
 ### Explanation of Results
-- The line `My prediction: %9 tiger cat` displays the top prediction made by the model for the input image, with the confidence level (`%9`) and the predicted class (`tiger cat`).
+- First k lines show the topk predictions. For example, `My prediction: %33 tiger cat` displays the highest confidence prediction made by the model for the input image, confidence level (`%33`), and the predicted class (`tabby`).
 - The following lines provide information about the average batch time for running the model in different configurations:
-  - `Running Benchmark for CPU` and `INFO:root:Average batch time: 956.95 ms` indicate the average batch time when running the model on the CPU.
-  - `Running Benchmark for CUDA` and `INFO:root:Average batch time: 41.20 ms` indicate the average batch time when running the model on CUDA.
+  - `Running Benchmark for CPU` and `Average batch time: 956.95 ms` indicate the average batch time when running the model on the CPU.
+  - `Running Benchmark for CUDA` and `Average batch time: 41.20 ms` indicate the average batch time when running the model on CUDA.
   - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float32` and `Average batch time: 19.24 ms` show the average batch time when running the model with TensorRT using `float32` precision.
   - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float16` and `Average batch time: 7.31 ms` indicate the average batch time when running the model with TensorRT using `float16` precision.
 
