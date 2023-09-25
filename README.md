@@ -40,17 +40,21 @@ This command will run predictions on the image at the specified path, show the t
 The results of the predictions and benchmarks are saved to `model.log`. This log file contains information about the predicted class for the input image and the average batch time for the different configurations during the benchmark.
 
 ### Example of Results
-Here is an example of the contents of `model.log` after running predictions and benchmarks:
+Here is an example of the contents of `model.log` after running predictions and benchmarks on this image:
+
+<img src="./inference/cat3.jpg" width="20%">
+
 ```
-My prediction: %9 tiger cat
+My prediction: %33 tabby
+My prediction: %26 Egyptian cat
 Running Benchmark for CPU
-Average batch time: 956.95 ms
+Average batch time: 942.47 ms
 Running Benchmark for CUDA
-Average batch time: 41.20 ms
+Average batch time: 41.02 ms
 Compiling and Running Inference Benchmark for TensorRT with precision: torch.float32
-Average batch time: 19.24 ms
+Average batch time: 19.20 ms
 Compiling and Running Inference Benchmark for TensorRT with precision: torch.float16
-Average batch time: 7.31 ms
+Average batch time: 7.25 ms
 ```
 
 ### Explanation of Results
