@@ -31,7 +31,7 @@ def main():
         class_label = model_loader.categories[0][int(classes[i])]
         logging.info("My prediction: %{} {}".format(int(probability * 100), class_label))
 
-    if not args.fp16:
+    if args.fp16:
         logging.info("Running Benchmark for CPU")
         benchmark_cpu = Benchmark(model_loader.model.to("cpu"), device="cpu", dtype=torch.float32)
         benchmark_cpu.run()
@@ -44,13 +44,13 @@ def main():
     traced_model = torch.jit.trace(model_loader.model, [torch.randn((1, 3, 224, 224)).to("cuda")])
 
     for precision in [torch.float32, torch.float16]:
-        if not args.fp16 and precision == torch.float32:
+        if args.fp16 and precision == torch.float32:
             continue
 
         logging.info(f"Compiling and Running Inference Benchmark for TensorRT with precision: {precision}")
         trt_model = torch_tensorrt.compile(
             traced_model,
-            inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=precision)],
+            inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
             enabled_precisions={precision}
         )
         benchmark_trt = Benchmark(trt_model, device="cuda", dtype=precision)
