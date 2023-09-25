@@ -60,15 +60,14 @@ Average batch time: 7.25 ms
 ### Explanation of Results
 - First k lines show the topk predictions. For example, `My prediction: %33 tiger cat` displays the highest confidence prediction made by the model for the input image, confidence level (`%33`), and the predicted class (`tabby`).
 - The following lines provide information about the average batch time for running the model in different configurations:
-  - `Running Benchmark for CPU` and `Average batch time: 956.95 ms` indicate the average batch time when running the model on the CPU.
-  - `Running Benchmark for CUDA` and `Average batch time: 41.20 ms` indicate the average batch time when running the model on CUDA.
-  - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float32` and `Average batch time: 19.24 ms` show the average batch time when running the model with TensorRT using `float32` precision.
-  - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float16` and `Average batch time: 7.31 ms` indicate the average batch time when running the model with TensorRT using `float16` precision.
+  - `Running Benchmark for CPU` and `Average batch time: 942.47 ms` indicate the average batch time when running the model on the CPU.
+  - `Running Benchmark for CUDA` and `Average batch time: 41.02 ms` indicate the average batch time when running the model on CUDA.
+  - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float32` and `Average batch time: 19.20 ms` show the average batch time when running the model with TensorRT using `float32` precision.
+  - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float16` and `Average batch time: 7.25 ms` indicate the average batch time when running the model with TensorRT using `float16` precision.
 
 ## References
 - [ResNetTensorRT Project](https://github.com/DimaBir/ResNetTensorRT/tree/main)
 
 ## Notes
 - The project uses a Docker container built on top of the NVIDIA TensorRT image to ensure that all dependencies, including CUDA and TensorRT, are correctly installed and configured.
-- Ensure you have the NVIDIA Container Toolkit installed to run the container with GPU support.
-- The image to predict and whether to show it are provided as command-line arguments to the script, allowing for flexibility in usage.
+- Please ensure you have the NVIDIA Container Toolkit installed to run the container with GPU support.
