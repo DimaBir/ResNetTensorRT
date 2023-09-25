@@ -4,17 +4,33 @@ from benchmark import Benchmark
 import torch
 import torch_tensorrt
 import logging
+import argparse
+import matplotlib.pyplot as plt
+from PIL import Image
 
 # Set up logging
 logging.basicConfig(filename='model.log', level=logging.INFO)
 
 def main():
+    # Initialize ArgumentParser
+    parser = argparse.ArgumentParser(description='PyTorch Inference')
+    parser.add_argument('--image_path', type=str, default='./inference/cat3.jpg', required=True, help='Path to the image to predict')
+    parser.add_argument('--topk', type=int, default=1, help='Number of top predictions to show')
+    parser.add_argument('--show_image', action='store_true', help='Flag to decide whether to show the image or not')
+    args = parser.parse_args()
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    img_path = "./inference/cat3.jpg"
-    topk = 2
+    topk = args.topk
 
     model_loader = ModelLoader(device=device)
-    img_processor = ImageProcessor(img_path=img_path, device=device)
+    img_processor = ImageProcessor(img_path=args.image_path, device=device)
+
+    if args.show_image:
+        img = Image.open(args.image_path)
+        plt.imshow(img)
+        plt.axis('off')
+        plt.show()
+
     img_batch = img_processor.process_image()
 
     prob = model_loader.predict(img_batch)
@@ -36,7 +52,7 @@ def main():
     traced_model = torch.jit.trace(model_loader.model, [torch.randn((32, 3, 224, 224)).to("cuda")])
 
     for precision in [torch.float32, torch.float16]:
-        logging.info(f"Compiling and Running Benchmark for TensorRT with precision: {precision}")
+        logging.info(f"Compiling and Running Inference Benchmark for TensorRT with precision: {precision}")
         trt_model = torch_tensorrt.compile(
             traced_model,
             inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
@@ -47,8 +63,9 @@ def main():
 
         print("Making prediction with TensorRT model")
         trt_model.eval()
+
         with torch.no_grad():
-            outputs = trt_model(img_batch)
+            outputs = trt_model(img_batch.to(precision))
         prob_trt = torch.nn.functional.softmax(outputs[0], dim=0)
 
         probs_trt, classes_trt = torch.topk(prob_trt, topk)
