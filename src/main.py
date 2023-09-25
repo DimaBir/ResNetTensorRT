@@ -39,7 +39,7 @@ def main():
     benchmark_cuda.run()
 
     print("Tracing CUDA model")
-    traced_model = torch.jit.trace(model_loader.model, [torch.randn((32, 3, 224, 224)).to("cuda")])
+    traced_model = torch.jit.trace(model_loader.model, [torch.randn((1, 3, 224, 224)).to("cuda")])
 
     for precision in [torch.float32, torch.float16]:
         logging.info(f"Compiling and Running Inference Benchmark for TensorRT with precision: {precision}")
