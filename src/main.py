@@ -99,6 +99,7 @@ def main() -> None:
             traced_model,
             inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
             enabled_precisions={precision},
+            truncate_long_and_double=True,
         )
         run_benchmark(trt_model, "cuda", precision)
         print("Making prediction with TensorRT model")
