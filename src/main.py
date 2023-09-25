@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description='PyTorch Inference')
     parser.add_argument('--image_path', type=str, default='./inference/cat3.jpg', required=True, help='Path to the image to predict')
     parser.add_argument('--topk', type=int, default=1, help='Number of top predictions to show')
+    parser.add_argument('--fp16', action='store_true', help='Flag to decide whether to use only FP16 precision for evaluation')
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -30,18 +31,22 @@ def main():
         class_label = model_loader.categories[0][int(classes[i])]
         logging.info("My prediction: %{} {}".format(int(probability * 100), class_label))
 
-    logging.info("Running Benchmark for CPU")
-    benchmark_cpu = Benchmark(model_loader.model.to("cpu"), device="cpu", dtype=torch.float32)
-    benchmark_cpu.run()
+    if not args.fp16:
+        logging.info("Running Benchmark for CPU")
+        benchmark_cpu = Benchmark(model_loader.model.to("cpu"), device="cpu", dtype=torch.float32)
+        benchmark_cpu.run()
 
-    logging.info("Running Benchmark for CUDA")
-    benchmark_cuda = Benchmark(model_loader.model.to("cuda"), device="cuda", dtype=torch.float32)
-    benchmark_cuda.run()
+        logging.info("Running Benchmark for CUDA")
+        benchmark_cuda = Benchmark(model_loader.model.to("cuda"), device="cuda", dtype=torch.float32)
+        benchmark_cuda.run()
 
-    print("Tracing CUDA model")
-    traced_model = torch.jit.trace(model_loader.model, [torch.randn((1, 3, 224, 224)).to("cuda")])
+        print("Tracing CUDA model")
+        traced_model = torch.jit.trace(model_loader.model, [torch.randn((1, 3, 224, 224)).to("cuda")])
 
     for precision in [torch.float32, torch.float16]:
+        if not args.fp16 and precision == torch.float32:
+            continue
+
         logging.info(f"Compiling and Running Inference Benchmark for TensorRT with precision: {precision}")
         trt_model = torch_tensorrt.compile(
             traced_model,
