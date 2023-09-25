@@ -30,7 +30,7 @@ python main.py --image_path /path-to-image/image.jpg --topk 2
 
 ## Example Command
 ```sh
-python main.py --image_path ./inference/sample.jpg --topk 3 --show_image
+python src/main.py --image_path ./inference/cat3.jpg --topk 3 --show_image
 ```
 
 This command will run predictions on the image at the specified path, show the top 3 predictions, and display the image. If you do not want to display the image, omit the `--show_image` flag. For the default 5 top predictions, omit the `--topk` argument or set it to 5.
