@@ -7,10 +7,13 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Install Python packages
-RUN pip3 install torch torchvision torchaudio transformers onnx onnxruntime tensorrt pycuda
+RUN pip3 install torch torchvision onnx pillow tensorrt pycuda
 
 # Set the working directory
 WORKDIR /workspace
 
 # Copy local project files to /workspace in the image
 COPY src /workspace/src
+
+# Run the Python script to generate the resnet50.onnx file
+RUN python3 src/export_to_onnx.py
