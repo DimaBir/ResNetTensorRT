@@ -1,6 +1,7 @@
 import torch
 import torchvision.transforms as transforms
 import torchvision.datasets as datasets
+import torchvision.models as models
 from PIL import Image
 import tensorrt as trt
 import numpy as np
@@ -55,9 +56,12 @@ def run_inference(images, labels, onnx_file_path, fp16_engine_file_path, fp32_en
 
 
 def infer_with_pytorch_model(image, model_path):
-    # Load the ONNX model
-    model = torch.jit.load(model_path).to(device)  # Move model to the GPU
-    model.eval()
+    # Load the pre-trained ResNet-50 model
+    model = models.resnet50(pretrained=True)
+    model.eval()  # Set the model to evaluation mode
+
+    # Move the model to the GPU
+    model = model.to(device)
 
     # Run inference
     with torch.no_grad():
