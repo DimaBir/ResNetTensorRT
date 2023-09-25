@@ -42,7 +42,7 @@ def main():
             inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
             enabled_precisions={precision}
         )
-        benchmark_trt = Benchmark(trt_model, device="cuda")
+        benchmark_trt = Benchmark(trt_model, device="cuda", dtype=precision)
         benchmark_trt.run()
 
         print("Making prediction with TensorRT model")

@@ -18,7 +18,9 @@ class Benchmark:
         cudnn.benchmark = True
 
     def run(self):
-        input_data = torch.randn(self.input_shape).to(self.device)
+        # Convert input_data to the appropriate dtype before running the model
+        input_data = torch.randn(self.input_shape).to(self.device).to(self.dtype)
+
         print("Warm up ...")
         with torch.no_grad():
             for _ in range(self.nwarmup):
