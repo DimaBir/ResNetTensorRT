@@ -56,18 +56,25 @@ def run_inference(images, labels, onnx_file_path, fp16_engine_file_path, fp32_en
         print("-------------------------------------------------")
 
 
-def infer_with_pytorch_model(image, model_path):
+def infer_with_pytorch_model(image, model_path=None):
     # Load the pre-trained ResNet-50 model
-    model = models.resnet50(pretrained=True)
-    model.eval()  # Set the model to evaluation mode
+    if model_path:
+        model = torch.load(model_path)
+    else:
+        model = models.resnet50(pretrained=True)
 
-    # Move the model to the GPU
-    model = model.to(device)
+    model.eval()  # Set the model to evaluation mode
+    model = model.to(device)  # Move the model to the device
+
+    # Normalize the CIFAR10 image to fit ResNet-50 input requirements
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    image = normalize(image)
 
     # Run inference
     with torch.no_grad():
-        outputs = model(image.unsqueeze(0))
+        outputs = model(image.unsqueeze(0).to(device))
         _, predicted = outputs.max(1)
+
     return predicted.item()
 
 
