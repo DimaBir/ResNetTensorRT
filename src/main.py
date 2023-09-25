@@ -40,8 +40,8 @@ def main():
         benchmark_cuda = Benchmark(model_loader.model.to("cuda"), device="cuda", dtype=torch.float32)
         benchmark_cuda.run()
 
-    print("Tracing CUDA model")
-    traced_model = torch.jit.trace(model_loader.model, [torch.randn((1, 3, 224, 224)).to("cuda")])
+        print("Tracing CUDA model")
+        traced_model = torch.jit.trace(model_loader.model, [torch.randn((1, 3, 224, 224)).to("cuda")])
 
     for precision in [torch.float32, torch.float16]:
         if not args.fp16 and precision == torch.float32:
