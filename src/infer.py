@@ -103,7 +103,7 @@ def infer_with_tensorrt_engine(image, engine_file_path):
                     outputs.append({'host': host_mem, 'device': cuda_mem})
 
             # Transfer input data to the GPU
-            np.copyto(inputs[0]['host'], image.ravel())
+            np.copyto(inputs[0]['host'], image.cpu().numpy().ravel())
             cuda.memcpy_htod_async(inputs[0]['device'], inputs[0]['host'], stream)
 
             # Run inference
