@@ -2,7 +2,10 @@ import time
 import numpy as np
 import torch.backends.cudnn as cudnn
 import torch
-from main import logging
+import logging
+
+# Set up logging
+logging.basicConfig(filename='model.log', level=logging.INFO)
 
 class Benchmark:
     def __init__(self, model, device="cuda", input_shape=(32, 3, 224, 224), dtype='fp32', nwarmup=50, nruns=100):
