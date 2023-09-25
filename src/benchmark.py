@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(filename='model.log', level=logging.INFO)
 
 class Benchmark:
-    def __init__(self, model, device="cuda", input_shape=(32, 3, 224, 224), dtype='fp32', nwarmup=50, nruns=100):
+    def __init__(self, model, device="cuda", input_shape=(32, 3, 224, 224), dtype=torch.float32, nwarmup=50, nruns=100):
         self.model = model
         self.device = device
         self.input_shape = input_shape

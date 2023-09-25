@@ -25,11 +25,11 @@ def main():
         logging.info("My prediction: %{} {}".format(int(probability * 100), class_label))
 
     logging.info("Running Benchmark for CPU")
-    benchmark_cpu = Benchmark(model_loader.model.to("cpu"), device="cpu")
+    benchmark_cpu = Benchmark(model_loader.model.to("cpu"), device="cpu", dtype=torch.float32)
     benchmark_cpu.run()
 
     logging.info("Running Benchmark for CUDA")
-    benchmark_cuda = Benchmark(model_loader.model.to("cuda"), device="cuda")
+    benchmark_cuda = Benchmark(model_loader.model.to("cuda"), device="cuda", dtype=torch.float32)
     benchmark_cuda.run()
 
     print("Tracing CUDA model")
