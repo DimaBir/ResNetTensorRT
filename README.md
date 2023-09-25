@@ -15,13 +15,13 @@ This project demonstrates how to perform inference with a PyTorch model and opti
 
 ```sh
 # 1. Build the Docker Image
-docker build -t pytorch-tensorrt-inference .
+docker build -t awesome-tesnorrt .
 
 # 2. Run the Docker Container
-docker run --gpus all -it pytorch-tensorrt-inference
+docker run --gpus all --rm -it awesome-tesnorrt
 
 # 3. Run the Script inside the Container
-python main.py --image_path /path-to-image/image.jpg --topk 5
+python main.py --image_path /path-to-image/image.jpg --topk 2
 ```
 
 ### Arguments
