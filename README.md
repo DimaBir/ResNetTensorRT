@@ -67,7 +67,7 @@ Average batch time: 7.25 ms
 ```
 
 ### Explanation of Results
-- First k lines show the topk predictions. For example, `My prediction: %33 tiger cat` displays the highest confidence prediction made by the model for the input image, confidence level (`%33`), and the predicted class (`tabby`).
+- First k lines show the topk predictions. For example, `My prediction: %33 tabby` displays the highest confidence prediction made by the model for the input image, confidence level (`%33`), and the predicted class (`tabby`).
 - The following lines provide information about the average batch time for running the model in different configurations:
   - `Running Benchmark for CPU` and `Average batch time: 942.47 ms` indicate the average batch time when running the model on the CPU.
   - `Running Benchmark for CUDA` and `Average batch time: 41.02 ms` indicate the average batch time when running the model on CUDA.
