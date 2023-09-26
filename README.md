@@ -30,7 +30,7 @@ docker build -t awesome-tesnorrt .
 docker run --gpus all --rm -it awesome-tesnorrt
 
 # 3. Run the Script inside the Container
-python main.py --image_path /path-to-image/image.jpg --topk 2
+python src/main.py --image_path /path-to-image/image.jpg --topk 2
 ```
 
 ### Arguments
