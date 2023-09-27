@@ -4,7 +4,7 @@
 2. [Requirements](#requirements)
 3. [Steps to Run](#steps-to-run)
 4. [Example Command](#example-command)
-5. [Results](#results)
+5. [Inference Benchmark Results](#inference-benchmark-results)
    - [Example of Results](#example-of-results)
    - [Explanation of Results](#explanation-of-results)
 6. [Author](#author)
@@ -44,7 +44,7 @@ python src/main.py --image_path ./inference/cat3.jpg --topk 3 --show_image
 
 This command will run predictions on the image at the specified path, show the top 3 predictions, and display the image. If you do not want to display the image, omit the `--show_image` flag. For the default 5 top predictions, omit the `--topk` argument or set it to 5.
 
-## Results
+## Inference Benchmark Results
 
 The results of the predictions and benchmarks are saved to `model.log`. This log file contains information about the predicted class for the input image and the average batch time for the different configurations during the benchmark.
 
