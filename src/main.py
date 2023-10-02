@@ -80,6 +80,7 @@ def make_prediction_onnx(
     # Assuming the model returns a list with one array of class probabilities
     if isinstance(outputs, list) and len(outputs) > 0:
         prob = outputs[0]
+        print(f"\n\n\n\nPROB: {prob}")
 
         # Checking if prob has more than one dimension and selecting the right one
         if prob.ndim > 1:
