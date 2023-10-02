@@ -9,23 +9,28 @@ import numpy as np
 
 from model import ModelLoader
 from image_processor import ImageProcessor
-from benchmark import Benchmark
+from benchmark import PyTorchBenchmark, ONNXBenchmark
 from onnx_exporter import ONNXExporter
 
 # Configure logging
 logging.basicConfig(filename='model.log', level=logging.INFO)
 
 
-def run_benchmark(model: torch.nn.Module, device: str, dtype: torch.dtype) -> None:
+def run_benchmark(model: torch.nn.Module, device: str, dtype: torch.dtype, ort_session: ort.InferenceSession, onnx: bool = False) -> None:
     """
     Run and log the benchmark for the given model, device, and dtype.
 
+    :param onnx:
+    :param ort_session:
     :param model: The model to be benchmarked.
     :param device: The device to run the benchmark on ("cpu" or "cuda").
     :param dtype: The data type to be used in the benchmark (typically torch.float32 or torch.float16).
     """
     logging.info(f"Running Benchmark for {device.upper()}")
-    benchmark = Benchmark(model, device=device, dtype=dtype)
+    if onnx:
+        benchmark = ONNXBenchmark(ort_session, input_shape=(32, 3, 224, 224))
+    else:
+        benchmark = PyTorchBenchmark(model, device=device, dtype=dtype)
     benchmark.run()
 
 
@@ -149,6 +154,9 @@ def main() -> None:
 
         # Create ONNX Runtime session
         ort_session = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
+
+        # Run benchmark
+        run_benchmark(None, None, None, ort_session, "cpu", torch.float32)
 
         # Make prediction
         make_prediction_onnx(ort_session, img_batch.numpy(), topk=args.topk, categories=model_loader.categories)

@@ -1,16 +1,32 @@
 import time
 from typing import Tuple
 
+from abc import ABC, abstractmethod
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 import logging
+import onnxruntime as ort
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
 
+class Benchmark(ABC):
+    """
+    Abstract class representing a benchmark.
+    """
 
-class Benchmark:
+    def __init__(self, nruns: int = 100, nwarmup: int = 50):
+        self.nruns = nruns
+
+    @abstractmethod
+    def run(self) -> None:
+        """
+        Abstract method to run the benchmark.
+        """
+        pass
+
+class PyTorchBenchmark:
     def __init__(
         self,
         model: torch.nn.Module,
@@ -74,3 +90,34 @@ class Benchmark:
         print(f"Input shape: {input_data.size()}")
         print(f"Output features size: {features.size()}")
         logging.info(f"Average batch time: {np.mean(timings) * 1000:.2f} ms")
+
+class ONNXBenchmark(Benchmark):
+    """
+    A class used to benchmark the performance of an ONNX model.
+    """
+
+    def __init__(self, ort_session: ort.InferenceSession, input_shape: tuple, nruns: int = 100, nwarmup: int = 50):
+        super().__init__(nruns)
+        self.ort_session = ort_session
+        self.input_shape = input_shape
+        self.nwarmup = nwarmup
+        self.nruns = nruns
+
+    def run(self) -> None:
+        print("Warming up ...")
+        input_data = np.random.randn(*self.input_shape).astype(np.float32)
+
+        for _ in range(self.nwarmup):  # Warm-up runs
+            _ = self.ort_session.run(None, {"input": input_data})
+
+        print("Starting benchmark ...")
+        timings = []
+
+        for _ in range(self.nruns):
+            start_time = time.time()
+            _ = self.ort_session.run(None, {"input": input_data})
+            end_time = time.time()
+            timings.append(end_time - start_time)
+
+        avg_time = np.mean(timings) * 1000  # Convert to milliseconds
+        logging.info(f"Average ONNX inference time: {avg_time:.2f} ms")
