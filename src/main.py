@@ -101,6 +101,9 @@ def make_prediction_onnx(
         if prob.ndim > 1:
             prob = prob[0]
 
+        # Apply Softmax to get probabilities
+        prob = np.exp(prob) / np.sum(np.exp(prob))
+
         top_indices = prob.argsort()[-topk:][::-1]
         top_probs = prob[top_indices]
 
