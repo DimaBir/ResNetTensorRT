@@ -74,15 +74,30 @@ def make_prediction_onnx(
     :param topk: The number of top predictions to show.
     :param categories: The list of categories to label the predictions.
     """
-    # Run ONNX inference
-    outputs = ort_session.run(None, {"input": img_batch})
-    prob = torch.nn.functional.softmax(torch.from_numpy(outputs[0]), dim=0)
+    # Get the input name for the ONNX model.
+    input_name = ort_session.get_inputs()[0].name
 
-    probs, classes = torch.topk(prob, topk)
-    for i in range(topk):
-        probability = probs[i].item()
-        class_label = categories[0][int(classes[i])]
-        logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
+    # Run the model with the properly named input.
+    ort_inputs = {input_name: img_batch}
+    ort_outs = ort_session.run(None, ort_inputs)
+
+    # Assuming the model returns a list with one array of class probabilities.
+    if len(ort_outs) > 0:
+        prob = ort_outs[0]
+
+        # Checking if prob has more than one dimension and selecting the right one.
+        if prob.ndim > 1:
+            prob = prob[0]
+
+        top_indices = prob.argsort()[-topk:][::-1]
+        top_probs = prob[top_indices]
+
+        for i in range(topk):
+            probability = top_probs[i]
+            class_label = categories[top_indices[i]]
+            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
+    else:
+        logging.error("Invalid model output")
 
 
 def main() -> None:
