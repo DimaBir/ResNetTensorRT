@@ -126,7 +126,7 @@ def main() -> None:
     parser.add_argument(
         "--image_path",
         type=str,
-        default="./inference/cat.png",
+        default="./inference/cat3.png",
         help="Path to the image to predict",
     )
     parser.add_argument(
