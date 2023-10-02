@@ -94,7 +94,8 @@ def make_prediction_onnx(
 
         for i in range(topk):
             probability = top_probs[i]
-            class_label = categories[top_indices[i]]
+            # Accessing the DataFrame by row number using .iloc[]
+            class_label = categories.iloc[top_indices[i]].item()
             logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
     else:
         logging.error("Invalid model output")
