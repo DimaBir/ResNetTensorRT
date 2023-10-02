@@ -100,7 +100,7 @@ def main() -> None:
         onnx_path = args.onnx_path
 
         # Export the model to ONNX format using ONNXExporter
-        onnx_exporter = ONNXExporter(model_loader.model, onnx_path, device=device)
+        onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
         onnx_exporter.export_model()
 
         # check if model was loaded successfully
