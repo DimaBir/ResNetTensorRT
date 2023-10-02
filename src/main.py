@@ -68,7 +68,7 @@ def main() -> None:
     parser.add_argument(
         "--image_path",
         type=str,
-        default="./inference/cat3.jpg",
+        default="./inference/cat.png",
         help="Path to the image to predict",
     )
     parser.add_argument(
@@ -100,7 +100,7 @@ def main() -> None:
         onnx_path = args.onnx_path
 
         # Export the model to ONNX format using ONNXExporter
-        onnx_exporter = ONNXExporter(model_loader.model, onnx_path)
+        onnx_exporter = ONNXExporter(model_loader.model, onnx_path, device=device)
         onnx_exporter.export_model()
 
         # check if model was loaded successfully
