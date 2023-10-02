@@ -7,7 +7,7 @@
 5. [Inference Benchmark Results](#inference-benchmark-results)
    - [Example of Results](#example-of-results)
    - [Explanation of Results](#explanation-of-results)
-6. [ONNX Exporter](#onnx-exporter)
+6. [ONNX Exporter](#onnx-exporter) ![New](https://img.shields.io/badge/-New-red)
 7. [Author](#author)
 8. [References](#references)
 
