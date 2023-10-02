@@ -1,0 +1,9 @@
+torch
+torchvision
+torch-tensorrt
+pandas
+Pillow
+numpy
+packaging
+onnx
+onnxruntime

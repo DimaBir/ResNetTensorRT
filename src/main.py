@@ -3,7 +3,7 @@ import logging
 import onnx
 import torch
 import torch_tensorrt
-from typing import List, Tuple
+from typing import List, Tuple, Union
 import onnxruntime as ort
 import numpy as np
 
@@ -42,78 +42,63 @@ def run_benchmark(
 
 
 def make_prediction(
-    model: torch.nn.Module,
-    img_batch: torch.Tensor,
+    model: Union[torch.nn.Module, ort.InferenceSession],
+    img_batch: Union[torch.Tensor, np.ndarray],
     topk: int,
     categories: List[str],
-    precision: torch.dtype,
+    precision: torch.dtype = None,
 ) -> None:
     """
     Make and print predictions for the given model, img_batch, topk, and categories.
 
-    :param model: The model to make predictions with.
+    :param model: The model (or ONNX Runtime InferenceSession) to make predictions with.
     :param img_batch: The batch of images to make predictions on.
     :param topk: The number of top predictions to show.
     :param categories: The list of categories to label the predictions.
-    :param precision: The data type to be used for the predictions (typically torch.float32 or torch.float16).
+    :param precision: The data type to be used for the predictions (typically torch.float32 or torch.float16) for PyTorch models.
     """
-    # Clone img_batch to avoid in-place modifications
-    img_batch = img_batch.clone().to(precision)
+    is_onnx_model = isinstance(model, ort.InferenceSession)
 
-    model.eval()
-    with torch.no_grad():
-        outputs = model(img_batch.to(precision))
-    prob = torch.nn.functional.softmax(outputs[0], dim=0)
+    if is_onnx_model:
+        # Get the input name for the ONNX model.
+        input_name = model.get_inputs()[0].name
 
-    probs, classes = torch.topk(prob, topk)
+        # Run the model with the properly named input.
+        ort_inputs = {input_name: img_batch}
+        ort_outs = model.run(None, ort_inputs)
+
+        # Assuming the model returns a list with one array of class probabilities.
+        if len(ort_outs) > 0:
+            prob = ort_outs[0]
+
+            # Checking if prob has more than one dimension and selecting the right one.
+            if prob.ndim > 1:
+                prob = prob[0]
+
+            # Apply Softmax to get probabilities
+            prob = np.exp(prob) / np.sum(np.exp(prob))
+
+    else:  # PyTorch Model
+        # Clone img_batch to avoid in-place modifications
+        img_batch = img_batch.clone().to(precision)
+
+        model.eval()
+        with torch.no_grad():
+            outputs = model(img_batch.to(precision))
+        prob = torch.nn.functional.softmax(outputs[0], dim=0)
+        prob = prob.cpu().numpy()
+
+    top_indices = prob.argsort()[-topk:][::-1]
+    top_probs = prob[top_indices]
+
     for i in range(topk):
-        probability = probs[i].item()
-        class_label = categories[0][int(classes[i])]
-        logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
-
-
-def make_prediction_onnx(
-    ort_session: ort.InferenceSession,
-    img_batch: np.ndarray,
-    topk: int,
-    categories: List[str],
-) -> None:
-    """
-    Make and print predictions for the given ONNX model, img_batch, topk, and categories.
-
-    :param ort_session: The ONNX Runtime InferenceSession to make predictions with.
-    :param img_batch: The batch of images to make predictions on.
-    :param topk: The number of top predictions to show.
-    :param categories: The list of categories to label the predictions.
-    """
-    # Get the input name for the ONNX model.
-    input_name = ort_session.get_inputs()[0].name
-
-    # Run the model with the properly named input.
-    ort_inputs = {input_name: img_batch}
-    ort_outs = ort_session.run(None, ort_inputs)
-
-    # Assuming the model returns a list with one array of class probabilities.
-    if len(ort_outs) > 0:
-        prob = ort_outs[0]
-
-        # Checking if prob has more than one dimension and selecting the right one.
-        if prob.ndim > 1:
-            prob = prob[0]
-
-        # Apply Softmax to get probabilities
-        prob = np.exp(prob) / np.sum(np.exp(prob))
-
-        top_indices = prob.argsort()[-topk:][::-1]
-        top_probs = prob[top_indices]
-
-        for i in range(topk):
-            probability = top_probs[i]
+        probability = top_probs[i]
+        if is_onnx_model:
             # Accessing the DataFrame by row number using .iloc[]
             class_label = categories.iloc[top_indices[i]].item()
-            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
-    else:
-        logging.error("Invalid model output")
+        else:
+            class_label = categories[0][int(top_indices[i])]
+        logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
 
 
 def main() -> None:
@@ -168,51 +153,49 @@ def main() -> None:
         run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
-        make_prediction_onnx(
+        make_prediction(
             ort_session,
             img_batch.cpu().numpy(),
             topk=args.topk,
             categories=model_loader.categories,
         )
-        print("FINISHED ONNX")
-        exit(0)
+    else:
+        # Define configurations for which to run benchmarks and make predictions
+        configs = [
+            ("cpu", torch.float32),
+            ("cuda", torch.float32),
+            ("cuda", torch.float16),
+        ]
 
-    # Make and log predictions for CPU
-    print("Making prediction with CPU model")
-    make_prediction(
-        model_loader.model.to("cpu"),
-        img_batch.to("cpu"),
-        args.topk,
-        model_loader.categories,
-        torch.float32,
-    )
+        for device, precision in configs:
+            model = model_loader.model.to(device)
 
-    # Run benchmarks for CPU and CUDA
-    run_benchmark(model_loader.model.to("cpu"), "cpu", torch.float32)
-    run_benchmark(model_loader.model.to("cuda"), "cuda", torch.float32)
+            if device == "cuda":
+                print(f"Tracing {device} model")
+                model = torch.jit.trace(
+                    model, [torch.randn((1, 3, 224, 224)).to(device)]
+                )
 
-    # Trace CUDA model
-    print("Tracing CUDA model")
-    traced_model = torch.jit.trace(
-        model_loader.model, [torch.randn((1, 3, 224, 224)).to("cuda")]
-    )
+            if device == "cuda" and precision == torch.float16:
+                print("Compiling TensorRT model")
+                model = torch_tensorrt.compile(
+                    model,
+                    inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
+                    enabled_precisions={precision},
+                    truncate_long_and_double=True,
+                )
 
-    # Compile, run benchmarks and make predictions with TensorRT models
-    for precision in [torch.float32, torch.float16]:
-        logging.info(
-            f"Running Inference Benchmark for TensorRT with precision: {precision}"
-        )
-        trt_model = torch_tensorrt.compile(
-            traced_model,
-            inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
-            enabled_precisions={precision},
-            truncate_long_and_double=True,
-        )
-        run_benchmark(trt_model, "cuda", precision)
-        print("Making prediction with TensorRT model")
-        make_prediction(
-            trt_model, img_batch, args.topk, model_loader.categories, precision
-        )
+            print(f"Making prediction with {device} model in {precision} precision")
+            make_prediction(
+                model,
+                img_batch.to(device),
+                args.topk,
+                model_loader.categories,
+                precision,
+            )
+
+            print(f"Running Benchmark for {device} model in {precision} precision")
+            run_benchmark(model, device, precision)
 
 
 if __name__ == "__main__":
