@@ -76,7 +76,7 @@ def make_prediction_onnx(
     """
     # Run ONNX inference
     outputs = ort_session.run(None, {"input": img_batch})
-    prob = torch.nn.functional.softmax(outputs[0], dim=0)
+    prob = torch.nn.functional.softmax(torch.from_numpy(outputs[0]), dim=0)
 
     probs, classes = torch.topk(prob, topk)
     for i in range(topk):
