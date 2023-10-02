@@ -105,7 +105,9 @@ class ONNXBenchmark(Benchmark):
 
     def run(self) -> None:
         print("Warming up ...")
-        input_data = np.random.randn(*self.input_shape).astype(np.float32)
+        # Adjusting the batch size in the input shape to match the expected input size of the model.
+        input_shape = (1,) + self.input_shape[1:]
+        input_data = np.random.randn(*input_shape).astype(np.float32)
 
         for _ in range(self.nwarmup):  # Warm-up runs
             _ = self.ort_session.run(None, {"input": input_data})
