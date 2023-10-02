@@ -76,16 +76,24 @@ def make_prediction_onnx(
     """
     # Run ONNX inference
     outputs = ort_session.run(None, {"input": img_batch})
-    prob = outputs[0]
 
-    # Get top-k probabilities and corresponding class indices
-    top_indices = prob.argsort()[-topk:][::-1]
-    top_probs = prob[top_indices]
+    # Assuming the model returns a list with one array of class probabilities
+    if isinstance(outputs, list) and len(outputs) > 0:
+        prob = outputs[0]
 
-    for i in range(topk):
-        probability = top_probs[i]
-        class_label = categories[top_indices[i]]
-        logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
+        # Checking if prob has more than one dimension and selecting the right one
+        if prob.ndim > 1:
+            prob = prob[0]
+
+        top_indices = prob.argsort()[-topk:][::-1]
+        top_probs = prob[top_indices]
+
+        for i in range(topk):
+            probability = top_probs[i]
+            class_label = categories[top_indices[i]]
+            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
+    else:
+        logging.error("Invalid model output")
 
 
 def main() -> None:
