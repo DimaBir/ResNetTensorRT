@@ -98,7 +98,7 @@ def main() -> None:
 
     if args.onnx:
         onnx_path = args.onnx_path
-
+        model_loader.model.train()
         # Export the model to ONNX format using ONNXExporter
         onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
         onnx_exporter.export_model()
