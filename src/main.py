@@ -167,7 +167,7 @@ def main() -> None:
         # Make prediction
         make_prediction_onnx(
             ort_session,
-            img_batch.numpy(),
+            img_batch.cpu().numpy(),
             topk=args.topk,
             categories=model_loader.categories,
         )
