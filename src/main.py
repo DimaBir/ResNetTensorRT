@@ -138,7 +138,7 @@ def main() -> None:
         ort_session = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
 
         # Make prediction
-        make_prediction_onnx(ort_session, img_batch, topk=args.topk, categories=model_loader.categories)
+        make_prediction_onnx(ort_session, img_batch.numpy(), topk=args.topk, categories=model_loader.categories)
         print("FINISHED ONNX")
         exit(0)
 
