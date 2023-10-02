@@ -26,10 +26,11 @@ def run_benchmark(model: torch.nn.Module, device: str, dtype: torch.dtype, ort_s
     :param device: The device to run the benchmark on ("cpu" or "cuda").
     :param dtype: The data type to be used in the benchmark (typically torch.float32 or torch.float16).
     """
-    logging.info(f"Running Benchmark for {device.upper()}")
     if onnx:
+        logging.info(f"Running Benchmark for ONNX")
         benchmark = ONNXBenchmark(ort_session, input_shape=(32, 3, 224, 224))
     else:
+        logging.info(f"Running Benchmark for {device.upper()}")
         benchmark = PyTorchBenchmark(model, device=device, dtype=dtype)
     benchmark.run()
 
