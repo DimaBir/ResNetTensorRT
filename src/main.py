@@ -156,7 +156,7 @@ def main() -> None:
         ort_session = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
 
         # Run benchmark
-        run_benchmark(None, None, None, ort_session, "cpu", torch.float32)
+        run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
         make_prediction_onnx(ort_session, img_batch.numpy(), topk=args.topk, categories=model_loader.categories)
