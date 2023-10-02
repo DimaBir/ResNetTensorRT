@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     git
 
 # Install Python packages
-RUN pip3 install torch torchvision torch-tensorrt pandas Pillow numpy packaging onnx
+RUN pip3 install torch torchvision torch-tensorrt pandas Pillow numpy packaging onnx onnxruntime
 
 # Set the working directory
 WORKDIR /workspace
