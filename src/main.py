@@ -16,7 +16,7 @@ from onnx_exporter import ONNXExporter
 logging.basicConfig(filename='model.log', level=logging.INFO)
 
 
-def run_benchmark(model: torch.nn.Module, device: str, dtype: torch.dtype, ort_session: ort.InferenceSession, onnx: bool = False) -> None:
+def run_benchmark(model: torch.nn.Module, device: str, dtype: torch.dtype, ort_session: ort.InferenceSession = None, onnx: bool = False) -> None:
     """
     Run and log the benchmark for the given model, device, and dtype.
 
