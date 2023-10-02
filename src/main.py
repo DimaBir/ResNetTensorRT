@@ -158,7 +158,7 @@ def main() -> None:
 
         # Create ONNX Runtime session
         ort_session = ort.InferenceSession(
-            onnx_path, providers=["CUDAExecutionProvider"]
+            onnx_path, providers=["CPUExecutionProvider"]
         )
 
         # Run benchmark
