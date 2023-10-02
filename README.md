@@ -7,8 +7,9 @@
 5. [Inference Benchmark Results](#inference-benchmark-results)
    - [Example of Results](#example-of-results)
    - [Explanation of Results](#explanation-of-results)
-6. [Author](#author)
-7. [References](#references)
+6. [ONNX Exporter](#onnx-exporter)
+7. [Author](#author)
+8. [References](#references)
 
 ## Overview
 This project demonstrates how to perform inference with a PyTorch model and optimize it using NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torchvision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
@@ -75,6 +76,9 @@ Average batch time: 7.25 ms
   - `Running Benchmark for CUDA` and `Average batch time: 41.02 ms` indicate the average batch time when running the model on CUDA.
   - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float32` and `Average batch time: 19.20 ms` show the average batch time when running the model with TensorRT using `float32` precision.
   - `Compiling and Running Inference Benchmark for TensorRT with precision: torch.float16` and `Average batch time: 7.25 ms` indicate the average batch time when running the model with TensorRT using `float16` precision.
+
+## ONNX Exporter
+The ONNX Exporter utility is integrated into this project to allow the conversion of the PyTorch model to ONNX format, enabling inference and benchmarking using ONNX Runtime. The ONNX model can provide hardware-agnostic optimizations and is widely supported across various platforms and devices.
 
 ## Author
 [DimaBir](https://github.com/DimaBir)
