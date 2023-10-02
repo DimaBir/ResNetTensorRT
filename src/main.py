@@ -119,7 +119,8 @@ def main() -> None:
     args = parser.parse_args()
 
     # Setup device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = "cpu"
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Initialize model and image processor
     model_loader = ModelLoader(device=device)
@@ -134,7 +135,7 @@ def main() -> None:
         onnx_exporter.export_model()
 
         # Create ONNX Runtime session
-        ort_session = ort.InferenceSession(onnx_path)
+        ort_session = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
 
         # Make prediction
         make_prediction_onnx(ort_session, img_batch, topk=args.topk, categories=model_loader.categories)
