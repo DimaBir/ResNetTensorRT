@@ -8,7 +8,7 @@ from typing import List, Tuple
 from model import ModelLoader
 from image_processor import ImageProcessor
 from benchmark import Benchmark
-from src.onnx_exporter import ONNXExporter
+from onnx_exporter import ONNXExporter
 
 # Configure logging
 logging.basicConfig(filename='model.log', level=logging.INFO)
