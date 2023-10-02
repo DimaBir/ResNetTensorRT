@@ -79,7 +79,6 @@ def make_prediction(
             prob = np.exp(prob) / np.sum(np.exp(prob))
 
     else:  # PyTorch Model
-        # Clone img_batch to avoid in-place modifications
         img_batch = img_batch.clone().to(precision)
 
         model.eval()
@@ -153,6 +152,7 @@ def main() -> None:
         run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
+        print(f"Making prediction with {ort.get_device()} for ONNX model")
         make_prediction(
             ort_session,
             img_batch.cpu().numpy(),
