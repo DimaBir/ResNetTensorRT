@@ -1,5 +1,6 @@
 import argparse
 import logging
+import onnx
 import torch
 import torch_tensorrt
 from typing import List, Tuple
@@ -7,6 +8,7 @@ from typing import List, Tuple
 from model import ModelLoader
 from image_processor import ImageProcessor
 from benchmark import Benchmark
+from src.onnx_exporter import ONNXExporter
 
 # Configure logging
 logging.basicConfig(filename='model.log', level=logging.INFO)
@@ -74,10 +76,17 @@ def main() -> None:
         "--topk", type=int, default=5, help="Number of top predictions to show"
     )
     parser.add_argument(
-        "--prec",
+        "--onnx",
         action="store_true",
-        help="Run predictions only in float16 and float32 precisions."
+        help="If we want export model to ONNX format"
     )
+    parser.add_argument(
+        "--onnx_path",
+        type=str,
+        default="./inference/model.onnx",
+        help="Path where model in ONNX format will be exported",
+    )
+
     args = parser.parse_args()
 
     # Setup device
@@ -88,17 +97,31 @@ def main() -> None:
     img_processor = ImageProcessor(img_path=args.image_path, device=device)
     img_batch = img_processor.process_image()
 
-    # Process CPU and CUDA only if we don't want FP16 and FP32 only
-    if not args.prec:
-        # Make and log predictions for CPU
-        print("Making prediction with CPU model")
-        make_prediction(
-            model_loader.model.to("cpu"), img_batch.to("cpu"), args.topk, model_loader.categories, torch.float32
-        )
+    if args.onnx:
+        onnx_path = args.onnx_path
 
-        # Run benchmarks for CPU and CUDA
-        run_benchmark(model_loader.model.to("cpu"), "cpu", torch.float32)
-        run_benchmark(model_loader.model.to("cuda"), "cuda", torch.float32)
+        # Export the model to ONNX format using ONNXExporter
+        onnx_exporter = ONNXExporter(model_loader.model, onnx_path)
+        onnx_exporter.export_model()
+
+        # check if model was loaded successfully
+        model = onnx.load(onnx_path)
+
+        # Check the model well-formed
+        onnx.checker.check_model(model)
+
+        print(onnx.helper.printable_graph(model.graph))
+        exit(0)
+
+    # Make and log predictions for CPU
+    print("Making prediction with CPU model")
+    make_prediction(
+        model_loader.model.to("cpu"), img_batch.to("cpu"), args.topk, model_loader.categories, torch.float32
+    )
+
+    # Run benchmarks for CPU and CUDA
+    run_benchmark(model_loader.model.to("cpu"), "cpu", torch.float32)
+    run_benchmark(model_loader.model.to("cuda"), "cuda", torch.float32)
 
     # Trace CUDA model
     print("Tracing CUDA model")
