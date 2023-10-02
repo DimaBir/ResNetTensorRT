@@ -4,6 +4,8 @@ import onnx
 import torch
 import torch_tensorrt
 from typing import List, Tuple
+import onnxruntime as ort
+import numpy as np
 
 from model import ModelLoader
 from image_processor import ImageProcessor
@@ -58,6 +60,34 @@ def make_prediction(
         logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
 
 
+def make_prediction_onnx(
+        ort_session: ort.InferenceSession,
+        img_batch: np.ndarray,
+        topk: int,
+        categories: List[str],
+) -> None:
+    """
+    Make and print predictions for the given ONNX model, img_batch, topk, and categories.
+
+    :param ort_session: The ONNX Runtime InferenceSession to make predictions with.
+    :param img_batch: The batch of images to make predictions on.
+    :param topk: The number of top predictions to show.
+    :param categories: The list of categories to label the predictions.
+    """
+    # Run ONNX inference
+    outputs = ort_session.run(None, {"input": img_batch})
+    prob = outputs[0]
+
+    # Get top-k probabilities and corresponding class indices
+    top_indices = prob.argsort()[-topk:][::-1]
+    top_probs = prob[top_indices]
+
+    for i in range(topk):
+        probability = top_probs[i]
+        class_label = categories[top_indices[i]]
+        logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
+
+
 def main() -> None:
     """
     Main function to run inference, benchmarks, and predictions on the model
@@ -103,13 +133,12 @@ def main() -> None:
         onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
         onnx_exporter.export_model()
 
-        # check if model was loaded successfully
-        model = onnx.load(onnx_path)
+        # Create ONNX Runtime session
+        ort_session = ort.InferenceSession(onnx_path)
 
-        # Iterate over the model's graph and print the names and types of the nodes (layers)
-        for node in model.graph.node:
-            print(node.name, node.op_type)
-
+        # Make prediction
+        make_prediction_onnx(ort_session, img_batch, topk=args.topk, categories=model_loader.categories)
+        print("FINISHED ONNX")
         exit(0)
 
 
