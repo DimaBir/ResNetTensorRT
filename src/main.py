@@ -74,15 +74,18 @@ def make_prediction_onnx(
     :param topk: The number of top predictions to show.
     :param categories: The list of categories to label the predictions.
     """
-    # Run ONNX inference
-    outputs = ort_session.run(None, {"input": img_batch})
+    # Get the input name for the ONNX model.
+    input_name = ort_session.get_inputs()[0].name
 
-    # Assuming the model returns a list with one array of class probabilities
-    if isinstance(outputs, list) and len(outputs) > 0:
-        prob = outputs[0]
-        print(f"\n\n\n\nPROB: {prob}")
+    # Run the model with the properly named input.
+    ort_inputs = {input_name: img_batch}
+    ort_outs = ort_session.run(None, ort_inputs)
 
-        # Checking if prob has more than one dimension and selecting the right one
+    # Assuming the model returns a list with one array of class probabilities.
+    if len(ort_outs) > 0:
+        prob = ort_outs[0]
+
+        # Checking if prob has more than one dimension and selecting the right one.
         if prob.ndim > 1:
             prob = prob[0]
 
