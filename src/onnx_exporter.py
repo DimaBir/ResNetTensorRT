@@ -3,7 +3,7 @@ from torch.onnx import export
 from torchvision import models
 
 class ONNXExporter:
-    def __init__(self, model: torchvision.models.ResNet, onnx_path: str):
+    def __init__(self, model, onnx_path: str):
         self.model = model
         self.onnx_path = onnx_path
 
