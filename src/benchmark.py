@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 import logging
-import onnxruntime-gpu as ort
+import onnxruntime as ort
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
