@@ -145,23 +145,22 @@ def main() -> None:
             onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
             onnx_exporter.export_model()
 
-        else:
-            # Create ONNX Runtime session
-            ort_session = ort.InferenceSession(
-                onnx_path, providers=["CPUExecutionProvider"]
-            )
+        # Create ONNX Runtime session
+        ort_session = ort.InferenceSession(
+            onnx_path, providers=["CPUExecutionProvider"]
+        )
 
-            # Run benchmark
-            run_benchmark(None, None, None, ort_session, onnx=True)
+        # Run benchmark
+        run_benchmark(None, None, None, ort_session, onnx=True)
 
-            # Make prediction
-            print(f"Making prediction with {ort.get_device()} for ONNX model")
-            make_prediction(
-                ort_session,
-                img_batch.cpu().numpy(),
-                topk=args.topk,
-                categories=model_loader.categories,
-            )
+        # Make prediction
+        print(f"Making prediction with {ort.get_device()} for ONNX model")
+        make_prediction(
+            ort_session,
+            img_batch.cpu().numpy(),
+            topk=args.topk,
+            categories=model_loader.categories,
+        )
     else:
         # Define configurations for which to run benchmarks and make predictions
         configs = [
