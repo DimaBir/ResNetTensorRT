@@ -8,7 +8,7 @@ class ONNXExporter:
         self.onnx_path = onnx_path
 
     def export_model(self):
-        self.mode.eval()
+        self.model.eval()
 
         # Define dummy input tensor
         x = torch.randn(1, 3, 224, 224).to(self.model.device)
