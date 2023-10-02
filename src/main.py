@@ -106,11 +106,12 @@ def main() -> None:
         # check if model was loaded successfully
         model = onnx.load(onnx_path)
 
-        # Check the model well-formed
-        onnx.checker.check_model(model)
+        # Iterate over the model's graph and print the names and types of the nodes (layers)
+        for node in model.graph.node:
+            print(node.name, node.op_type)
 
-        print(onnx.helper.printable_graph(model.graph))
         exit(0)
+
 
     # Make and log predictions for CPU
     print("Making prediction with CPU model")
