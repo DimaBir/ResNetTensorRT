@@ -1,4 +1,4 @@
-# ResNet-50 Inference with TensorRT
+# ResNet-50 Inference with ONNX/TensorRT
 ## Table of Contents
 1. [Overview](#overview)
 2. [Requirements](#requirements)
@@ -12,9 +12,10 @@
 8. [References](#references)
 
 ## Overview
-This project demonstrates how to perform inference with a PyTorch model and optimize it using NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torchvision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
+This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX or NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torchvision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CPU (ONNX), CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
 
 ## Requirements
+- This repo cloned
 - Docker
 - NVIDIA GPU (for CUDA and TensorRT benchmarks and optimizations)
 - Python 3.x
@@ -24,10 +25,10 @@ This project demonstrates how to perform inference with a PyTorch model and opti
 
 ```sh
 # 1. Build the Docker Image
-docker build -t awesome-tesnorrt .
+docker build -t awesome-tensorrt
 
 # 2. Run the Docker Container
-docker run --gpus all --rm -it awesome-tesnorrt
+docker run --gpus all --rm -it awesome-tensorrt
 
 # 3. Run the Script inside the Container
 python src/main.py
