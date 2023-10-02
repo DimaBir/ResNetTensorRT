@@ -142,8 +142,7 @@ def main() -> None:
     args = parser.parse_args()
 
     # Setup device
-    device = "cpu"
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Initialize model and image processor
     model_loader = ModelLoader(device=device)

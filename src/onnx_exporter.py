@@ -20,7 +20,7 @@ class ONNXExporter:
             self.model,
             x,
             self.onnx_path,
-            training=TrainingMode.TRAINING,
+            training=TrainingMode.EVAL,
             verbose=True,
             input_names=["input"],
             output_names=["output"],

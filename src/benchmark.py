@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 import logging
-import onnxruntime as ort
+import onnxruntime-gpu as ort
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
@@ -19,6 +19,7 @@ class Benchmark(ABC):
 
     def __init__(self, nruns: int = 100, nwarmup: int = 50):
         self.nruns = nruns
+        self.nwarmup = nwarmup
 
     @abstractmethod
     def run(self) -> None:
