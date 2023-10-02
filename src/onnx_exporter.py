@@ -2,6 +2,7 @@ import torch
 from torch.onnx import export, TrainingMode
 from torchvision import models
 
+
 class ONNXExporter:
     def __init__(self, model, device, onnx_path: str):
         self.model = model
@@ -15,5 +16,13 @@ class ONNXExporter:
         x = torch.randn(1, 3, 224, 224).to(self.device)
 
         # Export model as ONNX
-        export(self.model, x, self.onnx_path, training=TrainingMode.TRAINING, verbose=True, input_names=['input'], output_names=['output'])
+        export(
+            self.model,
+            x,
+            self.onnx_path,
+            training=TrainingMode.TRAINING,
+            verbose=True,
+            input_names=["input"],
+            output_names=["output"],
+        )
         print(f"Model exported to {self.onnx_path}")

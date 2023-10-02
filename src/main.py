@@ -13,10 +13,16 @@ from benchmark import PyTorchBenchmark, ONNXBenchmark
 from onnx_exporter import ONNXExporter
 
 # Configure logging
-logging.basicConfig(filename='model.log', level=logging.INFO)
+logging.basicConfig(filename="model.log", level=logging.INFO)
 
 
-def run_benchmark(model: torch.nn.Module, device: str, dtype: torch.dtype, ort_session: ort.InferenceSession = None, onnx: bool = False) -> None:
+def run_benchmark(
+    model: torch.nn.Module,
+    device: str,
+    dtype: torch.dtype,
+    ort_session: ort.InferenceSession = None,
+    onnx: bool = False,
+) -> None:
     """
     Run and log the benchmark for the given model, device, and dtype.
 
@@ -67,10 +73,10 @@ def make_prediction(
 
 
 def make_prediction_onnx(
-        ort_session: ort.InferenceSession,
-        img_batch: np.ndarray,
-        topk: int,
-        categories: List[str],
+    ort_session: ort.InferenceSession,
+    img_batch: np.ndarray,
+    topk: int,
+    categories: List[str],
 ) -> None:
     """
     Make and print predictions for the given ONNX model, img_batch, topk, and categories.
@@ -124,9 +130,7 @@ def main() -> None:
         "--topk", type=int, default=5, help="Number of top predictions to show"
     )
     parser.add_argument(
-        "--onnx",
-        action="store_true",
-        help="If we want export model to ONNX format"
+        "--onnx", action="store_true", help="If we want export model to ONNX format"
     )
     parser.add_argument(
         "--onnx_path",
@@ -154,21 +158,31 @@ def main() -> None:
         onnx_exporter.export_model()
 
         # Create ONNX Runtime session
-        ort_session = ort.InferenceSession(onnx_path, providers=['CPUExecutionProvider'])
+        ort_session = ort.InferenceSession(
+            onnx_path, providers=["CPUExecutionProvider"]
+        )
 
         # Run benchmark
         run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
-        make_prediction_onnx(ort_session, img_batch.numpy(), topk=args.topk, categories=model_loader.categories)
+        make_prediction_onnx(
+            ort_session,
+            img_batch.numpy(),
+            topk=args.topk,
+            categories=model_loader.categories,
+        )
         print("FINISHED ONNX")
         exit(0)
-
 
     # Make and log predictions for CPU
     print("Making prediction with CPU model")
     make_prediction(
-        model_loader.model.to("cpu"), img_batch.to("cpu"), args.topk, model_loader.categories, torch.float32
+        model_loader.model.to("cpu"),
+        img_batch.to("cpu"),
+        args.topk,
+        model_loader.categories,
+        torch.float32,
     )
 
     # Run benchmarks for CPU and CUDA

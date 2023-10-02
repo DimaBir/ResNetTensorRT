@@ -11,6 +11,7 @@ import onnxruntime as ort
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
 
+
 class Benchmark(ABC):
     """
     Abstract class representing a benchmark.
@@ -25,6 +26,7 @@ class Benchmark(ABC):
         Abstract method to run the benchmark.
         """
         pass
+
 
 class PyTorchBenchmark:
     def __init__(
@@ -91,12 +93,19 @@ class PyTorchBenchmark:
         print(f"Output features size: {features.size()}")
         logging.info(f"Average batch time: {np.mean(timings) * 1000:.2f} ms")
 
+
 class ONNXBenchmark(Benchmark):
     """
     A class used to benchmark the performance of an ONNX model.
     """
 
-    def __init__(self, ort_session: ort.InferenceSession, input_shape: tuple, nruns: int = 100, nwarmup: int = 50):
+    def __init__(
+        self,
+        ort_session: ort.InferenceSession,
+        input_shape: tuple,
+        nruns: int = 100,
+        nwarmup: int = 50,
+    ):
         super().__init__(nruns)
         self.ort_session = ort_session
         self.input_shape = input_shape
@@ -121,5 +130,5 @@ class ONNXBenchmark(Benchmark):
             end_time = time.time()
             timings.append(end_time - start_time)
 
-        avg_time = np.mean(timings) * 1000  # Convert to milliseconds
+        avg_time = np.mean(timings) * 1000
         logging.info(f"Average ONNX inference time: {avg_time:.2f} ms")
