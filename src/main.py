@@ -166,7 +166,7 @@ def main() -> None:
     elif args.mode == "ov":
         # Export the ONNX model to OpenVINO
         ov_exporter = OVExporter(args.onnx_path)
-        ov_model = ov_exporter.export_to_openvino()
+        ov_model = ov_exporter.export_model()
 
         # Benchmark the OpenVINO model
         ov_benchmark = OVBenchmark(ov_model, input_shape=(1, 3, 224, 224))
