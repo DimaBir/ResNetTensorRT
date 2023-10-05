@@ -1,6 +1,5 @@
 torch
 torchvision
-torch-tensorrt
 pandas
 Pillow
 numpy
