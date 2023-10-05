@@ -16,7 +16,7 @@ class OVExporter:
         :param onnx_model_path: str
             Path to the ONNX model file.
         """
-        self.onnx_model_path = onnx_model_path
+        self.onnx_path = onnx_model_path
 
     def export_model(self) -> ie.IENetwork:
         """
