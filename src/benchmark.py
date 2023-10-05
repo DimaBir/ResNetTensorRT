@@ -7,6 +7,7 @@ import torch
 import torch.backends.cudnn as cudnn
 import logging
 import onnxruntime as ort
+import openvino as ov
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
@@ -133,3 +134,59 @@ class ONNXBenchmark(Benchmark):
 
         avg_time = np.mean(timings) * 1000
         logging.info(f"Average ONNX inference time: {avg_time:.2f} ms")
+
+
+class OVBenchmark(Benchmark):
+    def __init__(self,  model: ov.ie.IENetwork, input_shape: Tuple[int, int, int, int]):
+        """
+        Initialize the OVBenchmark with the OpenVINO model and the input shape.
+
+        :param model: ov.ie.IENetwork
+            The OpenVINO model.
+        :param input_shape: Tuple[int, int, int, int]
+            The shape of the model input.
+        """
+        super().__init__(input_shape)
+        self.ov_model = model
+        self.core = ov.ie.IECore()
+        self.compiled_model = None
+
+    def warmup(self):
+        """
+        Compile the OpenVINO model for optimal execution on available hardware.
+        """
+        self.compiled_model = self.core.compile_model(self.ov_model, "AUTO")
+
+    def inference(self, input_data) -> dict:
+        """
+        Perform inference on the input data using the compiled OpenVINO model.
+
+        :param input_data: np.ndarray
+            The input data for the model.
+        :return: dict
+            The model's output as a dictionary.
+        """
+        # Assuming the input data is in the correct format for the model
+        # Execute the model and get the output
+        outputs = self.compiled_model.infer(inputs={"input": input_data})
+        return outputs
+
+    def run(self):
+        """
+        Run the benchmark on the OpenVINO model. It first warms up by compiling the model and then measures
+        the average inference time over a set number of runs.
+        """
+        # Warm-up runs
+        logging.info("Warming up ...")
+        for _ in range(self.warmup_runs):
+            self.warmup()
+
+        # Benchmarking
+        total_time = 0
+        for _ in range(self.num_runs):
+            start_time = time.time()
+            _ = self.inference(self.dummy_input)
+            total_time += (time.time() - start_time)
+
+        avg_time = total_time / self.num_runs
+        logging.info(f"Average inference time: {avg_time * 1000:.2f} ms")

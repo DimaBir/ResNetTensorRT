@@ -9,8 +9,9 @@ import numpy as np
 
 from model import ModelLoader
 from image_processor import ImageProcessor
-from benchmark import PyTorchBenchmark, ONNXBenchmark
+from benchmark import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 from onnx_exporter import ONNXExporter
+from ov_exporter import OVExporter
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
@@ -125,6 +126,9 @@ def main() -> None:
         default="./inference/model.onnx",
         help="Path where model in ONNX format will be exported",
     )
+    parser.add_argument(
+        "--ov", action="store_true", help="If we want to export the ONNX model to OpenVINO format"
+    )
 
     args = parser.parse_args()
 
@@ -159,6 +163,30 @@ def main() -> None:
             topk=args.topk,
             categories=model_loader.categories,
         )
+    elif args.ov:
+        # Export the ONNX model to OpenVINO
+        ov_exporter = OVExporter(args.onnx_path)
+        ov_model = ov_exporter.export_to_openvino()
+
+        # Benchmark the OpenVINO model
+        ov_benchmark = OVBenchmark(ov_model, input_shape=(1, 3, 224, 224))
+        ov_benchmark.run()
+
+        # Run inference using the OpenVINO model
+        # Note: Ensure that your image is preprocessed similarly as for other models.
+        img_batch = img_processor.process_image().cpu().numpy()  # Assuming batch size of 1
+        outputs = ov_benchmark.compiled_model.infer(inputs={"input": img_batch})
+
+        # Read and process the predictions from outputs
+        # This will depend on the format of the outputs.
+        # For this example, let's assume the model returns class probabilities.
+        prob = outputs["output"]  # Assuming the output key is "output"
+        top_indices = prob.argsort()[-args.topk:][::-1]
+        top_probs = prob[top_indices]
+        for i in range(args.topk):
+            probability = top_probs[i]
+            class_label = model_loader.categories.iloc[top_indices[i]].item()
+            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
     else:
         # Define configurations for which to run benchmarks and make predictions
         configs = [
