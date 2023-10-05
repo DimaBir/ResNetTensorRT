@@ -118,16 +118,16 @@ def main() -> None:
         "--topk", type=int, default=5, help="Number of top predictions to show"
     )
     parser.add_argument(
-        "--onnx", action="store_true", help="If we want export model to ONNX format"
-    )
-    parser.add_argument(
         "--onnx_path",
         type=str,
         default="./inference/model.onnx",
         help="Path where model in ONNX format will be exported",
     )
     parser.add_argument(
-        "--ov", action="store_true", help="If we want to export the ONNX model to OpenVINO format"
+        "--mode",
+        choices=["onnx", "ov", "cuda"],
+        required=True,
+        help="Mode for exporting and running the model. Choices are: onnx, ov, or cuda.",
     )
 
     args = parser.parse_args()
@@ -140,7 +140,7 @@ def main() -> None:
     img_processor = ImageProcessor(img_path=args.image_path, device=device)
     img_batch = img_processor.process_image()
 
-    if args.onnx:
+    if args.mode == "onnx":
         onnx_path = args.onnx_path
 
         # Export the model to ONNX format using ONNXExporter
@@ -163,7 +163,7 @@ def main() -> None:
             topk=args.topk,
             categories=model_loader.categories,
         )
-    elif args.ov:
+    elif args.mode == "ov":
         # Export the ONNX model to OpenVINO
         ov_exporter = OVExporter(args.onnx_path)
         ov_model = ov_exporter.export_to_openvino()
@@ -174,20 +174,22 @@ def main() -> None:
 
         # Run inference using the OpenVINO model
         # Note: Ensure that your image is preprocessed similarly as for other models.
-        img_batch = img_processor.process_image().cpu().numpy()  # Assuming batch size of 1
+        img_batch = (
+            img_processor.process_image().cpu().numpy()
+        )  # Assuming batch size of 1
         outputs = ov_benchmark.compiled_model.infer(inputs={"input": img_batch})
 
         # Read and process the predictions from outputs
         # This will depend on the format of the outputs.
         # For this example, let's assume the model returns class probabilities.
         prob = outputs["output"]  # Assuming the output key is "output"
-        top_indices = prob.argsort()[-args.topk:][::-1]
+        top_indices = prob.argsort()[-args.topk :][::-1]
         top_probs = prob[top_indices]
         for i in range(args.topk):
             probability = top_probs[i]
             class_label = model_loader.categories.iloc[top_indices[i]].item()
             logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
-    else:
+    elif args.mode == "cuda":
         # Define configurations for which to run benchmarks and make predictions
         configs = [
             ("cpu", torch.float32),
@@ -224,6 +226,8 @@ def main() -> None:
 
             print(f"Running Benchmark for {device} model in {precision} precision")
             run_benchmark(model, device, precision)
+    else:
+        raise ValueError(f"Unsupported mode: {args.mode}")
 
 
 if __name__ == "__main__":

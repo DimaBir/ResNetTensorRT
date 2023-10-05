@@ -6,6 +6,7 @@ class OVExporter:
     """
     OVExporter handles the conversion of an ONNX model to OpenVINO's internal representation.
     """
+
     def __init__(self, onnx_model_path: str):
         """
         Initialize the OVExporter with the path to the ONNX model.
@@ -28,4 +29,3 @@ class OVExporter:
         # Convert the ONNX model to OpenVINO's internal representation
         ov_model = ov.utils.convert_model(self.onnx_model_path)
         return ov_model
-

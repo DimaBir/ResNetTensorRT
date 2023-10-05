@@ -137,7 +137,7 @@ class ONNXBenchmark(Benchmark):
 
 
 class OVBenchmark(Benchmark):
-    def __init__(self,  model: ov.ie.IENetwork, input_shape: Tuple[int, int, int, int]):
+    def __init__(self, model: ov.ie.IENetwork, input_shape: Tuple[int, int, int, int]):
         """
         Initialize the OVBenchmark with the OpenVINO model and the input shape.
 
@@ -186,7 +186,7 @@ class OVBenchmark(Benchmark):
         for _ in range(self.num_runs):
             start_time = time.time()
             _ = self.inference(self.dummy_input)
-            total_time += (time.time() - start_time)
+            total_time += time.time() - start_time
 
         avg_time = total_time / self.num_runs
         logging.info(f"Average inference time: {avg_time * 1000:.2f} ms")
