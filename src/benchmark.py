@@ -8,7 +8,8 @@ import torch.backends.cudnn as cudnn
 import logging
 import onnxruntime as ort
 import openvino as ov
-from openvino import ie, utils
+import openvino.inference_engine as ie
+from openvino import utils
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
