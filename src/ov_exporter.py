@@ -1,5 +1,6 @@
 import os
 import openvino as ov
+from openvino import utils
 
 
 class OVExporter:
@@ -27,5 +28,5 @@ class OVExporter:
             raise ValueError(f"ONNX model wasn't found in path: {self.onnx_path}")
 
         # Convert the ONNX model to OpenVINO's internal representation
-        ov_model = ov.utils.convert_model(self.onnx_model_path)
+        ov_model = utils.convert_model(self.onnx_model_path)
         return ov_model

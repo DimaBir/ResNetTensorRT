@@ -8,6 +8,7 @@ import torch.backends.cudnn as cudnn
 import logging
 import onnxruntime as ort
 import openvino as ov
+from openvino import ie, utils
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
@@ -137,7 +138,7 @@ class ONNXBenchmark(Benchmark):
 
 
 class OVBenchmark(Benchmark):
-    def __init__(self, model: ov.ie.IENetwork, input_shape: Tuple[int, int, int, int]):
+    def __init__(self, model: ie.IENetwork, input_shape: Tuple[int, int, int, int]):
         """
         Initialize the OVBenchmark with the OpenVINO model and the input shape.
 
@@ -148,7 +149,7 @@ class OVBenchmark(Benchmark):
         """
         super().__init__(input_shape)
         self.ov_model = model
-        self.core = ov.ie.IECore()
+        self.core = ie.IECore()
         self.compiled_model = None
 
     def warmup(self):
