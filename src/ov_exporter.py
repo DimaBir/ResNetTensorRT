@@ -1,6 +1,7 @@
 import os
 import openvino as ov
 from openvino import utils
+import openvino.inference_engine as ie
 
 
 class OVExporter:
@@ -17,7 +18,7 @@ class OVExporter:
         """
         self.onnx_model_path = onnx_model_path
 
-    def export_model(self) -> ov.ie.IENetwork:
+    def export_model(self) -> ie.IENetwork:
         """
         Convert the ONNX model to OpenVINO's internal representation.
 
