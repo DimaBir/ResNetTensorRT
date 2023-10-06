@@ -88,9 +88,10 @@ def main():
                 img_batch = img_batch.to(device)
             else:
                 print("Compiling TensorRT model")
+                batch_size = 1 if args.mode == "cuda" else 32
                 model = torch_tensorrt.compile(
                     model,
-                    inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=precision)],
+                    inputs=[torch_tensorrt.Input((batch_size, 3, 224, 224), dtype=precision)],
                     enabled_precisions={precision},
                     truncate_long_and_double=True,
                     require_full_compilation=True,
