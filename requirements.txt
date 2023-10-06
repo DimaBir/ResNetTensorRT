@@ -1,8 +1,10 @@
 torch
 torchvision
+torch-tensorrt
 pandas
 Pillow
 numpy
 packaging
 onnx
 onnxruntime
+openvino==2023.1.0.dev20230811
