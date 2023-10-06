@@ -14,7 +14,7 @@
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
-5. [Used methodologies](#used-methodologies) ![New](https://img.shields.io/badge/-New-96E5FE)
+5. [Benchmarking and Visualization](#benchmarking-and-visualization) ![New](https://img.shields.io/badge/-New-96E5FE)
     - [TensorRT Optimization](#tensorrt-optimization)
     - [ONNX Exporter](#onnx-exporter)
     - [OV Exporter](#ov-exporter)
@@ -44,20 +44,20 @@ docker build -t awesome-tensorrt
 docker run --gpus all --rm -it awesome-tensorrt
 
 # 3. Run the Script inside the Container
-python src/main.py
+python main.py [--mode all]
 ```
 
 ### Arguments
 - `--image_path`: (Optional) Specifies the path to the image you want to predict.
 - `--topk`: (Optional) Specifies the number of top predictions to show. Defaults to 5 if not provided.
-- `--mode`: Specifies the mode for exporting and running the model. Choices are: `onnx`, `ov`, `all`.
+- `--mode`: (Optional) Specifies the mode for exporting and running the model. Choices are: `onnx`, `ov`, `all`.  If not provided, it defaults to `all`.
 
 ### Example Command
 ```sh
-python src/main.py --topk 3 --mode=all
+python main.py --topk 3 --mode=ov
 ```
 
-This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run all models (PyTorch CPU, CUDA, ONNX, OV, TRT-FP16, TRT-FP32). At the end results plot will be saved to `./inference/plot.png`
+This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run OpenVINO model. At the end results plot will be saved to `./inference/plot.png`
 
 ## RESULTS
 ### Inference Benchmark Results
@@ -116,62 +116,8 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 4. Perform inference on the provided image using the OpenVINO model.
 5. Benchmark results, including average inference time, are logged for the OpenVINO model.
 
-## Used methodologies
-### TensorRT Optimization
-TensorRT is a high-performance deep learning inference optimizer and runtime library developed by NVIDIA. It is designed for optimizing and deploying trained neural network models on production environments. This project supports TensorRT optimizations in FP32 (single precision) and FP16 (half precision) modes, offering different trade-offs between inference speed and model accuracy.
-
-#### Features
-- **Performance Boost**: TensorRT can significantly accelerate the inference of neural network models, making it suitable for deployment in resource-constrained environments.
-- **Precision Modes**: Supports FP32 for maximum accuracy and FP16 for faster performance with a minor trade-off in accuracy.
-- **Layer Fusion**: TensorRT fuses layers and tensors in the neural network to reduce memory access overhead and improve execution speed.
-- **Dynamic Tensor Memory**: Efficiently handles varying batch sizes without re-optimization.
-
-#### Usage
-When running the main script, use the'- mode all' argument to employ TensorRT optimizations in the project.
-This will initiate all models, including PyTorch models, that will be compiled to the TRT model with `FP16` and `FP32` precision modes. Then, in one of the steps, we will run inference on the specified image using the TensorRT-optimized model.
-Example:
-```sh
-python src/main.py --mode all
-```
-#### Requirements
-Ensure you have the TensorRT library and the torch_tensorrt package installed in your environment. Also, for FP16 optimizations, it's recommended to have a GPU that supports half-precision arithmetic (like NVIDIA GPUs with Tensor Cores).
-
-### ONNX Exporter
-ONNX Model Exporter (`ONNXExporter`) utility is incorporated within this project to enable converting the native PyTorch model into the ONNX format.
-Using the ONNX format, inference and benchmarking can be performed with the ONNX Runtime, which offers platform-agnostic optimizations and is widely supported across numerous platforms and devices.
-
-#### Features
-- **Standardized Format**: ONNX provides an open-source format for AI models. It defines an extensible computation graph model and definitions of built-in operators and standard data types.
-- **Interoperability**: Models in ONNX format can be used across various frameworks, tools, runtimes, and compilers.
-- **Optimizations**: The ONNX Runtime provides performance optimizations for both cloud and edge devices.
-
-#### Usage
-To leverage the `ONNXExporter` and conduct inference using the ONNX Runtime, utilize the `--mode onnx` argument when executing the main script.
-This will initiate the conversion process and then run inference on the specified image using the ONNX model.
-Example:
-```sh
-python src/main.py --mode onnx
-```
-
-#### Requirements
-Ensure the ONNX library is installed in your environment to use the ONNXExporter. Additionally, if you want to run inference using the ONNX model, install the ONNX Runtime.
-
-### OV Exporter
-OpenVINO Model Exporter utility (`OVExporter`) has been integrated into this project to facilitate the conversion of the ONNX model to the OpenVINO format.
-This enables inference and benchmarking using OpenVINO, a framework optimized for Intel hardware, providing substantial speed improvements, especially on CPUs.
-
-#### Features
-- **Model Optimization**: Converts the ONNX model to OpenVINO's Intermediate Representation (IR) format. This optimized format allows for faster inference times on Intel hardware.
-- **Versatility**: OpenVINO can target various Intel hardware devices such as CPUs, integrated GPUs, FPGAs, and VPUs.
-- **Ease of Use**: The `OVExporter` seamlessly transitions from ONNX to OpenVINO, abstracting the conversion details and providing a straightforward interface.
-
-#### Usage
-To utilize `OVExporter` and perform inference using OpenVINO, use the `--mode ov` argument when running the main script.
-This will trigger the conversion process and subsequently run inference on the provided image using the optimized OpenVINO model.
-Example:
-```sh
-python src/main.py --mode ov
-```
+## Benchmarking and Visualization
+The results of the benchmarks for all modes are saved and visualized in a bar chart, showcasing the average inference times across different backends. The visualization aids in comparing the performance gains achieved with different optimizations.
 
 #### Requirements
 Ensure you have installed the OpenVINO Toolkit and the necessary dependencies to use OpenVINO's model optimizer and inference engine.

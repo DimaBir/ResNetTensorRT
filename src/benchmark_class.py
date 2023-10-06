@@ -124,11 +124,16 @@ class ONNXBenchmark(Benchmark):
         print("Starting benchmark ...")
         timings = []
 
-        for _ in range(self.nruns):
+        for i in range(1, self.nruns+1):
             start_time = time.time()
             _ = self.ort_session.run(None, {"input": input_data})
             end_time = time.time()
             timings.append(end_time - start_time)
+
+            if i % 10 == 0:
+                print(
+                    f"Iteration {i}/{self.nruns}, ave batch time {np.mean(timings) * 1000:.2f} ms"
+                )
 
         avg_time = np.mean(timings) * 1000
         logging.info(f"Average ONNX inference time: {avg_time:.2f} ms")
@@ -185,10 +190,15 @@ class OVBenchmark(Benchmark):
 
         # Benchmarking
         total_time = 0
-        for _ in range(self.num_runs):
+        for i in range(1, self.num_runs+1):
             start_time = time.time()
             _ = self.inference(self.dummy_input)
             total_time += time.time() - start_time
+
+            if i % 10 == 0:
+                print(
+                    f"Iteration {i}/{self.nruns}, ave batch time {total_time / self.num_runs * 1000:.2f} ms"
+                )
 
         avg_time = total_time / self.num_runs
         logging.info(f"Average inference time: {avg_time * 1000:.2f} ms")
