@@ -1,7 +1,6 @@
 import logging
-import sys
 
-from ..benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
+from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
 from benchmark.benchmark_utils import run_all_benchmarks, plot_benchmark_results
 from common.utils import (
     parse_arguments,
@@ -9,13 +8,12 @@ from common.utils import (
     init_ov_model,
     init_cuda_model,
 )
-from image_processor import ImageProcessor
+from src.image_processor import ImageProcessor
 from prediction.prediction_models import *
-from model import ModelLoader
+from src.model import ModelLoader
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
-sys.path.append('/workspace')
 
 
 def main() -> None:
