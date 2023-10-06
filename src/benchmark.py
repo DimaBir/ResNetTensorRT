@@ -137,7 +137,9 @@ class ONNXBenchmark(Benchmark):
 
 
 class OVBenchmark(Benchmark):
-    def __init__(self, model: ov.frontend.FrontEnd, input_shape: Tuple[int, int, int, int]):
+    def __init__(
+        self, model: ov.frontend.FrontEnd, input_shape: Tuple[int, int, int, int]
+    ):
         """
         Initialize the OVBenchmark with the OpenVINO model and the input shape.
 
