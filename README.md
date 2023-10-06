@@ -57,7 +57,7 @@ python main.py [--mode all]
 python main.py --topk 3 --mode=ov
 ```
 
-This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run OpenVINO model. At the end results plot will be saved to `./inference/plot.png`
+This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run OpenVINO model. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
 ## RESULTS
 ### Inference Benchmark Results

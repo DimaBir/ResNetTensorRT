@@ -156,8 +156,8 @@ class OVBenchmark(Benchmark):
         self.core = ov.Core()
         self.compiled_model = None
         self.input_shape = input_shape
-        self.warmup_runs = 50
-        self.num_runs = 100
+        self.nwarmup = 50
+        self.nruns = 100
         self.dummy_input = np.random.randn(*input_shape).astype(np.float32)
 
     def warmup(self):
@@ -185,21 +185,21 @@ class OVBenchmark(Benchmark):
         """
         # Warm-up runs
         logging.info("Warming up ...")
-        for _ in range(self.warmup_runs):
+        for _ in range(self.nwarmup):
             self.warmup()
 
         # Benchmarking
         total_time = 0
-        for i in range(1, self.num_runs+1):
+        for i in range(1, self.nruns+1):
             start_time = time.time()
             _ = self.inference(self.dummy_input)
             total_time += time.time() - start_time
 
             if i % 10 == 0:
                 print(
-                    f"Iteration {i}/{self.nruns}, ave batch time {total_time / self.num_runs * 1000:.2f} ms"
+                    f"Iteration {i}/{self.nruns}, ave batch time {total_time / self.nruns * 1000:.2f} ms"
                 )
 
-        avg_time = total_time / self.num_runs
+        avg_time = total_time / self.nruns
         logging.info(f"Average inference time: {avg_time * 1000:.2f} ms")
         return avg_time * 1000
