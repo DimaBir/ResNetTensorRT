@@ -39,8 +39,8 @@ def main() -> None:
     # OpenVINO
     if args.mode in ["ov", "all"]:
         ov_model = init_ov_model(args.onnx_path)
-        benchmark_ov_model(ov_model)
-        predict_ov_model(ov_model, img_batch, args.topk, model_loader.categories)
+        ov_benchmark = benchmark_ov_model(ov_model)
+        predict_ov_model(ov_benchmark.compiled_model, img_batch, args.topk, model_loader.categories)
 
     # CUDA
     if args.mode in ["cuda", "all"]:
