@@ -118,8 +118,7 @@ def make_prediction(
 
 
 def run_all_benchmarks(
-    models: Dict[str, Any], img_batch: np.ndarray, device: str,
-    dtype: torch.dtype,
+    models: Dict[str, Any], img_batch: np.ndarray
 ) -> Dict[str, float]:
     """
     Run benchmarks for all models and return a dictionary of average inference times.
