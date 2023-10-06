@@ -23,7 +23,7 @@
 <img src="./inference/plot.png" width="100%">
 
 ## Overview
-This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX, OpenVINO, NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torchvision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
+This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX, OpenVINO, and NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torch-vision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
 
 ## Requirements
 - This repo cloned
@@ -48,14 +48,14 @@ python main.py [--mode all]
 ### Arguments
 - `--image_path`: (Optional) Specifies the path to the image you want to predict.
 - `--topk`: (Optional) Specifies the number of top predictions to show. Defaults to 5 if not provided.
-- `--mode`: (Optional) Specifies the mode for exporting and running the model. Choices are: `onnx`, `ov`, `all`.  If not provided, it defaults to `all`.
+- `--mode`: (Optional) Specifies the model's mode for exporting and running. Choices are: `onnx`, `ov`, `cuda`, and `all`.  If not provided, it defaults to `all`.
 
 ### Example Command
 ```sh
 python main.py --topk 3 --mode=ov
 ```
 
-This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run OpenVINO model. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
+This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run the OpenVINO model. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
 ## RESULTS
 ### Inference Benchmark Results
