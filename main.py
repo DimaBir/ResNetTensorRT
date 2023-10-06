@@ -42,10 +42,11 @@ def main():
 
     # OpenVINO
     if args.mode in ["ov", "all"]:
+        # If ONNX model wasn't exporter previously - export it
+        if not os.path.isfile(args.onnx_path):
+            export_onnx_model(model_loader, device, args.onnx_path)
         ov_model = init_ov_model(args.onnx_path)
         if args.mode != "all":
-            if not os.path.isfile(args.onnx_path):
-                export_onnx_model(model_loader, device, args.onnx_path)
             ov_benchmark = benchmark_ov_model(ov_model)
             predict_ov_model(ov_benchmark.compiled_model, img_batch, args.topk, model_loader.categories)
 
