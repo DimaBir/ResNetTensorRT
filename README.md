@@ -9,6 +9,7 @@
 3. [RESULTS](#results) ![Static Badge](https://img.shields.io/badge/update-orange)
     - [Results explanation](#results-explanation)
     - [Example Input](#example-input)
+    - [Example prediction results](#example-prediction-results)
 4. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
     - [PyTorch CPU & CUDA](#pytorch-cpu--cuda)
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
@@ -75,6 +76,15 @@ This command will run predictions on the default image (`./inference/cat3.jpg`),
 Here is an example of the input image to run predictions and benchmarks on:
 
 <img src="./inference/cat3.jpg" width="20%">
+
+### Example prediction results
+```
+#1: 15% Egyptian cat
+#2: 14% tiger cat
+#3: 9% tabby
+#4: 2% doormat
+#5: 2% lynx
+```
 
 ## Benchmark Implementation Details
 Here you can see the flow for each model and benchmark.

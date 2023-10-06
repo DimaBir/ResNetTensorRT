@@ -7,12 +7,17 @@ from src.ov_exporter import OVExporter
 import onnxruntime as ort
 
 
-# Model Initialization Functions
+def export_onnx_model(
+    onnx_path: str, model_loader: ModelLoader, device: torch.device
+) -> None:
+    onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
+    onnx_exporter.export_model()
+
+
 def init_onnx_model(
     onnx_path: str, model_loader: ModelLoader, device: torch.device
 ) -> ort.InferenceSession:
-    onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
-    onnx_exporter.export_model()
+    export_onnx_model(model_loader, device, onnx_path)
     return ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
 
 

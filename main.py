@@ -1,4 +1,6 @@
 import logging
+import os.path
+
 import torch_tensorrt
 
 from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
@@ -7,7 +9,7 @@ from common.utils import (
     parse_arguments,
     init_onnx_model,
     init_ov_model,
-    init_cuda_model,
+    init_cuda_model, export_onnx_model,
 )
 from src.image_processor import ImageProcessor
 from prediction.prediction_models import *
@@ -42,6 +44,8 @@ def main():
     if args.mode in ["ov", "all"]:
         ov_model = init_ov_model(args.onnx_path)
         if args.mode != "all":
+            if not os.path.isfile(args.onnx_path):
+                export_onnx_model(model_loader, device, args.onnx_path)
             ov_benchmark = benchmark_ov_model(ov_model)
             predict_ov_model(ov_benchmark.compiled_model, img_batch, args.topk, model_loader.categories)
 
