@@ -91,7 +91,7 @@ def make_prediction(
         prob = outputs[prob_key]
 
         # Apply Softmax to get probabilities
-        prob = np.exp(prob) / np.sum(np.exp(prob))
+        prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
     else:  # PyTorch Model
         if isinstance(img_batch, np.ndarray):
