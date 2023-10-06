@@ -1,9 +1,9 @@
-from benchmark.benchmark_models import *
-from benchmark.benchmark_utils import *
-from common.utils import *
+from benchmark_models import *
+from benchmark_utils import *
+from utils import *
 from image_processor import ImageProcessor
-from prediction.prediction_models import *
-from src.model import ModelLoader
+from prediction_models import *
+from model import ModelLoader
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)

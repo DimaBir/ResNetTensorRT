@@ -3,7 +3,7 @@ import openvino as ov
 import numpy as np
 import torch
 from typing import List
-from prediction.prediction_utils import make_prediction
+from prediction_utils import make_prediction
 
 
 # Prediction Functions
