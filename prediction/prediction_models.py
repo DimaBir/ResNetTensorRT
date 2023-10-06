@@ -17,7 +17,7 @@ def predict_onnx_model(
 
 
 def predict_ov_model(
-    ov_model: ov.CompiledModel, img_batch: np.ndarray, topk: int, categories: List[str], to_skip: bool = False
+    ov_model: ov.CompiledModel, img_batch: np.ndarray, topk: int, categories: List[str]
 ):
     make_prediction(ov_model, img_batch.cpu().numpy(), topk, categories)
 
