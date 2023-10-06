@@ -45,7 +45,7 @@ def run_benchmark(
 
 
 def make_prediction(
-    model: Union[torch.nn.Module, ort.InferenceSession],
+    model: Union[torch.nn.Module, ort.InferenceSession, ov.frontend.FrontEnd],
     img_batch: Union[torch.Tensor, np.ndarray],
     topk: int,
     categories: List[str],
@@ -61,7 +61,7 @@ def make_prediction(
     :param precision: The data type to be used for the predictions (typically torch.float32 or torch.float16) for PyTorch models.
     """
     is_onnx_model = isinstance(model, ort.InferenceSession)
-    is_ov_model = isinstance(model, ov.CompiledModel)
+    is_ov_model = isinstance(model, ov.frontend.FrontEnd)
 
     if is_onnx_model:
         # Get the input name for the ONNX model.
@@ -84,7 +84,7 @@ def make_prediction(
     elif is_ov_model:
         # For OV, the input name is usually the first input
         input_name = next(iter(model.inputs))
-        outputs = model.exec_net.infer({input_name: img_batch})
+        outputs = model(inputs={input_name: img_batch})
 
         # Assuming the model returns a dictionary with one key for class probabilities
         prob_key = next(iter(outputs))
