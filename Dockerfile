@@ -9,11 +9,11 @@ RUN apt-get update && apt-get install -y \
 # Copy the requirements.txt file into the container
 COPY requirements.txt /workspace/requirements.txt
 
-# Install torch-tensorrt from the special location
-RUN pip3 install torch-tensorrt -f https://github.com/NVIDIA/Torch-TensorRT/releases
-
 # Install Python packages
 RUN pip3 install --no-cache-dir -r /workspace/requirements.txt
+
+# Install torch-tensorrt from the special location
+RUN pip3 install torch-tensorrt -f https://github.com/NVIDIA/Torch-TensorRT/releases
 
 # Set the working directory
 WORKDIR /workspace
