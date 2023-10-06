@@ -78,6 +78,17 @@ def make_prediction(
 
             # Apply Softmax to get probabilities
             prob = np.exp(prob) / np.sum(np.exp(prob))
+    elif is_ov_model:
+        # For OV, the input name is usually the first input
+        input_name = next(iter(model.input_info))
+        outputs = model.infer({input_name: img_batch})
+
+        # Assuming the model returns a dictionary with one key for class probabilities
+        prob_key = next(iter(outputs))
+        prob = outputs[prob_key]
+
+        # Apply Softmax to get probabilities
+        prob = np.exp(prob) / np.sum(np.exp(prob))
 
     else:  # PyTorch Model
         img_batch = img_batch.clone().to(precision)
@@ -173,23 +184,16 @@ def main() -> None:
         ov_benchmark.run()
 
         # Run inference using the OpenVINO model
-        # Note: Ensure that your image is preprocessed similarly as for other models.
-        """
-        img_batch = (
+        img_batch_ov = (
             img_processor.process_image().cpu().numpy()
         )  # Assuming batch size of 1
-        outputs = ov_benchmark.compiled_model.infer(inputs={"input": img_batch})
-
-        # Read and process the predictions from outputs
-        # This will depend on the format of the outputs.
-        # For this example, let's assume the model returns class probabilities.
-        prob = outputs["output"]  # Assuming the output key is "output"
-        top_indices = prob.argsort()[-args.topk :][::-1]
-        top_probs = prob[top_indices]
-        for i in range(args.topk):
-            probability = top_probs[i]
-            class_label = model_loader.categories.iloc[top_indices[i]].item()
-            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")"""
+        print(f"Making prediction with OpenVINO model")
+        make_prediction(
+            ov_benchmark.compiled_model,
+            img_batch_ov,
+            topk=args.topk,
+            categories=model_loader.categories,
+        )
     elif args.mode == "cuda":
         # Define configurations for which to run benchmarks and make predictions
         configs = [
