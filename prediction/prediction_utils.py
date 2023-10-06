@@ -26,6 +26,7 @@ def make_prediction(
     is_ov_model = isinstance(model, ov.CompiledModel)
 
     if is_onnx_model:
+        logging.info(f"Running prediction for ONNX model")
         # Get the input name for the ONNX model.
         input_name = model.get_inputs()[0].name
 
@@ -44,6 +45,7 @@ def make_prediction(
             # Apply Softmax to get probabilities
             prob = np.exp(prob) / np.sum(np.exp(prob))
     elif is_ov_model:
+        logging.info(f"Running prediction for OV model")
         # For OV, the input name is usually the first input
         input_name = next(iter(model.inputs))
         outputs = model(inputs={input_name: img_batch})
@@ -56,6 +58,7 @@ def make_prediction(
         prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
     else:  # PyTorch Model
+        logging.info(f"Running prediction for PyTorch model")
         if isinstance(img_batch, np.ndarray):
             img_batch = torch.tensor(img_batch)
         else:

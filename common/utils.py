@@ -53,7 +53,7 @@ def parse_arguments():
     parser.add_argument(
         "--mode",
         choices=["onnx", "ov", "cuda", "all"],
-        required=True,
+        default="all",
         help="Mode for exporting and running the model. Choices are: onnx, ov, cuda or all.",
     )
 
