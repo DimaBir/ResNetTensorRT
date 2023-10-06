@@ -258,9 +258,8 @@ def main() -> None:
 
         models["onnx"] = ort_session
 
-        if args.mode != "all":
-            # Run benchmark
-            run_benchmark(None, None, None, ort_session, onnx=True)
+        # Run benchmark
+        # run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
         print(f"Making prediction with {ort.get_device()} for ONNX model")
@@ -323,18 +322,17 @@ def main() -> None:
                 else:
                     models["trt_fp16"] = model_to_use
 
-            if args.mode != "all":
-                print(f"Making prediction with {device} model in {precision} precision")
-                make_prediction(
-                    model_to_use,
-                    img_batch.to(device),
-                    args.topk,
-                    model_loader.categories,
-                    precision,
-                )
+            """print(f"Making prediction with {device} model in {precision} precision")
+            make_prediction(
+                model_to_use,
+                img_batch.to(device),
+                args.topk,
+                model_loader.categories,
+                precision,
+            )
 
-                print(f"Running Benchmark for {device} model in {precision} precision")
-                run_benchmark(model_to_use, device, precision)
+            print(f"Running Benchmark for {device} model in {precision} precision")
+            run_benchmark(model_to_use, device, precision) """
     if args.mode == "all":
         # Run all benchmarks
         results = run_all_benchmarks(models, img_batch)
