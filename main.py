@@ -1,4 +1,5 @@
 import logging
+import torch_tensorrt
 
 from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
 from benchmark.benchmark_utils import run_all_benchmarks, plot_benchmark_results
@@ -65,6 +66,13 @@ def main() -> None:
                 model = model.to(device)
                 img_batch = img_batch.to(device)
             else:
+                print("Compiling TensorRT model")
+                model_to_use = torch_tensorrt.compile(
+                    model_to_use,
+                    inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=precision)],
+                    enabled_precisions={precision},
+                    truncate_long_and_double=True,
+                )
                 # If it is for TensorRT, determine the mode (FP32 or FP16) and store under a TensorRT key
                 mode = "fp32" if precision == torch.float32 else "fp16"
                 models[f"trt_{mode}"] = model
