@@ -103,7 +103,7 @@ def make_prediction(
             outputs = model(img_batch.to(precision))
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
-
+    print("Shape of prob:", prob.shape)
     top_indices = prob.argsort()[-topk:][::-1]
     top_probs = prob[top_indices]
 
