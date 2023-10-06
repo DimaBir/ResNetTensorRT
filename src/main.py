@@ -1,6 +1,6 @@
 import argparse
 import logging
-import onnx
+import openvino as ov
 import torch
 import torch_tensorrt
 from typing import List, Tuple, Union
