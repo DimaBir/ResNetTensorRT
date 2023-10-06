@@ -20,5 +20,3 @@ WORKDIR /workspace
 
 # Copy local project files to /workspace in the image
 COPY . /workspace
-
-CMD ["python", "src/main.py", "--mode=onnx"]
