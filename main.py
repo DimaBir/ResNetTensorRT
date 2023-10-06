@@ -77,7 +77,7 @@ def main():
                 print("Compiling TensorRT model")
                 model = torch_tensorrt.compile(
                     model,
-                    inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
+                    inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=precision)],
                     enabled_precisions={precision},
                     truncate_long_and_double=True,
                 )
