@@ -62,13 +62,15 @@ def main() -> None:
             # If the configuration is not for TensorRT, store the model under a PyTorch key
             if not is_trt:
                 models[f"PyTorch_{device}"] = model
+                model = model.to(device)
+                img_batch = img_batch.to(device)
             else:
                 # If it is for TensorRT, determine the mode (FP32 or FP16) and store under a TensorRT key
                 mode = "fp32" if precision == torch.float32 else "fp16"
                 models[f"trt_{mode}"] = model
 
             predict_cuda_model(
-                model.to(device), img_batch.to(device), args.topk, model_loader.categories, precision
+                model, img_batch, args.topk, model_loader.categories, precision
             )
 
     # Aggregate Benchmark (if mode is "all")
