@@ -84,7 +84,7 @@ def make_prediction(
     elif is_ov_model:
         # For OV, the input name is usually the first input
         input_name = next(iter(model.inputs))
-        outputs = model.infer({input_name: img_batch})
+        outputs = model.exec_net.infer({input_name: img_batch})
 
         # Assuming the model returns a dictionary with one key for class probabilities
         prob_key = next(iter(outputs))
