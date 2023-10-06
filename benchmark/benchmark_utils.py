@@ -31,7 +31,7 @@ def run_benchmark(
         logging.info(f"Running Benchmark for ONNX")
         benchmark = ONNXBenchmark(ort_session, input_shape=(32, 3, 224, 224))
     else:
-        logging.info(f"Running Benchmark for {device.upper()}")
+        logging.info(f"Running Benchmark for {device.upper()} and precision {dtype}")
         benchmark = PyTorchBenchmark(model, device=device, dtype=dtype)
     benchmark.run()
 
@@ -66,7 +66,7 @@ def run_all_benchmarks(
         ("cuda", torch.float16, True),
     ]
     for device, precision, is_trt in configs:
-        model_to_use = models["pytorch"].to(device)
+        model_to_use = models[f"PyTorch_{device}"].to(device)
 
         if not is_trt:
             pytorch_benchmark = PyTorchBenchmark(
