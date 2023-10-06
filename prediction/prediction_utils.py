@@ -59,13 +59,7 @@ def make_prediction(
         prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
     else:  # PyTorch Model
-        if isinstance(model, torch.nn.Module):
-            logging.info(f"Running prediction for PyTorch_{next(model.parameters()).device}")
-        elif isinstance(model, torch_tensorrt.ts.TSModule):
-            logging.info(f"Running prediction for TensorRT_{precision} model")
-        else:
-            raise ValueError("Running prediction for an unknown model type")
-
+        logging.info(f"Running prediction for PyTorch model")
 
         if isinstance(img_batch, np.ndarray):
             img_batch = torch.tensor(img_batch)
