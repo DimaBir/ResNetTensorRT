@@ -66,6 +66,7 @@ def make_prediction(
         else:
             raise ValueError("Running prediction for an unknown model type")
 
+
         if isinstance(img_batch, np.ndarray):
             img_batch = torch.tensor(img_batch)
         else:
