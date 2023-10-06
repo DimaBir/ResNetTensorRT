@@ -1,5 +1,5 @@
 
-<img src="./inference/logo.png" width="60%">
+<img src="./inference/logo2.png" width="100%">
 
 ## Table of Contents
 1. [Overview](#overview)
