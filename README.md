@@ -115,54 +115,54 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 5. Benchmark results, including average inference time, are logged for the OpenVINO model.
 
 ## Used methodologies
-## TensorRT Optimization
+### TensorRT Optimization
 TensorRT is a high-performance deep learning inference optimizer and runtime library developed by NVIDIA. It is designed for optimizing and deploying trained neural network models on production environments. This project supports TensorRT optimizations in both FP32 (single precision) and FP16 (half precision) modes, offering different trade-offs between inference speed and model accuracy.
 
-### Features
+#### Features
 - **Performance Boost**: TensorRT can significantly accelerate the inference of neural network models, making it suitable for deployment in resource-constrained environments.
 - **Precision Modes**: Supports FP32 for maximum accuracy and FP16 for faster performance with a minor trade-off in accuracy.
 - **Layer Fusion**: TensorRT fuses layers and tensors in the neural network to reduce memory access overhead and improve execution speed.
 - **Dynamic Tensor Memory**: Efficiently handles varying batch sizes without re-optimization.
 
-### Usage
+#### Usage
 To employ TensorRT optimizations in the project, use the `--mode all` argument when running the main script.
 This will initiate all models including PyTorch models that will be compiled to TRT model with `FP16` and `FP32` precision modes. Then, in one of the steps, will run inference on the specified image using the TensorRT-optimized model.
 Example:
 ```sh
 python src/main.py --mode all
 ```
-### Requirements
+#### Requirements
 Ensure you have the TensorRT library and the torch_tensorrt package installed in your environment. Also, for FP16 optimizations, it's recommended to have a GPU that supports half-precision arithmetic (like NVIDIA GPUs with Tensor Cores).
 
-## ONNX Exporter
+### ONNX Exporter
 ONNX Model Exporter (`ONNXExporter`) utility is incorporated within this project to enable the conversion of the native PyTorch model into the ONNX format.
 Using the ONNX format, inference and benchmarking can be performed with the ONNX Runtime, which offers platform-agnostic optimizations and is widely supported across numerous platforms and devices.
 
-### Features
+#### Features
 - **Standardized Format**: ONNX provides an open-source format for AI models. It defines an extensible computation graph model, as well as definitions of built-in operators and standard data types.
 - **Interoperability**: Models in ONNX format can be used across a variety of frameworks, tools, runtimes, and compilers.
 - **Optimizations**: The ONNX Runtime provides performance optimizations for both cloud and edge devices.
 
-### Usage
+#### Usage
 To leverage the `ONNXExporter` and conduct inference using the ONNX Runtime, utilize the `--mode onnx` argument when executing the main script.
 This will initiate the conversion process and then run inference on the specified image using the ONNX model.
 Example:
 ```sh
 python src/main.py --mode onnx
 ```
-### Requirements
+#### Requirements
 Ensure the ONNX library is installed in your environment to use the ONNXExporter. Additionally, if you want to run inference using the ONNX model, make sure you have the ONNX Runtime installed.
 
-## OV Exporter
+### OV Exporter
 OpenVINO Model Exporter utility (`OVExporter`) has been integrated into this project to facilitate the conversion of the ONNX model to the OpenVINO format.
 This enables inference and benchmarking using OpenVINO, a framework optimized for Intel hardware, providing substantial speed improvements especially on CPUs.
 
-### Features
+#### Features
 - **Model Optimization**: Converts the ONNX model to OpenVINO's Intermediate Representation (IR) format. This optimized format allows for faster inference times on Intel hardware.
 - **Versatility**: OpenVINO can target a variety of Intel hardware devices such as CPUs, integrated GPUs, FPGAs, and VPUs.
 - **Ease of Use**: The `OVExporter` provides a seamless transition from ONNX to OpenVINO, abstracting the conversion details and providing a straightforward interface.
 
-### Usage
+#### Usage
 To utilize `OVExporter` and perform inference using OpenVINO, use the `--mode ov` argument when running the main script.
 This will trigger the conversion process and subsequently run inference on the provided image using the optimized OpenVINO model.
 Example:
@@ -170,7 +170,7 @@ Example:
 python src/main.py --mode ov
 ```
 
-### Requirements
+#### Requirements
 Ensure you have the OpenVINO Toolkit installed and the necessary dependencies set up to use OpenVINO's model optimizer and inference engine.
 
 ## Author
