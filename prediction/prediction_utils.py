@@ -77,4 +77,3 @@ def make_prediction(
         else:
             class_label = categories[0][int(top_indices[i])]
         logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
-        print(f"#{i + 1}: {int(probability * 100)}% {class_label}")

@@ -68,14 +68,14 @@ def main() -> None:
             else:
                 print("Compiling TensorRT model")
                 model_to_use = torch_tensorrt.compile(
-                    model_to_use,
+                    model,
                     inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=precision)],
                     enabled_precisions={precision},
                     truncate_long_and_double=True,
                 )
                 # If it is for TensorRT, determine the mode (FP32 or FP16) and store under a TensorRT key
                 mode = "fp32" if precision == torch.float32 else "fp16"
-                models[f"trt_{mode}"] = model
+                models[f"trt_{mode}"] = model_to_use
 
             predict_cuda_model(
                 model, img_batch, args.topk, model_loader.categories, precision
