@@ -7,6 +7,7 @@ import torch
 import torch.backends.cudnn as cudnn
 import logging
 import onnxruntime as ort
+import openvino as ov
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
@@ -22,7 +23,7 @@ class Benchmark(ABC):
         self.nwarmup = nwarmup
 
     @abstractmethod
-    def run(self) -> None:
+    def run(self):
         """
         Abstract method to run the benchmark.
         """
@@ -58,7 +59,7 @@ class PyTorchBenchmark:
 
         cudnn.benchmark = True  # Enable cuDNN benchmarking optimization
 
-    def run(self) -> None:
+    def run(self):
         """
         Run the benchmark with the given model, input shape, and other parameters.
         Log the average batch time and print the input shape and output feature size.
@@ -93,6 +94,7 @@ class PyTorchBenchmark:
         print(f"Input shape: {input_data.size()}")
         print(f"Output features size: {features.size()}")
         logging.info(f"Average batch time: {np.mean(timings) * 1000:.2f} ms")
+        return np.mean(timings) * 1000
 
 
 class ONNXBenchmark(Benchmark):
@@ -113,7 +115,8 @@ class ONNXBenchmark(Benchmark):
         self.nwarmup = nwarmup
         self.nruns = nruns
 
-    def run(self) -> None:
+        
+    def run(self):
         print("Warming up ...")
         # Adjusting the batch size in the input shape to match the expected input size of the model.
         input_shape = (1,) + self.input_shape[1:]
@@ -133,3 +136,64 @@ class ONNXBenchmark(Benchmark):
 
         avg_time = np.mean(timings) * 1000
         logging.info(f"Average ONNX inference time: {avg_time:.2f} ms")
+        return avg_time
+
+
+class OVBenchmark(Benchmark):
+    def __init__(
+        self, model: ov.frontend.FrontEnd, input_shape: Tuple[int, int, int, int]
+    ):
+        """
+        Initialize the OVBenchmark with the OpenVINO model and the input shape.
+
+        :param model: ov.frontend.FrontEnd
+            The OpenVINO model.
+        :param input_shape: Tuple[int, int, int, int]
+            The shape of the model input.
+        """
+        self.ov_model = model
+        self.core = ov.Core()
+        self.compiled_model = None
+        self.input_shape = input_shape
+        self.warmup_runs = 50
+        self.num_runs = 100
+        self.dummy_input = np.random.randn(*input_shape).astype(np.float32)
+
+    def warmup(self):
+        """
+        Compile the OpenVINO model for optimal execution on available hardware.
+        """
+        self.compiled_model = self.core.compile_model(self.ov_model, "AUTO")
+
+    def inference(self, input_data) -> dict:
+        """
+        Perform inference on the input data using the compiled OpenVINO model.
+
+        :param input_data: np.ndarray
+            The input data for the model.
+        :return: dict
+            The model's output as a dictionary.
+        """
+        outputs = self.compiled_model(inputs={"input": input_data})
+        return outputs
+
+    def run(self):
+        """
+        Run the benchmark on the OpenVINO model. It first warms up by compiling the model and then measures
+        the average inference time over a set number of runs.
+        """
+        # Warm-up runs
+        logging.info("Warming up ...")
+        for _ in range(self.warmup_runs):
+            self.warmup()
+
+        # Benchmarking
+        total_time = 0
+        for _ in range(self.num_runs):
+            start_time = time.time()
+            _ = self.inference(self.dummy_input)
+            total_time += time.time() - start_time
+
+        avg_time = total_time / self.num_runs
+        logging.info(f"Average inference time: {avg_time * 1000:.2f} ms")
+        return avg_time * 1000

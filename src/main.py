@@ -1,17 +1,21 @@
 import argparse
 import os
 import logging
-import onnx
+import pandas as pd
+import openvino as ov
 import torch
 import torch_tensorrt
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict, Any
 import onnxruntime as ort
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from model import ModelLoader
 from image_processor import ImageProcessor
-from benchmark import PyTorchBenchmark, ONNXBenchmark
+from benchmark import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 from onnx_exporter import ONNXExporter
+from ov_exporter import OVExporter
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
@@ -43,7 +47,7 @@ def run_benchmark(
 
 
 def make_prediction(
-    model: Union[torch.nn.Module, ort.InferenceSession],
+    model: Union[torch.nn.Module, ort.InferenceSession, ov.CompiledModel],
     img_batch: Union[torch.Tensor, np.ndarray],
     topk: int,
     categories: List[str],
@@ -59,6 +63,7 @@ def make_prediction(
     :param precision: The data type to be used for the predictions (typically torch.float32 or torch.float16) for PyTorch models.
     """
     is_onnx_model = isinstance(model, ort.InferenceSession)
+    is_ov_model = isinstance(model, ov.CompiledModel)
 
     if is_onnx_model:
         # Get the input name for the ONNX model.
@@ -78,10 +83,23 @@ def make_prediction(
 
             # Apply Softmax to get probabilities
             prob = np.exp(prob) / np.sum(np.exp(prob))
+    elif is_ov_model:
+        # For OV, the input name is usually the first input
+        input_name = next(iter(model.inputs))
+        outputs = model(inputs={input_name: img_batch})
+
+        # Assuming the model returns a dictionary with one key for class probabilities
+        prob_key = next(iter(outputs))
+        prob = outputs[prob_key]
+
+        # Apply Softmax to get probabilities
+        prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
     else:  # PyTorch Model
-        img_batch = img_batch.clone().to(precision)
-
+        if isinstance(img_batch, np.ndarray):
+            img_batch = torch.tensor(img_batch)
+        else:
+            img_batch = img_batch.clone().to(precision)
         model.eval()
         with torch.no_grad():
             outputs = model(img_batch.to(precision))
@@ -101,6 +119,91 @@ def make_prediction(
         logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
 
 
+def run_all_benchmarks(
+    models: Dict[str, Any], img_batch: np.ndarray
+) -> Dict[str, float]:
+    """
+    Run benchmarks for all models and return a dictionary of average inference times.
+
+    :param models: Dictionary of models. Key is model type ("onnx", "ov", "pytorch", "trt_fp32", "trt_fp16"), value is the model.
+    :param img_batch: The batch of images to run the benchmark on.
+    :return: Dictionary of average inference times. Key is model type, value is average inference time.
+    """
+    results = {}
+
+    # ONNX benchmark
+    onnx_benchmark = ONNXBenchmark(models["onnx"], img_batch.shape)
+    avg_time_onnx = onnx_benchmark.run()
+    results["ONNX"] = avg_time_onnx
+
+    # OpenVINO benchmark
+    ov_benchmark = OVBenchmark(models["ov"], img_batch.shape)
+    avg_time_ov = ov_benchmark.run()
+    results["OpenVINO"] = avg_time_ov
+
+    # PyTorch + TRT benchmark
+    configs = [
+        ("cpu", torch.float32, False),
+        ("cuda", torch.float32, False),
+        ("cuda", torch.float32, True),
+        ("cuda", torch.float16, True),
+    ]
+    for device, precision, is_trt in configs:
+        model_to_use = models["pytorch"].to(device)
+
+        if not is_trt:
+            pytorch_benchmark = PyTorchBenchmark(
+                model_to_use, device=device, dtype=precision
+            )
+            avg_time_pytorch = pytorch_benchmark.run()
+            results[f"PyTorch_{device}"] = avg_time_pytorch
+
+        else:
+            # TensorRT benchmarks
+            if precision == torch.float32 or precision == torch.float16:
+                mode = "fp32" if precision == torch.float32 else "fp16"
+                trt_benchmark = PyTorchBenchmark(
+                    models[f"trt_{mode}"], device=device, dtype=precision
+                )
+                avg_time_trt = trt_benchmark.run()
+                results[f"TRT_{mode}"] = avg_time_trt
+
+    return results
+
+
+def plot_benchmark_results(results: Dict[str, float]):
+    """
+    Plot the benchmark results using Seaborn.
+
+    :param results: Dictionary of average inference times. Key is model type, value is average inference time.
+    """
+    # Convert dictionary to two lists for plotting
+    models = list(results.keys())
+    times = list(results.values())
+
+    # Create a DataFrame for plotting
+    data = pd.DataFrame({"Model": models, "Time": times})
+
+    # Sort the DataFrame by Time
+    data = data.sort_values("Time", ascending=True)
+
+    # Plot
+    plt.figure(figsize=(10, 6))
+    ax = sns.barplot(x=data["Time"], y=data["Model"], palette="rocket")
+
+    # Adding the actual values on the bars
+    for index, value in enumerate(data["Time"]):
+        ax.text(value, index, f"{value:.2f} ms", color="black", ha="left", va="center")
+
+    plt.xlabel("Average Inference Time (ms)")
+    plt.ylabel("Model Type")
+    plt.title("ResNet50 - Inference Benchmark Results")
+
+    # Save the plot to a file
+    plt.savefig("./inference/plot.png", bbox_inches="tight")
+    plt.show()
+
+
 def main() -> None:
     """
     Main function to run inference, benchmarks, and predictions on the model
@@ -118,16 +221,21 @@ def main() -> None:
         "--topk", type=int, default=5, help="Number of top predictions to show"
     )
     parser.add_argument(
-        "--onnx", action="store_true", help="If we want export model to ONNX format"
-    )
-    parser.add_argument(
         "--onnx_path",
         type=str,
         default="./inference/model.onnx",
         help="Path where model in ONNX format will be exported",
     )
+    parser.add_argument(
+        "--mode",
+        choices=["onnx", "ov", "cuda", "all"],
+        required=True,
+        help="Mode for exporting and running the model. Choices are: onnx, ov, cuda or all.",
+    )
 
     args = parser.parse_args()
+
+    models = {}
 
     # Setup device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -137,21 +245,22 @@ def main() -> None:
     img_processor = ImageProcessor(img_path=args.image_path, device=device)
     img_batch = img_processor.process_image()
 
-    if args.onnx:
+    if args.mode == "onnx" or args.mode == "all":
         onnx_path = args.onnx_path
 
-        if not os.path.exists(onnx_path):
-            # Export the model to ONNX format using ONNXExporter
-            onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
-            onnx_exporter.export_model()
+        # Export the model to ONNX format using ONNXExporter
+        onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
+        onnx_exporter.export_model()
 
         # Create ONNX Runtime session
         ort_session = ort.InferenceSession(
             onnx_path, providers=["CPUExecutionProvider"]
         )
 
+        models["onnx"] = ort_session
+
         # Run benchmark
-        run_benchmark(None, None, None, ort_session, onnx=True)
+        # run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
         print(f"Making prediction with {ort.get_device()} for ONNX model")
@@ -161,7 +270,29 @@ def main() -> None:
             topk=args.topk,
             categories=model_loader.categories,
         )
-    else:
+    if args.mode == "ov" or args.mode == "all":
+        # Export the ONNX model to OpenVINO
+        ov_exporter = OVExporter(args.onnx_path)
+        ov_model = ov_exporter.export_model()
+
+        models["ov"] = ov_model
+
+        # Benchmark the OpenVINO model
+        ov_benchmark = OVBenchmark(ov_model, input_shape=(1, 3, 224, 224))
+        ov_benchmark.run()
+
+        # Run inference using the OpenVINO model
+        img_batch_ov = (
+            img_processor.process_image().cpu().numpy()
+        )  # Assuming batch size of 1
+        print(f"Making prediction with OpenVINO model")
+        make_prediction(
+            ov_benchmark.compiled_model,
+            img_batch_ov,
+            topk=args.topk,
+            categories=model_loader.categories,
+        )
+    if args.mode == "cuda" or args.mode == "all":
         # Define configurations for which to run benchmarks and make predictions
         configs = [
             ("cpu", torch.float32),
@@ -170,26 +301,31 @@ def main() -> None:
         ]
 
         for device, precision in configs:
-            model = model_loader.model.to(device)
+            model_to_use = model_loader.model.to(device)
+            models["pytorch"] = model_loader.model
 
             if device == "cuda":
                 print(f"Tracing {device} model")
-                model = torch.jit.trace(
-                    model, [torch.randn((1, 3, 224, 224)).to(device)]
+                model_to_use = torch.jit.trace(
+                    model_to_use, [torch.randn((1, 3, 224, 224)).to(device)]
                 )
 
-            if device == "cuda" and precision == torch.float16:
+            if precision == torch.float32 or precision == torch.float16:
                 print("Compiling TensorRT model")
-                model = torch_tensorrt.compile(
-                    model,
+                model_to_use = torch_tensorrt.compile(
+                    model_to_use,
                     inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
                     enabled_precisions={precision},
                     truncate_long_and_double=True,
                 )
+                if precision == torch.float32:
+                    models["trt_fp32"] = model_to_use
+                else:
+                    models["trt_fp16"] = model_to_use
 
-            print(f"Making prediction with {device} model in {precision} precision")
+            """print(f"Making prediction with {device} model in {precision} precision")
             make_prediction(
-                model,
+                model_to_use,
                 img_batch.to(device),
                 args.topk,
                 model_loader.categories,
@@ -197,7 +333,13 @@ def main() -> None:
             )
 
             print(f"Running Benchmark for {device} model in {precision} precision")
-            run_benchmark(model, device, precision)
+            run_benchmark(model_to_use, device, precision) """
+    if args.mode == "all":
+        # Run all benchmarks
+        results = run_all_benchmarks(models, img_batch)
+
+        # Plot results
+        plot_benchmark_results(results)
 
 
 if __name__ == "__main__":
