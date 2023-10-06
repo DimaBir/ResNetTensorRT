@@ -6,15 +6,15 @@
 2. [Requirements](#requirements)
     - [Steps to Run](#steps-to-run)
     - [Example Command](#example-command)
-5. [RESULTS](#results) ![Static Badge](https://img.shields.io/badge/update-yellow)
+5. [RESULTS](#results) ![Static Badge](https://img.shields.io/badge/update-orange)
     - [Results explanation](#results-explanation)
     - [Example Input](#example-input)
-6. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-red)
+6. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
     - [PyTorch CPU & CUDA](#pytorch-cpu--cuda)
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
-7. [Used methodologies](#used-methodologies) ![New](https://img.shields.io/badge/-New-red)
+7. [Used methodologies](#used-methodologies) ![New](https://img.shields.io/badge/-New-96E5FE)
     - [TensorRT Optimization](#tensorrt-optimization)
     - [ONNX Exporter](#onnx-exporter)
     - [OV Exporter](#ov-exporter)
@@ -68,8 +68,8 @@ This command will run predictions on the default image (`./inference/cat3.jpg`),
   - `PyTorch_cuda: 41.11 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
   - `TRT_fp32: 19.10 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
   - `TRT_fp16: 7.22 ms` indicates the average batch time when running the model with `TensorRT` using `float16` precision.
-  - ![New](https://img.shields.io/badge/-New-red)`ONNX: 15.38 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
-  - ![New](https://img.shields.io/badge/-New-red)`OpenVINO: 14.04 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`ONNX: 15.38 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`OpenVINO: 14.04 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
 
 ### Example Input
 Here is an example of the input image to run predictions and benchmarks on:
