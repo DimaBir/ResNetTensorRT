@@ -1,3 +1,4 @@
+
 <img src="./inference/logo.png" width="60%">
 
 ## Table of Contents
@@ -27,6 +28,7 @@
 This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX, OpenVINO, NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torchvision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
 
 ## Requirements
+- This repo cloned
 - Docker
 - NVIDIA GPU (for CUDA and TensorRT benchmarks and optimizations)
 - Python 3.x
@@ -36,10 +38,10 @@ This project demonstrates how to perform inference with a PyTorch model and opti
 
 ```sh
 # 1. Build the Docker Image
-docker build -t awesome-tesnorrt .
+docker build -t awesome-tensorrt
 
 # 2. Run the Docker Container
-docker run --gpus all --rm -it awesome-tesnorrt
+docker run --gpus all --rm -it awesome-tensorrt
 
 # 3. Run the Script inside the Container
 python src/main.py
@@ -150,6 +152,7 @@ Example:
 ```sh
 python src/main.py --mode onnx
 ```
+
 #### Requirements
 Ensure the ONNX library is installed in your environment to use the ONNXExporter. Additionally, if you want to run inference using the ONNX model, make sure you have the ONNX Runtime installed.
 
@@ -172,6 +175,10 @@ python src/main.py --mode ov
 
 #### Requirements
 Ensure you have the OpenVINO Toolkit installed and the necessary dependencies set up to use OpenVINO's model optimizer and inference engine.
+
+
+## ONNX Exporter
+The ONNX Exporter utility is integrated into this project to allow the conversion of the PyTorch model to ONNX format, enabling inference and benchmarking using ONNX Runtime. The ONNX model can provide hardware-agnostic optimizations and is widely supported across various platforms and devices.
 
 ## Author
 [DimaBir](https://github.com/DimaBir)

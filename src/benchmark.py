@@ -115,6 +115,7 @@ class ONNXBenchmark(Benchmark):
         self.nwarmup = nwarmup
         self.nruns = nruns
 
+        
     def run(self):
         print("Warming up ...")
         # Adjusting the batch size in the input shape to match the expected input size of the model.
