@@ -118,7 +118,8 @@ def make_prediction(
 
 
 def run_all_benchmarks(
-    models: Dict[str, Any], img_batch: np.ndarray
+    models: Dict[str, Any], img_batch: np.ndarray, device: str,
+    dtype: torch.dtype,
 ) -> Dict[str, float]:
     """
     Run benchmarks for all models and return a dictionary of average inference times.
@@ -139,16 +140,28 @@ def run_all_benchmarks(
     avg_time_ov = ov_benchmark.run()
     results["ov"] = avg_time_ov
 
-    # PyTorch benchmark
-    pytorch_benchmark = PyTorchBenchmark(models["pytorch"], img_batch.shape)
-    avg_time_pytorch = pytorch_benchmark.run()
-    results["pytorch"] = avg_time_pytorch
+    # PyTorch + TRT benchmark
+    configs = [
+        ("cpu", torch.float32, False),
+        ("cuda", torch.float32, False),
+        ("cuda", torch.float32, True),
+        ("cuda", torch.float16, True),
+    ]
+    for device, precision, is_trt in configs:
+        model_to_use = models["pytorch"].to(device)
 
-    # TensorRT benchmarks
-    for mode in ["fp32", "fp16"]:
-        trt_benchmark = PyTorchBenchmark(models[f"trt_{mode}"], img_batch.shape)
-        avg_time_trt = trt_benchmark.run()
-        results[f"trt_{mode}"] = avg_time_trt
+        if not is_trt:
+            pytorch_benchmark = PyTorchBenchmark(model_to_use, device=device, dtype=precision)
+            avg_time_pytorch = pytorch_benchmark.run()
+            results["pytorch"] = avg_time_pytorch
+
+        else:
+            # TensorRT benchmarks
+            if precision == torch.float32 or precision == torch.float16:
+                mode = "fp32" if precision == torch.float32 else "fp16"
+                trt_benchmark = PyTorchBenchmark(models[f"trt_{mode}"], device=device, dtype=dtype)
+                avg_time_trt = trt_benchmark.run()
+                results[f"trt_{mode}"] = avg_time_trt
 
     return results
 
@@ -226,7 +239,7 @@ def main() -> None:
         models["onnx"] = ort_session
 
         # Run benchmark
-        run_benchmark(None, None, None, ort_session, onnx=True)
+        # run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
         print(f"Making prediction with {ort.get_device()} for ONNX model")
@@ -289,7 +302,7 @@ def main() -> None:
                 else:
                     models["trt_fp16"] = model_to_use
 
-            print(f"Making prediction with {device} model in {precision} precision")
+            """print(f"Making prediction with {device} model in {precision} precision")
             make_prediction(
                 model_to_use,
                 img_batch.to(device),
@@ -299,7 +312,7 @@ def main() -> None:
             )
 
             print(f"Running Benchmark for {device} model in {precision} precision")
-            run_benchmark(model_to_use, device, precision)
+            run_benchmark(model_to_use, device, precision) """
     if args.mode == "all":
         # Run all benchmarks
         results = run_all_benchmarks(models, img_batch)
