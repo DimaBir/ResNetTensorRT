@@ -234,7 +234,7 @@ def main() -> None:
             topk=args.topk,
             categories=model_loader.categories,
         )
-    elif args.mode == "ov" or args.mode == "all":
+    if args.mode == "ov" or args.mode == "all":
         # Export the ONNX model to OpenVINO
         ov_exporter = OVExporter(args.onnx_path)
         ov_model = ov_exporter.export_model()
@@ -256,7 +256,7 @@ def main() -> None:
             topk=args.topk,
             categories=model_loader.categories,
         )
-    elif args.mode == "cuda" or args.mode == "all":
+    if args.mode == "cuda" or args.mode == "all":
         # Define configurations for which to run benchmarks and make predictions
         configs = [
             ("cpu", torch.float32),
@@ -302,14 +302,12 @@ def main() -> None:
 
             print(f"Running Benchmark for {device} model in {precision} precision")
             run_benchmark(trt_model, device, precision)
-    elif args.mode == "all":
+    if args.mode == "all":
         # Run all benchmarks
         results = run_all_benchmarks(models, img_batch)
 
         # Plot results
         plot_benchmark_results(results)
-    else:
-        raise ValueError(f"Unsupported mode: {args.mode}")
 
 
 if __name__ == "__main__":
