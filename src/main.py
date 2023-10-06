@@ -94,6 +94,8 @@ def make_prediction(
         prob = np.exp(prob) / np.sum(np.exp(prob))
 
     else:  # PyTorch Model
+        if isinstance(img_batch, np.ndarray):
+            img_batch = torch.tensor(img_batch)
         img_batch = img_batch.clone().to(precision)
 
         model.eval()
