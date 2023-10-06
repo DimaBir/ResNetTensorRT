@@ -16,9 +16,6 @@
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
 5. [Benchmarking and Visualization](#benchmarking-and-visualization) ![New](https://img.shields.io/badge/-New-96E5FE)
-    - [TensorRT Optimization](#tensorrt-optimization)
-    - [ONNX Exporter](#onnx-exporter)
-    - [OV Exporter](#ov-exporter)
 6. [Author](#author)
 7. [References](#references)
 
@@ -126,11 +123,11 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 4. Perform inference on the provided image using the OpenVINO model.
 5. Benchmark results, including average inference time, are logged for the OpenVINO model.
 
-## Benchmarking and Visualization
-The results of the benchmarks for all modes are saved and visualized in a bar chart, showcasing the average inference times across different backends. The visualization aids in comparing the performance gains achieved with different optimizations.
-
 #### Requirements
 Ensure you have installed the OpenVINO Toolkit and the necessary dependencies to use OpenVINO's model optimizer and inference engine.
+
+## Benchmarking and Visualization
+The results of the benchmarks for all modes are saved and visualized in a bar chart, showcasing the average inference times across different backends. The visualization aids in comparing the performance gains achieved with different optimizations.
 
 ## Author
 [DimaBir](https://github.com/DimaBir)
