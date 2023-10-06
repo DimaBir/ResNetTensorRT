@@ -103,7 +103,7 @@ def make_prediction(
             outputs = model(img_batch.to(precision))
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
-    print("Shape of prob:", prob.shape)
+
     top_indices = prob.argsort()[-topk:][::-1]
     top_probs = prob[top_indices]
 
@@ -267,35 +267,31 @@ def main() -> None:
         ]
 
         for device, precision in configs:
-            cuda_model = model_loader.model.to(device)
+            model_to_use = model_loader.model.to(device)
             models["pytorch"] = model_loader.model
 
             if device == "cuda":
                 print(f"Tracing {device} model")
-                cuda_model = torch.jit.trace(
-                    cuda_model, [torch.randn((1, 3, 224, 224)).to(device)]
+                model_to_use = torch.jit.trace(
+                    model_to_use, [torch.randn((1, 3, 224, 224)).to(device)]
                 )
 
-            if (
-                device == "cuda"
-                and precision == torch.float32
-                or precision == torch.float16
-            ):
+            if precision == torch.float32 or precision == torch.float16:
                 print("Compiling TensorRT model")
-                trt_model = torch_tensorrt.compile(
-                    cuda_model,
+                model_to_use = torch_tensorrt.compile(
+                    model_to_use,
                     inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
                     enabled_precisions={precision},
                     truncate_long_and_double=True,
                 )
                 if precision == torch.float32:
-                    models["trt_fp32"] = trt_model
+                    models["trt_fp32"] = model_to_use
                 else:
-                    models["trt_fp16"] = trt_model
+                    models["trt_fp16"] = model_to_use
 
             print(f"Making prediction with {device} model in {precision} precision")
             make_prediction(
-                trt_model,
+                model_to_use,
                 img_batch.to(device),
                 args.topk,
                 model_loader.categories,
@@ -303,7 +299,7 @@ def main() -> None:
             )
 
             print(f"Running Benchmark for {device} model in {precision} precision")
-            run_benchmark(trt_model, device, precision)
+            run_benchmark(model_to_use, device, precision)
     if args.mode == "all":
         # Run all benchmarks
         results = run_all_benchmarks(models, img_batch)
