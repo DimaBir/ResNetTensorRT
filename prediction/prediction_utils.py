@@ -60,7 +60,8 @@ def make_prediction(
             img_batch = torch.tensor(img_batch)
         else:
             img_batch = img_batch.clone().to(precision)
-        model.eval()
+        if isinstance(model, torch.nn.Module):  # Check if the model is a PyTorch model
+            model.eval()
         with torch.no_grad():
             outputs = model(img_batch.to(precision))
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
