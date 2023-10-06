@@ -59,7 +59,7 @@ def make_prediction(
     :param precision: The data type to be used for the predictions (typically torch.float32 or torch.float16) for PyTorch models.
     """
     is_onnx_model = isinstance(model, ort.InferenceSession)
-    is_ov_model = isinstance(model, ov.ExecutableNetwork)
+    is_ov_model = isinstance(model, ov.CompiledModel)
 
     if is_onnx_model:
         # Get the input name for the ONNX model.
