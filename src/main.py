@@ -1,8 +1,8 @@
-from benchmark_models import *
-from benchmark_utils import *
-from utils import *
+from benchmark.benchmark_models import *
+from benchmark.benchmark_utils import *
+from common.utils import *
 from image_processor import ImageProcessor
-from prediction_models import *
+from prediction.prediction_models import *
 from model import ModelLoader
 
 # Configure logging

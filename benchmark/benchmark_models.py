@@ -1,4 +1,4 @@
-from benchmark_utils import run_benchmark
+from benchmark.benchmark_utils import run_benchmark
 from benchmark import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 import openvino as ov
 import torch

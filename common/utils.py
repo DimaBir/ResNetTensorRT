@@ -8,7 +8,9 @@ import onnxruntime as ort
 
 
 # Model Initialization Functions
-def init_onnx_model(onnx_path: str, model_loader: ModelLoader, device: torch.device) -> ort.InferenceSession:
+def init_onnx_model(
+    onnx_path: str, model_loader: ModelLoader, device: torch.device
+) -> ort.InferenceSession:
     onnx_exporter = ONNXExporter(model_loader.model, device, onnx_path)
     onnx_exporter.export_model()
     return ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
@@ -19,10 +21,14 @@ def init_ov_model(onnx_path: str) -> ov.CompiledModel:
     return ov_exporter.export_model()
 
 
-def init_cuda_model(model_loader: ModelLoader, device: torch.device, dtype: torch.dtype) -> torch.nn.Module:
+def init_cuda_model(
+    model_loader: ModelLoader, device: torch.device, dtype: torch.dtype
+) -> torch.nn.Module:
     cuda_model = model_loader.model.to(device)
     if device == "cuda":
-        cuda_model = torch.jit.trace(cuda_model, [torch.randn((1, 3, 224, 224)).to(device)])
+        cuda_model = torch.jit.trace(
+            cuda_model, [torch.randn((1, 3, 224, 224)).to(device)]
+        )
     return cuda_model
 
 
