@@ -169,7 +169,7 @@ class OVBenchmark(Benchmark):
         :return: dict
             The model's output as a dictionary.
         """
-        outputs = self.compiled_model.infer(inputs={"input": input_data})
+        outputs = self.compiled_model(inputs={"input": input_data})
         return outputs
 
     def run(self):
