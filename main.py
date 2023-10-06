@@ -14,9 +14,10 @@ from common.utils import (
 from src.image_processor import ImageProcessor
 from prediction.prediction_models import *
 from src.model import ModelLoader
-import os
+import warnings
 
-os.environ["CUDA_LAZY_DEBUG"] = "1"
+# Filter out the specific warning from torchvision
+warnings.filterwarnings("ignore", category=UserWarning, module="torchvision.io.image")
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
