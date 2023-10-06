@@ -59,8 +59,9 @@ def make_prediction(
         prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
     else:  # PyTorch Model
-        if isinstance(model, torch.nn.Module):
-            logging.info(f"Running prediction for PyTorch_{next(model.parameters()).device}")
+        params = list(model.parameters())
+        if params:
+            logging.info(f"Running prediction for PyTorch_{params[0].device}")
         elif isinstance(model, torch_tensorrt.ts.TSModule):
             logging.info(f"Running prediction for TensorRT_{precision} model")
         else:
