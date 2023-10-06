@@ -110,7 +110,13 @@ def plot_benchmark_results(results: Dict[str, float]):
 
     # Plot
     plt.figure(figsize=(10, 6))
-    ax = sns.barplot(x=data["Time"], y=data["Model"], hue=data["Model"], palette="rocket", legend=False)
+    ax = sns.barplot(
+        x=data["Time"],
+        y=data["Model"],
+        hue=data["Model"],
+        palette="rocket",
+        legend=False,
+    )
 
     # Adding the actual values on the bars
     for index, value in enumerate(data["Time"]):
