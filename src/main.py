@@ -172,28 +172,21 @@ def plot_benchmark_results(results: Dict[str, float]):
 
     :param results: Dictionary of average inference times. Key is model type, value is average inference time.
     """
-    # Convert dictionary to two lists for plotting
-    models = list(results.keys())
-    times = list(results.values())
-
-    # Create a DataFrame for plotting
-    data = pd.DataFrame({
-        'Model': models,
-        'Time': times
-    })
-
-    # Sort the DataFrame by Time
-    data = data.sort_values('Time', ascending=True)
+    # Convert dictionary to a dataframe for plotting
+    data = pd.DataFrame(list(results.items()), columns=['Model', 'Time'])
 
     # Plot
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=data['Time'], y=data['Model'], palette="rocket")
-    plt.xlabel('Average Inference Time (ms)')
-    plt.ylabel('Model Type')
-    plt.title('Inference Benchmark Results')
+    sns.set_theme(style="whitegrid")
+    ax = sns.barplot(x=data['Time'], y=data['Model'], palette="rocket")
 
-    # Save the plot to a file
-    plt.savefig('./inference/plot.png', bbox_inches='tight')
+    # Adding the actual values on the bars
+    for index, value in enumerate(data['Time']):
+        ax.text(value, index, f'{value:.2f}', color='black', ha="left", va="center")
+
+    ax.set(xlabel='Average Inference Time (ms)', ylabel='Model Type')
+    plt.tight_layout()
+    plt.title('ResNet50 - Inference Benchmark Results')
+    plt.savefig('./inference/plot.png')
     plt.show()
 
 
