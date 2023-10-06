@@ -158,7 +158,7 @@ def run_all_benchmarks(
             # TensorRT benchmarks
             if precision == torch.float32 or precision == torch.float16:
                 mode = "fp32" if precision == torch.float32 else "fp16"
-                trt_benchmark = PyTorchBenchmark(models[f"trt_{mode}"], device=device, dtype=dtype)
+                trt_benchmark = PyTorchBenchmark(models[f"trt_{mode}"], device=device, dtype=precision)
                 avg_time_trt = trt_benchmark.run()
                 results[f"trt_{mode}"] = avg_time_trt
 
