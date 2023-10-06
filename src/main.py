@@ -174,6 +174,7 @@ def main() -> None:
 
         # Run inference using the OpenVINO model
         # Note: Ensure that your image is preprocessed similarly as for other models.
+        """
         img_batch = (
             img_processor.process_image().cpu().numpy()
         )  # Assuming batch size of 1
@@ -188,7 +189,7 @@ def main() -> None:
         for i in range(args.topk):
             probability = top_probs[i]
             class_label = model_loader.categories.iloc[top_indices[i]].item()
-            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
+            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")"""
     elif args.mode == "cuda":
         # Define configurations for which to run benchmarks and make predictions
         configs = [
