@@ -4,6 +4,7 @@ import openvino as ov
 import torch
 import onnxruntime as ort
 import numpy as np
+import torch_tensorrt
 
 
 def make_prediction(
@@ -16,7 +17,7 @@ def make_prediction(
     """
     Make and print predictions for the given model, img_batch, topk, and categories.
 
-    :param model: The model (or ONNX Runtime InferenceSession) to make predictions with.
+    :param model: The model to make predictions with.
     :param img_batch: The batch of images to make predictions on.
     :param topk: The number of top predictions to show.
     :param categories: The list of categories to label the predictions.
@@ -58,7 +59,13 @@ def make_prediction(
         prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
     else:  # PyTorch Model
-        logging.info(f"Running prediction for PyTorch model")
+        if isinstance(model, torch.nn.Module):
+            logging.info(f"Running prediction for PyTorch_{next(model.parameters()).device}")
+        elif isinstance(model, torch_tensorrt.ts.TSModule):
+            logging.info(f"Running prediction for TensorRT_{precision} model")
+        else:
+            raise ValueError("Running prediction for an unknown model type")
+
         if isinstance(img_batch, np.ndarray):
             img_batch = torch.tensor(img_batch)
         else:
