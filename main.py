@@ -34,14 +34,16 @@ def main() -> None:
     # ONNX
     if args.mode in ["onnx", "all"]:
         ort_session = init_onnx_model(args.onnx_path, model_loader, device)
-        benchmark_onnx_model(ort_session)
-        predict_onnx_model(ort_session, img_batch, args.topk, model_loader.categories)
+        if args.mode != "all":
+            benchmark_onnx_model(ort_session)
+            predict_onnx_model(ort_session, img_batch, args.topk, model_loader.categories)
 
     # OpenVINO
     if args.mode in ["ov", "all"]:
         ov_model = init_ov_model(args.onnx_path)
-        ov_benchmark = benchmark_ov_model(ov_model)
-        predict_ov_model(ov_benchmark.compiled_model, img_batch, args.topk, model_loader.categories)
+        if args.mode != "all":
+            ov_benchmark = benchmark_ov_model(ov_model)
+            predict_ov_model(ov_benchmark.compiled_model, img_batch, args.topk, model_loader.categories)
 
     # CUDA
     if args.mode in ["cuda", "all"]:
@@ -69,7 +71,7 @@ def main() -> None:
                 print("Compiling TensorRT model")
                 model = torch_tensorrt.compile(
                     model,
-                    inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=precision)],
+                    inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
                     enabled_precisions={precision},
                     truncate_long_and_double=True,
                 )
@@ -77,9 +79,10 @@ def main() -> None:
                 mode = "fp32" if precision == torch.float32 else "fp16"
                 models[f"trt_{mode}"] = model
 
-            predict_cuda_model(
-                model, img_batch, args.topk, model_loader.categories, precision
-            )
+            if args.mode != "all":
+                predict_cuda_model(
+                    model, img_batch, args.topk, model_loader.categories, precision
+                )
 
     # Aggregate Benchmark (if mode is "all")
     if args.mode == "all":
