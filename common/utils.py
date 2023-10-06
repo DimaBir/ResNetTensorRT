@@ -2,8 +2,8 @@ import argparse
 import openvino as ov
 import torch
 from src.model import ModelLoader
-from onnx_exporter import ONNXExporter
-from ov_exporter import OVExporter
+from src.onnx_exporter import ONNXExporter
+from src.ov_exporter import OVExporter
 import onnxruntime as ort
 
 
