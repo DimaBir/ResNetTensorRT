@@ -15,15 +15,16 @@
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
-5. [Benchmarking and Visualization](#benchmarking-and-visualization) ![New](https://img.shields.io/badge/-New-96E5FE)
+5. [Benchmarking and Visualization](#benchmarking-and-visualization) ![New](https://img.shields.io/badge/-New-842E5B)
 6. [Author](#author)
-7. [References](#references)
+7. [PC Setup](#pc-setup)
+8. [References](#references)
 
 
 <img src="./inference/plot.png" width="100%">
 
 ## Overview
-This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX, OpenVINO, and NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torch-vision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
+This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX, OpenVINO, and NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torch-vision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
 
 ## Requirements
 - This repo cloned
@@ -52,10 +53,10 @@ python main.py [--mode all]
 
 ### Example Command
 ```sh
-python main.py --topk 3 --mode=ov
+python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
 ```
 
-This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run the OpenVINO model. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
+This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run the all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
 ## RESULTS
 ### Inference Benchmark Results
@@ -132,6 +133,11 @@ The results of the benchmarks for all modes are saved and visualized in a bar ch
 ## Author
 [DimaBir](https://github.com/DimaBir)
 
+## PC Setup 
+- CPU: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz
+- RAM: 32 GB
+- GPU: GeForce RTX 3070
+  
 ## References
 - **PyTorch**: [Official Documentation](https://pytorch.org/docs/stable/index.html)
 - **TensorRT**: NVIDIA's high-performance deep learning inference optimizer and runtime. [Official Documentation](https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html)
