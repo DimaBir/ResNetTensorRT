@@ -49,11 +49,13 @@ def run_all_benchmarks(
     results = {}
 
     # ONNX benchmark
+    logging.info(f"Running benchmark inference for ONNX model")
     onnx_benchmark = ONNXBenchmark(models["onnx"], img_batch.shape)
     avg_time_onnx = onnx_benchmark.run()
     results["ONNX"] = avg_time_onnx
 
     # OpenVINO benchmark
+    logging.info(f"Running benchmark inference for OpenVINO model")
     ov_benchmark = OVBenchmark(models["ov"], img_batch.shape)
     avg_time_ov = ov_benchmark.run()
     results["OpenVINO"] = avg_time_ov
@@ -72,6 +74,7 @@ def run_all_benchmarks(
             pytorch_benchmark = PyTorchBenchmark(
                 model_to_use, device=device, dtype=precision
             )
+            logging.info(f"Running benchmark inference for PyTorch_{device} model")
             avg_time_pytorch = pytorch_benchmark.run()
             results[f"PyTorch_{device}"] = avg_time_pytorch
 
@@ -79,6 +82,7 @@ def run_all_benchmarks(
             # TensorRT benchmarks
             if precision == torch.float32 or precision == torch.float16:
                 mode = "fp32" if precision == torch.float32 else "fp16"
+                logging.info(f"Running benchmark inference for TRT_{mode} model")
                 trt_benchmark = PyTorchBenchmark(
                     models[f"trt_{mode}"], device=device, dtype=precision
                 )
@@ -106,7 +110,7 @@ def plot_benchmark_results(results: Dict[str, float]):
 
     # Plot
     plt.figure(figsize=(10, 6))
-    ax = sns.barplot(x=data["Time"], y=data["Model"], palette="rocket")
+    ax = sns.barplot(x=data["Time"], y=data["Model"], hue=data["Model"], palette="rocket", legend=False)
 
     # Adding the actual values on the bars
     for index, value in enumerate(data["Time"]):

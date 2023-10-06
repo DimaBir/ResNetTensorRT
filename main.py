@@ -17,7 +17,7 @@ from src.model import ModelLoader
 logging.basicConfig(filename="model.log", level=logging.INFO)
 
 
-def main() -> None:
+def main():
     """
     Main function to run inference, benchmarks, and predictions on the model
     using provided image and optional parameters.

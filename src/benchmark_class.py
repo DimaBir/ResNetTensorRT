@@ -90,9 +90,6 @@ class PyTorchBenchmark:
                         f"Iteration {i}/{self.nruns}, ave batch time {np.mean(timings) * 1000:.2f} ms"
                     )
 
-        # Print and log results
-        print(f"Input shape: {input_data.size()}")
-        print(f"Output features size: {features.size()}")
         logging.info(f"Average batch time: {np.mean(timings) * 1000:.2f} ms")
         return np.mean(timings) * 1000
 
