@@ -90,9 +90,6 @@ class PyTorchBenchmark:
                         f"Iteration {i}/{self.nruns}, ave batch time {np.mean(timings) * 1000:.2f} ms"
                     )
 
-        # Print and log results
-        print(f"Input shape: {input_data.size()}")
-        print(f"Output features size: {features.size()}")
         logging.info(f"Average batch time: {np.mean(timings) * 1000:.2f} ms")
         return np.mean(timings) * 1000
 
@@ -115,7 +112,6 @@ class ONNXBenchmark(Benchmark):
         self.nwarmup = nwarmup
         self.nruns = nruns
 
-        
     def run(self):
         print("Warming up ...")
         # Adjusting the batch size in the input shape to match the expected input size of the model.
@@ -128,11 +124,16 @@ class ONNXBenchmark(Benchmark):
         print("Starting benchmark ...")
         timings = []
 
-        for _ in range(self.nruns):
+        for i in range(1, self.nruns+1):
             start_time = time.time()
             _ = self.ort_session.run(None, {"input": input_data})
             end_time = time.time()
             timings.append(end_time - start_time)
+
+            if i % 10 == 0:
+                print(
+                    f"Iteration {i}/{self.nruns}, ave batch time {np.mean(timings) * 1000:.2f} ms"
+                )
 
         avg_time = np.mean(timings) * 1000
         logging.info(f"Average ONNX inference time: {avg_time:.2f} ms")
@@ -155,8 +156,8 @@ class OVBenchmark(Benchmark):
         self.core = ov.Core()
         self.compiled_model = None
         self.input_shape = input_shape
-        self.warmup_runs = 50
-        self.num_runs = 100
+        self.nwarmup = 50
+        self.nruns = 100
         self.dummy_input = np.random.randn(*input_shape).astype(np.float32)
 
     def warmup(self):
@@ -184,16 +185,21 @@ class OVBenchmark(Benchmark):
         """
         # Warm-up runs
         logging.info("Warming up ...")
-        for _ in range(self.warmup_runs):
+        for _ in range(self.nwarmup):
             self.warmup()
 
         # Benchmarking
         total_time = 0
-        for _ in range(self.num_runs):
+        for i in range(1, self.nruns+1):
             start_time = time.time()
             _ = self.inference(self.dummy_input)
             total_time += time.time() - start_time
 
-        avg_time = total_time / self.num_runs
+            if i % 10 == 0:
+                print(
+                    f"Iteration {i}/{self.nruns}, ave batch time {total_time / self.nruns * 1000:.2f} ms"
+                )
+
+        avg_time = total_time / self.nruns
         logging.info(f"Average inference time: {avg_time * 1000:.2f} ms")
         return avg_time * 1000
