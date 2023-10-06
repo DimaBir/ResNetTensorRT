@@ -15,7 +15,7 @@ RUN pip3 install -q "openvino==2023.1.0.dev20230811"
 RUN pip3 install torch-tensorrt -f https://github.com/NVIDIA/Torch-TensorRT/releases
 
 # Install Python packages
-RUN pip3 install --no-cache-dir -r /workspace/requirements.txtsourc
+RUN pip3 install --no-cache-dir -r /workspace/requirements.txt
 
 # Set the working directory
 WORKDIR /workspace
