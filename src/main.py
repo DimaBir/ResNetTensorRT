@@ -1,5 +1,6 @@
 import argparse
 import logging
+import pandas as pd
 import openvino as ov
 import torch
 import torch_tensorrt
@@ -175,10 +176,24 @@ def plot_benchmark_results(results: Dict[str, float]):
     models = list(results.keys())
     times = list(results.values())
 
+    # Create a DataFrame for plotting
+    data = pd.DataFrame({
+        'Model': models,
+        'Time': times
+    })
+
+    # Sort the DataFrame by Time
+    data = data.sort_values('Time', ascending=True)
+
     # Plot
-    sns.set_theme(style="whitegrid")
-    ax = sns.barplot(x=times, y=models, palette="rocket")
-    ax.set(xlabel="Average Inference Time (ms)", ylabel="Model Type")
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=data['Time'], y=data['Model'], palette="rocket")
+    plt.xlabel('Average Inference Time (ms)')
+    plt.ylabel('Model Type')
+    plt.title('Benchmark Comparison')
+
+    # Save the plot to a file
+    plt.savefig('./inference/plot.png', bbox_inches='tight')
     plt.show()
 
 
