@@ -176,7 +176,7 @@ class OVBenchmark(Benchmark):
         outputs = self.compiled_model(inputs={"input": input_data})
         return outputs
 
-    def  run(self):
+    def run(self):
         """
         Run the benchmark on the OpenVINO model. It first warms up by compiling the model and then measures
         the average inference time over a set number of runs.

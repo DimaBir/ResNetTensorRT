@@ -151,7 +151,9 @@ def run_all_benchmarks(
         model_to_use = models["pytorch"].to(device)
 
         if not is_trt:
-            pytorch_benchmark = PyTorchBenchmark(model_to_use, device=device, dtype=precision)
+            pytorch_benchmark = PyTorchBenchmark(
+                model_to_use, device=device, dtype=precision
+            )
             avg_time_pytorch = pytorch_benchmark.run()
             results[f"PyTorch_{device}"] = avg_time_pytorch
 
@@ -159,7 +161,9 @@ def run_all_benchmarks(
             # TensorRT benchmarks
             if precision == torch.float32 or precision == torch.float16:
                 mode = "fp32" if precision == torch.float32 else "fp16"
-                trt_benchmark = PyTorchBenchmark(models[f"trt_{mode}"], device=device, dtype=precision)
+                trt_benchmark = PyTorchBenchmark(
+                    models[f"trt_{mode}"], device=device, dtype=precision
+                )
                 avg_time_trt = trt_benchmark.run()
                 results[f"TRT_{mode}"] = avg_time_trt
 
@@ -172,21 +176,30 @@ def plot_benchmark_results(results: Dict[str, float]):
 
     :param results: Dictionary of average inference times. Key is model type, value is average inference time.
     """
-    # Convert dictionary to a dataframe for plotting
-    data = pd.DataFrame(list(results.items()), columns=['Model', 'Time'])
+    # Convert dictionary to two lists for plotting
+    models = list(results.keys())
+    times = list(results.values())
+
+    # Create a DataFrame for plotting
+    data = pd.DataFrame({"Model": models, "Time": times})
+
+    # Sort the DataFrame by Time
+    data = data.sort_values("Time", ascending=True)
 
     # Plot
-    sns.set_theme(style="whitegrid")
-    ax = sns.barplot(x=data['Time'], y=data['Model'], palette="rocket")
+    plt.figure(figsize=(10, 6))
+    ax = sns.barplot(x=data["Time"], y=data["Model"], palette="rocket")
 
     # Adding the actual values on the bars
-    for index, value in enumerate(data['Time']):
-        ax.text(value, index, f'{value:.2f}', color='black', ha="left", va="center")
+    for index, value in enumerate(data["Time"]):
+        ax.text(value, index, f"{value:.2f} ms", color="black", ha="left", va="center")
 
-    ax.set(xlabel='Average Inference Time (ms)', ylabel='Model Type')
-    plt.tight_layout()
-    plt.title('ResNet50 - Inference Benchmark Results')
-    plt.savefig('./inference/plot.png')
+    plt.xlabel("Average Inference Time (ms)")
+    plt.ylabel("Model Type")
+    plt.title("ResNet50 - Inference Benchmark Results")
+
+    # Save the plot to a file
+    plt.savefig("./inference/plot.png", bbox_inches="tight")
     plt.show()
 
 
@@ -245,8 +258,9 @@ def main() -> None:
 
         models["onnx"] = ort_session
 
-        # Run benchmark
-        # run_benchmark(None, None, None, ort_session, onnx=True)
+        if args.mode != "all":
+            # Run benchmark
+            run_benchmark(None, None, None, ort_session, onnx=True)
 
         # Make prediction
         print(f"Making prediction with {ort.get_device()} for ONNX model")
@@ -309,17 +323,18 @@ def main() -> None:
                 else:
                     models["trt_fp16"] = model_to_use
 
-            """print(f"Making prediction with {device} model in {precision} precision")
-            make_prediction(
-                model_to_use,
-                img_batch.to(device),
-                args.topk,
-                model_loader.categories,
-                precision,
-            )
+            if args.mode != "all":
+                print(f"Making prediction with {device} model in {precision} precision")
+                make_prediction(
+                    model_to_use,
+                    img_batch.to(device),
+                    args.topk,
+                    model_loader.categories,
+                    precision,
+                )
 
-            print(f"Running Benchmark for {device} model in {precision} precision")
-            run_benchmark(model_to_use, device, precision) """
+                print(f"Running Benchmark for {device} model in {precision} precision")
+                run_benchmark(model_to_use, device, precision)
     if args.mode == "all":
         # Run all benchmarks
         results = run_all_benchmarks(models, img_batch)
