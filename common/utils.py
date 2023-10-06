@@ -17,7 +17,7 @@ def export_onnx_model(
 def init_onnx_model(
     onnx_path: str, model_loader: ModelLoader, device: torch.device
 ) -> ort.InferenceSession:
-    export_onnx_model(model_loader, device, onnx_path)
+    export_onnx_model(onnx_path=onnx_path, model_loader=model_loader, device=device)
     return ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
 
 
