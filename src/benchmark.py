@@ -23,7 +23,7 @@ class Benchmark(ABC):
         self.nwarmup = nwarmup
 
     @abstractmethod
-    def run(self) -> None:
+    def run(self):
         """
         Abstract method to run the benchmark.
         """
@@ -59,7 +59,7 @@ class PyTorchBenchmark:
 
         cudnn.benchmark = True  # Enable cuDNN benchmarking optimization
 
-    def run(self) -> None:
+    def run(self):
         """
         Run the benchmark with the given model, input shape, and other parameters.
         Log the average batch time and print the input shape and output feature size.
@@ -94,6 +94,7 @@ class PyTorchBenchmark:
         print(f"Input shape: {input_data.size()}")
         print(f"Output features size: {features.size()}")
         logging.info(f"Average batch time: {np.mean(timings) * 1000:.2f} ms")
+        return np.mean(timings) * 1000
 
 
 class ONNXBenchmark(Benchmark):
@@ -114,7 +115,7 @@ class ONNXBenchmark(Benchmark):
         self.nwarmup = nwarmup
         self.nruns = nruns
 
-    def run(self) -> None:
+    def run(self):
         print("Warming up ...")
         # Adjusting the batch size in the input shape to match the expected input size of the model.
         input_shape = (1,) + self.input_shape[1:]
@@ -134,6 +135,7 @@ class ONNXBenchmark(Benchmark):
 
         avg_time = np.mean(timings) * 1000
         logging.info(f"Average ONNX inference time: {avg_time:.2f} ms")
+        return avg_time
 
 
 class OVBenchmark(Benchmark):
@@ -193,3 +195,4 @@ class OVBenchmark(Benchmark):
 
         avg_time = total_time / self.num_runs
         logging.info(f"Average inference time: {avg_time * 1000:.2f} ms")
+        return avg_time
