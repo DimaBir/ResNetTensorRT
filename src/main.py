@@ -81,7 +81,7 @@ def make_prediction(
             prob = np.exp(prob) / np.sum(np.exp(prob))
     elif is_ov_model:
         # For OV, the input name is usually the first input
-        input_name = next(iter(model.input_info))
+        input_name = next(iter(model.inputs))
         outputs = model.infer({input_name: img_batch})
 
         # Assuming the model returns a dictionary with one key for class probabilities

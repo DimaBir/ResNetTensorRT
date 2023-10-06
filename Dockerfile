@@ -4,7 +4,9 @@ FROM nvcr.io/nvidia/tensorrt:23.08-py3
 # Install system packages
 RUN apt-get update && apt-get install -y \
     python3-pip \
-    git
+    git \
+    libjpeg-dev \
+    libpng-dev
 
 # Copy the requirements.txt file into the container
 COPY requirements.txt /workspace/requirements.txt
