@@ -1,6 +1,13 @@
-from benchmark.benchmark_models import *
-from benchmark.benchmark_utils import *
-from common.utils import *
+import logging
+
+from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
+from benchmark.benchmark_utils import run_all_benchmarks, plot_benchmark_results
+from common.utils import (
+    parse_arguments,
+    init_onnx_model,
+    init_ov_model,
+    init_cuda_model,
+)
 from image_processor import ImageProcessor
 from prediction.prediction_models import *
 from model import ModelLoader
