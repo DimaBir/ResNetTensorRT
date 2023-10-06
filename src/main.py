@@ -133,12 +133,12 @@ def run_all_benchmarks(
     # ONNX benchmark
     onnx_benchmark = ONNXBenchmark(models["onnx"], img_batch.shape)
     avg_time_onnx = onnx_benchmark.run()
-    results["onnx"] = avg_time_onnx
+    results["ONNX"] = avg_time_onnx
 
     # OpenVINO benchmark
     ov_benchmark = OVBenchmark(models["ov"], img_batch.shape)
     avg_time_ov = ov_benchmark.run()
-    results["ov"] = avg_time_ov
+    results["OpenVINO"] = avg_time_ov
 
     # PyTorch + TRT benchmark
     configs = [
@@ -153,15 +153,15 @@ def run_all_benchmarks(
         if not is_trt:
             pytorch_benchmark = PyTorchBenchmark(model_to_use, device=device, dtype=precision)
             avg_time_pytorch = pytorch_benchmark.run()
-            results["pytorch"] = avg_time_pytorch
+            results[f"PyTorch_{device}"] = avg_time_pytorch
 
         else:
             # TensorRT benchmarks
             if precision == torch.float32 or precision == torch.float16:
-                mode = "fp32" if precision == torch.float32 else "fp16"
+                mode = "FP32" if precision == torch.float32 else "FP16"
                 trt_benchmark = PyTorchBenchmark(models[f"trt_{mode}"], device=device, dtype=precision)
                 avg_time_trt = trt_benchmark.run()
-                results[f"trt_{mode}"] = avg_time_trt
+                results[f"TRT_{mode}"] = avg_time_trt
 
     return results
 
@@ -190,7 +190,7 @@ def plot_benchmark_results(results: Dict[str, float]):
     sns.barplot(x=data['Time'], y=data['Model'], palette="rocket")
     plt.xlabel('Average Inference Time (ms)')
     plt.ylabel('Model Type')
-    plt.title('Benchmark Comparison')
+    plt.title('Inference Benchmark Results')
 
     # Save the plot to a file
     plt.savefig('./inference/plot.png', bbox_inches='tight')
