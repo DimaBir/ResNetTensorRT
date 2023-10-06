@@ -68,7 +68,7 @@ def main() -> None:
                 models[f"trt_{mode}"] = model
 
             predict_cuda_model(
-                model, img_batch, args.topk, model_loader.categories, precision
+                model.to(device), img_batch.to(device), args.topk, model_loader.categories, precision
             )
 
     # Aggregate Benchmark (if mode is "all")
