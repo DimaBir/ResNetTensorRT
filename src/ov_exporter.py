@@ -1,6 +1,5 @@
 import os
-import openvino.inference_engine as ie
-from openvino.tools.mo import convert_model
+import openvino as ov
 
 
 class OVExporter:
@@ -16,8 +15,9 @@ class OVExporter:
             Path to the ONNX model file.
         """
         self.onnx_path = onnx_model_path
+        self.core = ov.Core()
 
-    def export_model(self) -> ie.IENetwork:
+    def export_model(self) -> ov.Model:
         """
         Convert the ONNX model to OpenVINO's internal representation.
 
@@ -28,5 +28,5 @@ class OVExporter:
             raise ValueError(f"ONNX model wasn't found in path: {self.onnx_path}")
 
         # Convert the ONNX model to OpenVINO's internal representation
-        ov_model = convert_model(self.onnx_model_path)
+        ov_model = self.core.read_model(self.onnx_path)
         return ov_model

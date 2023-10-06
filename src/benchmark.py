@@ -139,19 +139,22 @@ class ONNXBenchmark(Benchmark):
 
 
 class OVBenchmark(Benchmark):
-    def __init__(self, model: ie.IENetwork, input_shape: Tuple[int, int, int, int]):
+    def __init__(self, model: ov.frontend.FrontEnd, input_shape: Tuple[int, int, int, int]):
         """
         Initialize the OVBenchmark with the OpenVINO model and the input shape.
 
-        :param model: ov.ie.IENetwork
+        :param model: ov.frontend.FrontEnd
             The OpenVINO model.
         :param input_shape: Tuple[int, int, int, int]
             The shape of the model input.
         """
-        super().__init__(input_shape)
         self.ov_model = model
-        self.core = ie.IECore()
+        self.core = ov.Core()
         self.compiled_model = None
+        self.input_shape = input_shape
+        self.warmup_runs = 50
+        self.num_runs = 100
+        self.dummy_input = np.random.randn(*input_shape).astype(np.float32)
 
     def warmup(self):
         """
@@ -168,8 +171,6 @@ class OVBenchmark(Benchmark):
         :return: dict
             The model's output as a dictionary.
         """
-        # Assuming the input data is in the correct format for the model
-        # Execute the model and get the output
         outputs = self.compiled_model.infer(inputs={"input": input_data})
         return outputs
 
