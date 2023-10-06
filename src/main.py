@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
+from ..benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
 from benchmark.benchmark_utils import run_all_benchmarks, plot_benchmark_results
 from common.utils import (
     parse_arguments,
