@@ -21,7 +21,7 @@
 11. [References](#references)
 
 
-<img src="./inference/plot.png" width="40%">
+<img src="./inference/plot.png" width="70%">
 
 ## Overview
 This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX, OpenVINO, NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torchvision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: CPU, CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
@@ -59,7 +59,7 @@ This command will run predictions on the default image (`./inference/cat3.jpg`),
 
 ## RESULTS
 ### Inference Benchmark Results
-<img src="./inference/plot.png" width="40%">
+<img src="./inference/plot.png" width="70%">
 
 ### Results explanation
   - `PyTorch_cpu: 973.52 ms` indicate the average batch time when running `PyTorch` model on `CPU` device.
