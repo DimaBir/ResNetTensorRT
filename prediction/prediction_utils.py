@@ -62,11 +62,10 @@ def make_prediction(
         params = list(model.parameters())
         if params:
             logging.info(f"Running prediction for PyTorch_{params[0].device}")
-        elif isinstance(model, torch_tensorrt.ts.TSModule):
+        elif isinstance(model, torch.nn.Module):
             logging.info(f"Running prediction for TensorRT_{precision} model")
         else:
             raise ValueError("Running prediction for an unknown model type")
-
 
         if isinstance(img_batch, np.ndarray):
             img_batch = torch.tensor(img_batch)
