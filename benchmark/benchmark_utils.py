@@ -8,7 +8,7 @@ from typing import Dict, Any
 import torch
 import onnxruntime as ort
 
-from src.benchmark import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
+from benchmark import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 
 
 def run_benchmark(
