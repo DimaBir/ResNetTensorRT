@@ -11,30 +11,6 @@ import onnxruntime as ort
 from benchmark.benchmark_models import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 
 
-def run_benchmark(
-    model: torch.nn.Module,
-    device: str,
-    dtype: torch.dtype,
-    ort_session: ort.InferenceSession = None,
-    onnx: bool = False,
-) -> None:
-    """
-    Run and log the benchmark for the given model, device, and dtype.
-
-    :param onnx:
-    :param ort_session:
-    :param model: The model to be benchmarked.
-    :param device: The device to run the benchmark on ("cpu" or "cuda").
-    :param dtype: The data type to be used in the benchmark (typically torch.float32 or torch.float16).
-    """
-    if onnx:
-        logging.info(f"Running Benchmark for ONNX")
-        benchmark = ONNXBenchmark(ort_session, input_shape=(32, 3, 224, 224))
-    else:
-        logging.info(f"Running Benchmark for {device.upper()} and precision {dtype}")
-        benchmark = PyTorchBenchmark(model, device=device, dtype=dtype)
-    benchmark.run()
-
 
 def run_all_benchmarks(
     models: Dict[str, Any], img_batch: np.ndarray
