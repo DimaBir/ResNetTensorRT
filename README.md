@@ -56,7 +56,7 @@ python main.py [--mode all]
 python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
 ```
 
-This command will run predictions on the default image (`./inference/cat3.jpg`), show the top 3 predictions, and run the all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
+This command will run predictions on the default image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
 ## RESULTS
 ### Inference Benchmark Results
@@ -96,7 +96,7 @@ In the provided code, we perform inference using the native PyTorch framework on
 3. Benchmark results, including average inference time, are logged for the CPU and CUDA setups.
 
 ### TensorRT FP32 & FP16
-TensorRT offers significant performance improvements by optimizing the neural network model. This code uses TensorRT's capabilities to run benchmarks in both FP32 (single precision) and FP16 (half precision) modes.
+TensorRT offers significant performance improvements by optimizing the neural network model. This code uses TensorRT's capabilities to run benchmarks in FP32 (single precision) and FP16 (half precision) modes.
 
 #### Flow:
 1. Load the ResNet-50 model.
