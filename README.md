@@ -56,7 +56,7 @@ python main.py [--mode all]
 python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
 ```
 
-This command will run predictions on the default image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
+This command will run predictions on the chosen image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
 ## RESULTS
 ### Inference Benchmark Results
