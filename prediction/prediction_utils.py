@@ -7,6 +7,7 @@ import numpy as np
 import torch_tensorrt
 
 
+
 def make_prediction(
     model: Union[torch.nn.Module, ort.InferenceSession, ov.CompiledModel],
     img_batch: Union[torch.Tensor, np.ndarray],
