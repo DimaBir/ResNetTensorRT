@@ -197,7 +197,7 @@ class OVBenchmark(Benchmark):
 
             if i % 10 == 0:
                 print(
-                    f"Iteration {i}/{self.nruns}, ave batch time {total_time / self.nruns * 1000:.2f} ms"
+                    f"Iteration {i}/{self.nruns}, ave batch time {total_time / i * 1000:.2f} ms"
                 )
 
         avg_time = total_time / self.nruns

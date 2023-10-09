@@ -11,7 +11,6 @@ import onnxruntime as ort
 from benchmark.benchmark_models import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 
 
-
 def run_all_benchmarks(
     models: Dict[str, Any], img_batch: np.ndarray
 ) -> Dict[str, float]:
