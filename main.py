@@ -1,6 +1,5 @@
 import logging
 import os.path
-
 import torch_tensorrt
 
 from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
@@ -9,11 +8,16 @@ from common.utils import (
     parse_arguments,
     init_onnx_model,
     init_ov_model,
-    init_cuda_model, export_onnx_model,
+    init_cuda_model,
+    export_onnx_model,
 )
 from src.image_processor import ImageProcessor
 from prediction.prediction_models import *
 from src.model import ModelLoader
+import warnings
+
+# Filter out the specific warning from torchvision
+warnings.filterwarnings("ignore", category=UserWarning, module="torchvision.io.image")
 
 # Configure logging
 logging.basicConfig(filename="model.log", level=logging.INFO)
@@ -38,18 +42,27 @@ def main():
         ort_session = init_onnx_model(args.onnx_path, model_loader, device)
         if args.mode != "all":
             benchmark_onnx_model(ort_session)
-            predict_onnx_model(ort_session, img_batch, args.topk, model_loader.categories)
+            predict_onnx_model(
+                ort_session, img_batch, args.topk, model_loader.categories
+            )
 
     # OpenVINO
     if args.mode in ["ov", "all"]:
         # Check if ONNX model wasn't exported previously
         if not os.path.isfile(args.onnx_path):
-            export_onnx_model(onnx_path=args.onnx_path, model_loader=model_loader, device=device)
+            export_onnx_model(
+                onnx_path=args.onnx_path, model_loader=model_loader, device=device
+            )
 
         ov_model = init_ov_model(args.onnx_path)
         if args.mode != "all":
             ov_benchmark = benchmark_ov_model(ov_model)
-            predict_ov_model(ov_benchmark.compiled_model, img_batch, args.topk, model_loader.categories)
+            predict_ov_model(
+                ov_benchmark.compiled_model,
+                img_batch,
+                args.topk,
+                model_loader.categories,
+            )
 
     # CUDA
     if args.mode in ["cuda", "all"]:
@@ -75,11 +88,13 @@ def main():
                 img_batch = img_batch.to(device)
             else:
                 print("Compiling TensorRT model")
+                batch_size = 1 if args.mode == "cuda" else 32
                 model = torch_tensorrt.compile(
                     model,
-                    inputs=[torch_tensorrt.Input((32, 3, 224, 224), dtype=precision)],
+                    inputs=[torch_tensorrt.Input((batch_size, 3, 224, 224), dtype=precision)],
                     enabled_precisions={precision},
                     truncate_long_and_double=True,
+                    require_full_compilation=True,
                 )
                 # If it is for TensorRT, determine the mode (FP32 or FP16) and store under a TensorRT key
                 mode = "fp32" if precision == torch.float32 else "fp16"
