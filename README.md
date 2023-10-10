@@ -32,6 +32,7 @@ This project demonstrates how to perform inference with a PyTorch model and opti
 - NVIDIA GPU (for CUDA and TensorRT benchmarks and optimizations)
 - Python 3.x
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide) (for running the Docker container with GPU support)
+- ![New](https://img.shields.io/badge/-New-842E5B)[OpenVINO Toolkit](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/download.html) (for running OpenVINO model)
 
 ### Steps to Run
 
