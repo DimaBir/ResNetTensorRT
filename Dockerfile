@@ -2,7 +2,10 @@
 ARG ENVIRONMENT=cpu
 
 # Conditionally set the base image based on the environment
-FROM ${ENVIRONMENT=cpu?'python:3.8-slim':'nvcr.io/nvidia/tensorrt:23.08-py3'}
+FROM python:3.8-slim as base_cpu
+FROM nvcr.io/nvidia/tensorrt:23.08-py3 as base_gpu
+
+FROM base_${ENVIRONMENT}
 
 # Install required system packages conditionally
 RUN apt-get update && apt-get install -y python3-pip git && \
