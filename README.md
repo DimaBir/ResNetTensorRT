@@ -118,7 +118,7 @@ Here is an example of the input image to run predictions and benchmarks on:
 ### PC Setup 
 - CPU: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz
 - RAM: 32 GB
-- GPU: GeForce RTX 3070
+- GPU: GeForce RTX 3070 (CUDA)
 
 ## Benchmark Implementation Details
 Here you can see the flow for each model and benchmark.
