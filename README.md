@@ -34,14 +34,34 @@ This project demonstrates how to perform inference with a PyTorch model and opti
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide) (for running the Docker container with GPU support)
 - ![New](https://img.shields.io/badge/-New-842E5B)[OpenVINO Toolkit](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/download.html) (for running OpenVINO model)
 
-### Steps to Run
+## Steps to Run
+### Building the Docker Image
 
-```sh
-# 1. Build the Docker Image
-docker build -t awesome-tensorrt
+Depending on target environment (CPU or GPU), choose a different base image.
 
-# 2. Run the Docker Container
-docker run --gpus all --rm -it awesome-tensorrt
+1. **CPU Deployment**:
+   For systems without a GPU or CUDA support, simply use the default base image.
+   ```bash
+   docker build -t my_image_cpu .
+   ```
+   
+2. **GPU Deployment**:
+   If your system has GPU support and you have NVIDIA Docker runtime installed, you can use the TensorRT base image to leverage GPU acceleration.
+   ```bash
+   docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t my_image_gpu .
+   ```
+
+
+### Running the Docker Container
+1. **CPU Version**:
+   ```bash
+   docker run -it --rm -v my_image_cpu
+   ```
+
+2. **GPU Version**:
+   ```bash
+   docker run --gpus all -it --rm -v my_image_gpu
+   ```
 
 # 3. Run the Script inside the Container
 python main.py [--mode all]

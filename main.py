@@ -1,6 +1,14 @@
 import logging
 import os.path
-import torch_tensorrt
+import torch
+
+CUDA_AVAILABLE = False
+if torch.cuda.is_available():
+    try:
+        import torch_tensorrt
+        CUDA_AVAILABLE = True
+    except ImportError:
+        print("torch-tensorrt is not installed. Running on CPU mode only.")
 
 from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
 from benchmark.benchmark_utils import run_all_benchmarks, plot_benchmark_results
@@ -78,6 +86,10 @@ def main():
             device = config["device"]
             precision = config["precision"]
             is_trt = config["is_trt"]
+
+            # check if CUDA is available
+            if device.lower() == "cuda" and not CUDA_AVAILABLE:
+                continue
 
             model = init_cuda_model(model_loader, device, precision)
 
