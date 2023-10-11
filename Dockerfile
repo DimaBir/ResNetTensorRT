@@ -4,20 +4,15 @@ ARG BASE_IMAGE=python:3.8-slim
 # Use the base image specified by the BASE_IMAGE argument
 FROM $BASE_IMAGE
 
-# The rest of the Dockerfile remains the same...
-
-# Install system packages
-RUN apt-get update && apt-get install -y \
-    python3-pip \
-    git \
-    libjpeg-dev \
-    libpng-dev
-
 # Argument to determine environment: cpu or gpu (default is cpu)
 ARG ENVIRONMENT=cpu
 
+# Install required system packages conditionally
+RUN apt-get update && apt-get install -y python3-pip git && \
+    if [ "$ENVIRONMENT" = "gpu" ] ; then apt-get install -y libjpeg-dev libpng-dev ; fi
+
 # Copy the requirements file based on the environment into the container
-COPY requirements_${ENVIRONMENT}.txt /workspace/requirements.txt
+COPY requirements.txt /workspace/requirements.txt
 
 # Install Python packages
 RUN pip3 install --no-cache-dir -r /workspace/requirements.txt
