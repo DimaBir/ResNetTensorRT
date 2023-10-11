@@ -17,7 +17,7 @@
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
 5. [Extra](#extra) ![New](https://img.shields.io/badge/-New-842E5B)
-   - [Remote Linux Server - CPU only - Inference](#remote-linux-server-cpu-only-inference)
+   - [Linux Server Inference](#linux-server-inference)
    - [Prediction results](#prediction-results)
 6. [Author](#author)
 7. [References](#references)
@@ -29,10 +29,10 @@
 This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
 
 The project is Dockerized for easy deployment:
-1. **CPU-only Deployment** - Suitable for non-GPU systems (supports `PyTorch CPU`, `ONNX CPU` and `OpenVINO CPU` models only).
+1. **CPU-only Deployment** - Suitable for non-GPU systems (supports `PyTorch CPU`, `ONNX CPU`, and `OpenVINO CPU` models only).
 2. **GPU Deployment** - Optimized for NVIDIA GPUs (supports all models: `PyTorch CPU`, `ONNX CPU`, `OpenVINO CPU`, `PyTorch CUDA`, `TensorRT-FP32`, and `TensorRT-FP16`).
 
-For Docker instructions, refer to the [Steps to Run](#steps-to-run) section.
+Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 
 
 ## Requirements
@@ -46,7 +46,7 @@ For Docker instructions, refer to the [Steps to Run](#steps-to-run) section.
 ## Steps to Run
 ### Building the Docker Image
 
-Depending on target environment (CPU or GPU), choose a different base image.
+Choose a different base image depending on the target environment (CPU or GPU).
 
 1. **CPU Deployment**:
    For systems without a GPU or CUDA support, simply use the default base image.
@@ -55,7 +55,7 @@ Depending on target environment (CPU or GPU), choose a different base image.
    ```
    
 2. **GPU Deployment**:
-   If your system has GPU support and you have NVIDIA Docker runtime installed, you can use the TensorRT base image to leverage GPU acceleration.
+   If your system has GPU and CUDA support, you can use the TensorRT base image to leverage GPU acceleration.
    ```bash
    docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t my_project_image_gpu .
    ```
@@ -160,7 +160,7 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 5. Benchmark results, including average inference time, are logged for the OpenVINO model.
 
 ## Extra
-### Remote Linux Server - CPU only - Inference
+### Linux Server Inference
 <img src="./inference/plot_linux_server.png" width="70%">
 
 ### Prediction results
