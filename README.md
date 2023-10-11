@@ -19,6 +19,7 @@
 5. [Extra](#extra) ![New](https://img.shields.io/badge/-New-842E5B)
    - [Linux Server Inference](#linux-server-inference)
    - [Prediction results](#prediction-results)
+   - [PC Setup Linux](#pc-setup-linux)
 6. [Author](#author)
 7. [References](#references)
 
@@ -181,7 +182,10 @@ Running prediction for ONNX model
 #4: 2% doormat
 #5: 2% lynx
 ```
-
+### PC Setup Linux 
+- CPU: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+- RAM: 16 GB
+- GPU: None
 
 ## Author
 [DimaBir](https://github.com/DimaBir)
