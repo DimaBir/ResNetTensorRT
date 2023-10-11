@@ -6,44 +6,73 @@
 2. [Requirements](#requirements)
     - [Steps to Run](#steps-to-run)
     - [Example Command](#example-command)
-3. [RESULTS](#results) ![Static Badge](https://img.shields.io/badge/update-orange)
+3. [GPU-CUDA Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
     - [Results explanation](#results-explanation)
     - [Example Input](#example-input)
     - [Example prediction results](#example-prediction-results)
+    - [PC Setup](#pc-setup)
 4. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
     - [PyTorch CPU & CUDA](#pytorch-cpu--cuda)
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
-5. [Benchmarking and Visualization](#benchmarking-and-visualization) ![New](https://img.shields.io/badge/-New-842E5B)
+5. [Extra](#extra) ![New](https://img.shields.io/badge/-New-842E5B)
+   - [Remote Linux Server - CPU only - Inference](#remote-linux-server-cpu-only-inference)
+   - [Prediction results](#prediction-results)
 6. [Author](#author)
-7. [PC Setup](#pc-setup)
-8. [References](#references)
+7. [References](#references)
 
 
 <img src="./inference/plot_latest.png" width="100%">
 
 ## Overview
-This project demonstrates how to perform inference with a PyTorch model and optimize it using ONNX, OpenVINO, and NVIDIA TensorRT. The script loads a pre-trained ResNet-50 model from torch-vision, performs inference on a user-provided image, and prints the top-K predicted classes. Additionally, the script benchmarks the model's performance in the following configurations: PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16, providing insights into the speedup gained through optimization.
+This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
+
+The project is Dockerized for easy deployment:
+1. **CPU-only Deployment** - Suitable for non-GPU systems (supports `PyTorch CPU`, `ONNX CPU` and `OpenVINO CPU` models only).
+2. **GPU Deployment** - Optimized for NVIDIA GPUs (supports all models: `PyTorch CPU`, `ONNX CPU`, `OpenVINO CPU`, `PyTorch CUDA`, `TensorRT-FP32`, and `TensorRT-FP16`).
+
+For Docker instructions, refer to the [Steps to Run](#steps-to-run) section.
+
 
 ## Requirements
 - This repo cloned
 - Docker
 - NVIDIA GPU (for CUDA and TensorRT benchmarks and optimizations)
 - Python 3.x
-- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide) (for running the Docker container with GPU support)
-- ![New](https://img.shields.io/badge/-New-842E5B)[OpenVINO Toolkit](https://www.intel.com/content/www/us/en/developer/tools/openvino-toolkit/download.html) (for running OpenVINO model)
+- NVIDIA drivers installed on the host machine.
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide) (for running the Docker container with GPU support). Pre-installed withing the GPU docker image.
 
-### Steps to Run
+## Steps to Run
+### Building the Docker Image
 
+Depending on target environment (CPU or GPU), choose a different base image.
+
+1. **CPU Deployment**:
+   For systems without a GPU or CUDA support, simply use the default base image.
+   ```bash
+   docker build -t my_image_cpu .
+   ```
+   
+2. **GPU Deployment**:
+   If your system has GPU support and you have NVIDIA Docker runtime installed, you can use the TensorRT base image to leverage GPU acceleration.
+   ```bash
+   docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t my_project_image_gpu .
+   ```
+
+### Running the Docker Container
+1. **CPU Version**:
+   ```bash
+   docker run -it --rm my_image_cpu
+   ```
+
+2. **GPU Version**:
+   ```bash
+   docker run --gpus all -it --rm my_image_gpu
+   ```
+
+### Run the Script inside the Container
 ```sh
-# 1. Build the Docker Image
-docker build -t awesome-tensorrt
-
-# 2. Run the Docker Container
-docker run --gpus all --rm -it awesome-tensorrt
-
-# 3. Run the Script inside the Container
 python main.py [--mode all]
 ```
 
@@ -59,7 +88,7 @@ python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
 
 This command will run predictions on the chosen image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
-## RESULTS
+## GPU-CUDA Results
 ### Inference Benchmark Results
 <img src="./inference/plot_latest.png" width="70%">
 
@@ -84,6 +113,11 @@ Here is an example of the input image to run predictions and benchmarks on:
 #4: 2% doormat
 #5: 2% lynx
 ```
+
+### PC Setup 
+- CPU: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz
+- RAM: 32 GB
+- GPU: GeForce RTX 3070
 
 ## Benchmark Implementation Details
 Here you can see the flow for each model and benchmark.
@@ -125,16 +159,32 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 4. Perform inference on the provided image using the OpenVINO model.
 5. Benchmark results, including average inference time, are logged for the OpenVINO model.
 
-## Benchmarking and Visualization
-The results of the benchmarks for all modes are saved and visualized in a bar chart, showcasing the average inference times across different backends. The visualization aids in comparing the performance gains achieved with different optimizations.
+## Extra
+### Remote Linux Server - CPU only - Inference
+<img src="./inference/plot_linux_server.png" width="70%">
+
+### Prediction results
+`model.log` file content
+```
+Running prediction for OV model
+#1: 15% Egyptian cat
+#2: 14% tiger cat
+#3: 9% tabby
+#4: 2% doormat
+#5: 2% lynx
+
+
+Running prediction for ONNX model
+#1: 15% Egyptian cat
+#2: 14% tiger cat
+#3: 9% tabby
+#4: 2% doormat
+#5: 2% lynx
+```
+
 
 ## Author
 [DimaBir](https://github.com/DimaBir)
-
-## PC Setup 
-- CPU: Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz
-- RAM: 32 GB
-- GPU: GeForce RTX 3070
   
 ## References
 - **PyTorch**: [Official Documentation](https://pytorch.org/docs/stable/index.html)

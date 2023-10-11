@@ -72,7 +72,9 @@ class PyTorchBenchmark:
         with torch.no_grad():
             for _ in range(self.nwarmup):
                 features = self.model(input_data)
-        torch.cuda.synchronize()
+
+        if self.device == "cuda":
+            torch.cuda.synchronize()
 
         # Start timing
         print("Start timing ...")
@@ -81,7 +83,8 @@ class PyTorchBenchmark:
             for i in range(1, self.nruns + 1):
                 start_time = time.time()
                 features = self.model(input_data)
-                torch.cuda.synchronize()
+                if self.device == "cuda":
+                    torch.cuda.synchronize()
                 end_time = time.time()
                 timings.append(end_time - start_time)
 

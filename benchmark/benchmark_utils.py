@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, Any
 import torch
-import onnxruntime as ort
 
 from benchmark.benchmark_models import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 
@@ -43,6 +42,9 @@ def run_all_benchmarks(
         ("cuda", torch.float16, True),
     ]
     for device, precision, is_trt in configs:
+        if not torch.cuda.is_available() and device == "cuda":
+            continue
+
         model_to_use = models[f"PyTorch_{device}"].to(device)
 
         if not is_trt:

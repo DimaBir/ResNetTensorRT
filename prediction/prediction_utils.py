@@ -4,8 +4,6 @@ import openvino as ov
 import torch
 import onnxruntime as ort
 import numpy as np
-import torch_tensorrt
-
 
 
 def make_prediction(
