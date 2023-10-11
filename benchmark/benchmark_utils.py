@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, Any
 import torch
-import onnxruntime as ort
 
 from benchmark.benchmark_models import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
 
