@@ -1,11 +1,8 @@
-# Argument for base image. Default is a neutral Python image.
-ARG BASE_IMAGE=python:3.8-slim
-
-# Use the base image specified by the BASE_IMAGE argument
-FROM $BASE_IMAGE
-
 # Argument to determine environment: cpu or gpu (default is cpu)
 ARG ENVIRONMENT=cpu
+
+# Conditionally set the base image based on the environment
+FROM ${ENVIRONMENT=cpu?'python:3.8-slim':'nvcr.io/nvidia/tensorrt:23.08-py3'}
 
 # Install required system packages conditionally
 RUN apt-get update && apt-get install -y python3-pip git && \
