@@ -42,6 +42,9 @@ def run_all_benchmarks(
         ("cuda", torch.float16, True),
     ]
     for device, precision, is_trt in configs:
+        if not torch.cuda.is_available() and device == "cuda":
+            continue
+
         model_to_use = models[f"PyTorch_{device}"].to(device)
 
         if not is_trt:
