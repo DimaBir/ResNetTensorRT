@@ -47,8 +47,6 @@ Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 ## Steps to Run
 ### Building the Docker Image
 
-Choose a different base image depending on the target environment (CPU or GPU).
-
 1. **CPU Deployment**:
    For systems without a GPU or CUDA support, simply use the default base image.
    ```bash
