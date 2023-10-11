@@ -57,7 +57,7 @@ Depending on target environment (CPU or GPU), choose a different base image.
 2. **GPU Deployment**:
    If your system has GPU support and you have NVIDIA Docker runtime installed, you can use the TensorRT base image to leverage GPU acceleration.
    ```bash
-   docker build --build-arg ENVIRONMENT=gpu -t my_image_gpu .
+   docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t my_project_image_gpu .
    ```
 
 ### Running the Docker Container
@@ -68,7 +68,7 @@ Depending on target environment (CPU or GPU), choose a different base image.
 
 2. **GPU Version**:
    ```bash
-   docker run --gpus all -it --rm -v my_image_gpu
+   docker run --gpus all -it --rm my_image_gpu
    ```
 
 ### Run the Script inside the Container
