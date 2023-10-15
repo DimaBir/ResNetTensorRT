@@ -13,8 +13,8 @@ class ONNXInference(InferenceBase):
 
     def load_model(self):
         if not os.path.exists(self.model_path):
-            exporter = ONNXExporter()
-            exporter.export_and_save(self.model_path)
+            onnx_exporter = ONNXExporter(self.model_loader.model, self.device, self.model_path)
+            onnx_exporter.export_model()
         return ort.InferenceSession(self.model_path)
 
     def predict(self, input_data, topk: int):

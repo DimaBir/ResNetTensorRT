@@ -55,8 +55,15 @@ def parse_arguments():
     parser.add_argument(
         "--onnx_path",
         type=str,
-        default="./inference/model.onnx",
+        default="./models/model.onnx",
         help="Path where model in ONNX format will be exported",
+    )
+
+    parser.add_argument(
+        "--ov_path",
+        type=str,
+        default="./models/model.ov",
+        help="Path where model in OpenVINO format will be exported",
     )
 
     parser.add_argument(

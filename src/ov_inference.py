@@ -18,13 +18,13 @@ class OVInference(InferenceBase):
 
         # Check if ONNX model exists
         if not os.path.exists(onnx_model_path):
-            onnx_exporter = ONNXExporter()
-            onnx_exporter.export_and_save(onnx_model_path)
+            onnx_exporter = ONNXExporter(self.model_loader.model, self.device, onnx_model_path)
+            onnx_exporter.export_model()
 
         # Check if OV model exists
         if not os.path.exists(self.model_path):
-            ov_exporter = OVExporter()
-            ov_exporter.export_and_save(self.model_path)
+            ov_exporter = OVExporter(self.model_path)
+            ov_exporter.export_model()
 
         # Load the OV model using OpenVINO's API
         ie = ov.IECore()
