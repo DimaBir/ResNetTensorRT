@@ -3,8 +3,8 @@ import logging
 import numpy as np
 import openvino as ov
 from src.inference_base import InferenceBase
-from onnx_exporter import ONNXExporter
-from ov_exporter import OVExporter
+from src.onnx_exporter import ONNXExporter
+from src.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):
