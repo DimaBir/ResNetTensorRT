@@ -1,10 +1,9 @@
 import logging
-import os.path
 import torch
 
-from onnx_inference import ONNXInference
-from ov_inference import OVInference
-from pytorch_inference import PyTorchCPUInference, PyTorchCUDAInference
+from src.onnx_inference import ONNXInference
+from src.ov_inference import OVInference
+from src.pytorch_inference import PyTorchCPUInference, PyTorchCUDAInference
 
 from src.tensorrt_inference import TensorRTInference
 
@@ -17,15 +16,8 @@ if torch.cuda.is_available():
     except ImportError:
         print("torch-tensorrt is not installed. Running on CPU mode only.")
 
-from benchmark.benchmark_models import benchmark_onnx_model, benchmark_ov_model
-from benchmark.benchmark_utils import run_all_benchmarks, plot_benchmark_results
-from common.utils import (
-    parse_arguments,
-    init_onnx_model,
-    init_ov_model,
-    init_cuda_model,
-    export_onnx_model,
-)
+from benchmark.benchmark_utils import plot_benchmark_results
+from common.utils import parse_arguments
 from src.image_processor import ImageProcessor
 from prediction.prediction_models import *
 from src.model import ModelLoader
