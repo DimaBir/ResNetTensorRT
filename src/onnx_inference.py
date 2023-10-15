@@ -4,7 +4,7 @@ from src.inference_base import InferenceBase
 import onnxruntime as ort
 import numpy as np
 
-from onnx_exporter import ONNXExporter
+from src.onnx_exporter import ONNXExporter
 
 
 class ONNXInference(InferenceBase):
