@@ -160,7 +160,7 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 
 ## Extra
 ### Linux Server Inference
-<img src="./inference/plot_linux_server.png" width="70%">
+<img src="./inference/plot.png" width="70%">
 
 ### Prediction results
 `model.log` file content

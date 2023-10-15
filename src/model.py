@@ -26,7 +26,9 @@ class ModelLoader:
             ).to(device)
             torch.save(self.model.state_dict(), self.model_path)
         else:
-            self.model = models.resnet50().to(device)
+            self.model = models.resnet50(
+                weights=models.ResNet50_Weights.IMAGENET1K_V2
+            ).to(device)
             self.model.load_state_dict(torch.load(self.model_path))
 
         # Check if categories exist locally, if not, download and save
