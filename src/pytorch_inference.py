@@ -10,14 +10,14 @@ class PyTorchCPUInference(InferenceBase):
     def load_model(self):
         return self.model_loader.model.to(self.model_loader.device)
 
-    def predict(self, input_data):
+    def predict(self, input_data, is_benchmark=False):
         logging.info(f"Running prediction for PyTorch CPU model")
         self.model.eval()
         with torch.no_grad():
             outputs = self.model(input_data.to(self.model_loader.device))
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
-        return self.get_top_predictions(prob)
+        return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         super().benchmark(input_data, num_runs, warmup_runs)
