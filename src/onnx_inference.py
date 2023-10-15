@@ -32,4 +32,4 @@ class ONNXInference(InferenceBase):
         return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
-        super().benchmark(input_data, num_runs, warmup_runs)
+        return super().benchmark(input_data, num_runs, warmup_runs)

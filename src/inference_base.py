@@ -37,7 +37,7 @@ class InferenceBase:
             self.predict(input_data, is_benchmark=True)
         avg_time = ((time.time() - start_time) / num_runs) * 1000  # To ms
         logging.info(f"Average inference time for {num_runs} runs: {avg_time:.4f} ms")
-        print(f"Average inference time for {num_runs} runs: {avg_time:.4f} ms")
+        print(f"Average inference time for {self.__class__.__name__} and {num_runs} runs: {avg_time:.4f} ms")
         return avg_time
 
     def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
