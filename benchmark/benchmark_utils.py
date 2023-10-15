@@ -1,72 +1,7 @@
-import logging
-
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, Any
-import torch
-
-from benchmark.benchmark_models import PyTorchBenchmark, ONNXBenchmark, OVBenchmark
-
-
-def run_all_benchmarks(
-    models: Dict[str, Any], img_batch: np.ndarray
-) -> Dict[str, float]:
-    """
-    Run benchmarks for all models and return a dictionary of average inference times.
-
-    :param models: Dictionary of models. Key is model type ("onnx", "ov", "pytorch", "trt_fp32", "trt_fp16"), value is the model.
-    :param img_batch: The batch of images to run the benchmark on.
-    :return: Dictionary of average inference times. Key is model type, value is average inference time.
-    """
-    results = {}
-
-    # ONNX benchmark
-    logging.info(f"Running benchmark inference for ONNX model")
-    onnx_benchmark = ONNXBenchmark(models["onnx"], img_batch.shape)
-    avg_time_onnx = onnx_benchmark.run()
-    results["ONNX"] = avg_time_onnx
-
-    # OpenVINO benchmark
-    logging.info(f"Running benchmark inference for OpenVINO model")
-    ov_benchmark = OVBenchmark(models["ov"], img_batch.shape)
-    avg_time_ov = ov_benchmark.run()
-    results["OpenVINO"] = avg_time_ov
-
-    # PyTorch + TRT benchmark
-    configs = [
-        ("cpu", torch.float32, False),
-        ("cuda", torch.float32, False),
-        ("cuda", torch.float32, True),
-        ("cuda", torch.float16, True),
-    ]
-    for device, precision, is_trt in configs:
-        if not torch.cuda.is_available() and device == "cuda":
-            continue
-
-        model_to_use = models[f"PyTorch_{device}"].to(device)
-
-        if not is_trt:
-            pytorch_benchmark = PyTorchBenchmark(
-                model_to_use, device=device, dtype=precision
-            )
-            logging.info(f"Running benchmark inference for PyTorch_{device} model")
-            avg_time_pytorch = pytorch_benchmark.run()
-            results[f"PyTorch_{device}"] = avg_time_pytorch
-
-        else:
-            # TensorRT benchmarks
-            if precision == torch.float32 or precision == torch.float16:
-                mode = "fp32" if precision == torch.float32 else "fp16"
-                logging.info(f"Running benchmark inference for TRT_{mode} model")
-                trt_benchmark = PyTorchBenchmark(
-                    models[f"trt_{mode}"], device=device, dtype=precision
-                )
-                avg_time_trt = trt_benchmark.run()
-                results[f"TRT_{mode}"] = avg_time_trt
-
-    return results
+from typing import Dict
 
 
 def plot_benchmark_results(results: Dict[str, float]):

@@ -60,14 +60,14 @@ def main():
         ov_inference.predict(img_batch)
 
     # PyTorch CPU
-    if args.mode in ["pytorch_cpu", "all"]:
+    if args.mode in ["cpu", "all"]:
         pytorch_cpu_inference = PyTorchCPUInference(model_loader)
 
         benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark(img_batch)
         pytorch_cpu_inference.predict(img_batch)
 
     # PyTorch CUDA
-    if args.mode in ["pytorch_cuda", "all"] and device == "cuda":
+    if args.mode in ["cuda", "all"] and device == "cuda":
         pytorch_cuda_inference = PyTorchCUDAInference(model_loader)
 
         benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(
