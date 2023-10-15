@@ -28,13 +28,13 @@ class InferenceBase:
         # Warmup
         logging.info(f"Starting warmup for {self.__class__.__name__} inference...")
         for _ in range(warmup_runs):
-            self.predict(input_data, topk=self.topk)
+            self.predict(input_data)
 
         # Benchmark
         logging.info(f"Starting benchmark for {self.__class__.__name__} inference...")
         start_time = time.time()
         for _ in range(num_runs):
-            self.predict(input_data, topk=self.topk)
+            self.predict(input_data)
         avg_time = ((time.time() - start_time) / num_runs) * 1000  # To ms
         logging.info(f"Average inference time for {num_runs} runs: {avg_time:.4f} ms")
         return avg_time
