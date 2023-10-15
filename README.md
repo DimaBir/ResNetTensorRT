@@ -24,7 +24,7 @@
 7. [References](#references)
 
 
-<img src="./inference/plot_latest.png" width="100%">
+<img src="./inference/plot.png" width="70%">
 
 ## Overview
 This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
@@ -89,7 +89,7 @@ This command will run predictions on the chosen image (`./inference/train.jpg`),
 
 ## GPU-CUDA Results
 ### Inference Benchmark Results
-<img src="./inference/plot_latest.png" width="70%">
+<img src="./inference/plot.png" width="70%">
 
 ### Results explanation
   - `PyTorch_cpu: 978.71 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
