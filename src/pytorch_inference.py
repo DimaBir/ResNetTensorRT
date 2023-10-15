@@ -12,9 +12,10 @@ class PyTorchCPUInference(InferenceBase):
 
     def predict(self, input_data, is_benchmark=False):
         logging.info(f"Running prediction for PyTorch CPU model")
-        self.model.eval()
+        self.model_loader.model.to(self.model_loader.device)
+        self.model_loader.model.eval()
         with torch.no_grad():
-            outputs = self.model(input_data.to(self.model_loader.device))
+            outputs = self.model_loader.model(input_data.to(self.model_loader.device))
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
         return self.get_top_predictions(prob, is_benchmark)
@@ -40,7 +41,7 @@ class PyTorchCUDAInference(InferenceBase):
             outputs = self.model(input_data)
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
-        return self.log_top_predictions(prob, topk)
+        return self.get_top_predictions(prob, topk)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         super().benchmark(input_data, num_runs, warmup_runs)
