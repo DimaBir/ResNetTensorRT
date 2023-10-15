@@ -17,17 +17,17 @@ class ONNXInference(InferenceBase):
             onnx_exporter.export_model()
         return ort.InferenceSession(self.onnx_path, providers=["CPUExecutionProvider"])
 
-    def predict(self, input_data, topk: int):
+    def predict(self, input_data):
         logging.info(f"Running prediction for ONNX model")
         input_name = self.model.get_inputs()[0].name
-        ort_inputs = {input_name: input_data}
+        ort_inputs = {input_name: input_data.numpy()}
         ort_outs = self.model.run(None, ort_inputs)
         if len(ort_outs) > 0:
             prob = ort_outs[0]
             if prob.ndim > 1:
                 prob = prob[0]
             prob = np.exp(prob) / np.sum(np.exp(prob))
-        return self.get_top_predictions(prob, topk)
+        return self.get_top_predictions(prob, self.topk)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         super().benchmark(input_data, num_runs, warmup_runs)
