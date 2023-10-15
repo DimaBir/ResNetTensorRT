@@ -17,13 +17,13 @@ class OVInference(InferenceBase):
 
         # Check if ONNX model exists
         if not os.path.exists(self.onnx_path):
-            onnx_exporter = ONNXExporter(self.model_loader.model, self.device, self.onnx_path)
+            onnx_exporter = ONNXExporter(self.model_loader.model, self.model_loader.device, self.onnx_path)
             onnx_exporter.export_model()
 
         ov_exporter = OVExporter(self.onnx_path)
         return ov_exporter.export_model()
 
-    def predict(self, input_data, topk: int):
+    def predict(self, input_data):
         # Run the OV model inference
         logging.info(f"Running prediction for OV model")
         input_name = next(iter(self.model.inputs))
@@ -34,7 +34,7 @@ class OVInference(InferenceBase):
         prob = outputs[prob_key]
         prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
-        return self.get_top_predictions(prob, topk)
+        return self.get_top_predictions(prob)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         super().benchmark(input_data, num_runs, warmup_runs)
