@@ -2,10 +2,17 @@ import logging
 import os.path
 import torch
 
+from onnx_inference import ONNXInference
+from ov_inference import OVInference
+from pytorch_inference import PyTorchCPUInference, PyTorchCUDAInference
+
+from src.tensorrt_inference import TensorRTInference
+
 CUDA_AVAILABLE = False
 if torch.cuda.is_available():
     try:
         import torch_tensorrt
+
         CUDA_AVAILABLE = True
     except ImportError:
         print("torch-tensorrt is not installed. Running on CPU mode only.")
@@ -39,7 +46,8 @@ def main():
     args = parse_arguments()
 
     # Model and Image Initialization
-    models = {}
+    benchmark_results = {}
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_loader = ModelLoader(device=device)
     img_processor = ImageProcessor(img_path=args.image_path, device=device)
@@ -47,83 +55,44 @@ def main():
 
     # ONNX
     if args.mode in ["onnx", "all"]:
-        ort_session = init_onnx_model(args.onnx_path, model_loader, device)
-        if args.mode != "all":
-            benchmark_onnx_model(ort_session)
-            predict_onnx_model(
-                ort_session, img_batch, args.topk, model_loader.categories
-            )
+        onnx_inference = ONNXInference(model_loader, args.onnx_path)
+
+        benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark()
+        onnx_inference.predict(img_batch)
 
     # OpenVINO
     if args.mode in ["ov", "all"]:
-        # Check if ONNX model wasn't exported previously
-        if not os.path.isfile(args.onnx_path):
-            export_onnx_model(
-                onnx_path=args.onnx_path, model_loader=model_loader, device=device
-            )
+        ov_inference = OVInference(model_loader, args.ov_path)
 
-        ov_model = init_ov_model(args.onnx_path)
-        if args.mode != "all":
-            ov_benchmark = benchmark_ov_model(ov_model)
-            predict_ov_model(
-                ov_benchmark.compiled_model,
-                img_batch,
-                args.topk,
-                model_loader.categories,
-            )
+        benchmark_results["OpenVINO (CPU)"] = ov_inference.benchmark()
+        ov_inference.predict(img_batch)
 
-    # CUDA
-    if args.mode in ["cuda", "all"]:
-        # CUDA configurations
-        cuda_configs = [
-            {"device": "cpu", "precision": torch.float32, "is_trt": False},
-            {"device": "cuda", "precision": torch.float32, "is_trt": False},
-            {"device": "cuda", "precision": torch.float32, "is_trt": True},
-            {"device": "cuda", "precision": torch.float16, "is_trt": True},
-        ]
+    # PyTorch CPU
+    if args.mode in ["pytorch_cpu", "all"]:
+        pytorch_cpu_inference = PyTorchCPUInference(model_loader)
 
-        for config in cuda_configs:
-            device = config["device"]
-            precision = config["precision"]
-            is_trt = config["is_trt"]
+        benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark()
+        pytorch_cpu_inference.predict(img_batch)
 
-            # check if CUDA is available
-            if device.lower() == "cuda" and not CUDA_AVAILABLE:
-                continue
+    # PyTorch CUDA
+    if args.mode in ["pytorch_cuda", "all"] and device == "cuda":
+        pytorch_cuda_inference = PyTorchCUDAInference(model_loader)
 
-            model = init_cuda_model(model_loader, device, precision)
+        benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark()
+        pytorch_cuda_inference.predict(img_batch)
 
-            # If the configuration is not for TensorRT, store the model under a PyTorch key
-            if not is_trt:
-                models[f"PyTorch_{device}"] = model
-                model = model.to(device)
-                img_batch = img_batch.to(device)
-            else:
-                print("Compiling TensorRT model")
-                batch_size = 1 if args.mode == "cuda" else 32
-                model = torch_tensorrt.compile(
-                    model,
-                    inputs=[torch_tensorrt.Input((batch_size, 3, 224, 224), dtype=precision)],
-                    enabled_precisions={precision},
-                    truncate_long_and_double=True,
-                    require_full_compilation=True,
-                )
-                # If it is for TensorRT, determine the mode (FP32 or FP16) and store under a TensorRT key
-                mode = "fp32" if precision == torch.float32 else "fp16"
-                models[f"trt_{mode}"] = model
+    # TensorRT
+    if args.mode in ["tensorrt", "all"] and device == "cuda":
+        precisions = [torch.float16, torch.float32]
+        for precision in precisions:
+            tensorrt_inference = TensorRTInference(model_loader, precision=precision)
 
-            if args.mode != "all":
-                predict_cuda_model(
-                    model, img_batch, args.topk, model_loader.categories, precision
-                )
+            benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark()
+            tensorrt_inference.predict(img_batch)
 
-    # Aggregate Benchmark (if mode is "all")
+    # Plot graph combining all results
     if args.mode == "all":
-        models["onnx"] = ort_session
-        models["ov"] = ov_model
-
-        results = run_all_benchmarks(models, img_batch)
-        plot_benchmark_results(results)
+        plot_benchmark_results(benchmark_results)
 
 
 if __name__ == "__main__":

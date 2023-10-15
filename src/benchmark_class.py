@@ -124,7 +124,7 @@ class ONNXBenchmark(Benchmark):
         print("Starting benchmark ...")
         timings = []
 
-        for i in range(1, self.nruns+1):
+        for i in range(1, self.nruns + 1):
             start_time = time.time()
             _ = self.ort_session.run(None, {"input": input_data})
             end_time = time.time()
@@ -190,7 +190,7 @@ class OVBenchmark(Benchmark):
 
         # Benchmarking
         total_time = 0
-        for i in range(1, self.nruns+1):
+        for i in range(1, self.nruns + 1):
             start_time = time.time()
             _ = self.inference(self.dummy_input)
             total_time += time.time() - start_time
