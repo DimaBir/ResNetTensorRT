@@ -13,11 +13,13 @@ class ONNXInference(InferenceBase):
 
     def load_model(self):
         if not os.path.exists(self.onnx_path):
-            onnx_exporter = ONNXExporter(self.model_loader.model, self.model_loader.device, self.onnx_path)
+            onnx_exporter = ONNXExporter(
+                self.model_loader.model, self.model_loader.device, self.onnx_path
+            )
             onnx_exporter.export_model()
         return ort.InferenceSession(self.onnx_path, providers=["CPUExecutionProvider"])
 
-    def predict(self, input_data):
+    def predict(self, input_data, is_benchmark=False):
         logging.info(f"Running prediction for ONNX model")
         input_name = self.model.get_inputs()[0].name
         ort_inputs = {input_name: input_data.numpy()}
@@ -27,7 +29,7 @@ class ONNXInference(InferenceBase):
             if prob.ndim > 1:
                 prob = prob[0]
             prob = np.exp(prob) / np.sum(np.exp(prob))
-        return self.get_top_predictions(prob)
+        return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         super().benchmark(input_data, num_runs, warmup_runs)

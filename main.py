@@ -70,18 +70,20 @@ def main():
     if args.mode in ["pytorch_cuda", "all"] and device == "cuda":
         pytorch_cuda_inference = PyTorchCUDAInference(model_loader)
 
-        benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(img_batch)
+        benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(
+            img_batch
+        )
         pytorch_cuda_inference.predict(img_batch)
 
     # TensorRT
     if args.mode in ["tensorrt", "all"] and device == "cuda":
         precisions = [torch.float16, torch.float32]
         for precision in precisions:
-            tensorrt_inference = TensorRTInference(
-                model_loader, precision=precision
-            )
+            tensorrt_inference = TensorRTInference(model_loader, precision=precision)
 
-            benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(img_batch)
+            benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(
+                img_batch
+            )
             tensorrt_inference.predict(img_batch)
 
     # Plot graph combining all results
