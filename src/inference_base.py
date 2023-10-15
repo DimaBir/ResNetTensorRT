@@ -15,6 +15,7 @@ class InferenceBase:
         self.ov_path = ov_path
 
         self.categories = model_loader.categories
+        self.model = self.load_model()
         self.topk = topk
 
     def load_model(self):
