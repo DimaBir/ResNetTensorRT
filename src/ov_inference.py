@@ -31,7 +31,7 @@ class OVInference(InferenceBase):
         logging.info(f"Running prediction for OV model")
 
         input_name = next(iter(self.compiled_model.inputs))
-        outputs = self.compiled_model.infer(inputs={input_name: input_data.cpu().numpy()})
+        outputs = self.compiled_model(inputs={input_name: input_data.cpu().numpy()})
 
         # Assuming the model returns a dictionary with one key for class probabilities
         prob_key = next(iter(outputs))
