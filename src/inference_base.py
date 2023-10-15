@@ -6,9 +6,11 @@ import numpy as np
 
 
 class InferenceBase:
-    def __init__(self, model_loader, model_path, image_processor):
+    def __init__(self, model_loader, model_path, image_processor, onnx_path=None, ov_path=None):
         self.model_loader = model_loader
         self.model_path = model_path
+        self.onnx_path = onnx_path
+        self.ov_path = ov_path
         self.image_processor = image_processor
         self.categories = model_loader.categories
         self.local_model_dir = "models"

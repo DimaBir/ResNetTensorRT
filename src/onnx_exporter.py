@@ -1,6 +1,5 @@
 import torch
 from torch.onnx import export, TrainingMode
-from torchvision import models
 
 
 class ONNXExporter:

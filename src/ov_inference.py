@@ -10,7 +10,7 @@ from src.ov_exporter import OVExporter
 
 class OVInference(InferenceBase):
     def __init__(self, model_loader, model_path, image_processor):
-        super().__init__(model_loader, model_path, image_processor)
+        super().__init__(model_loader, image_processor, ov_path=model_path)
 
     def load_model(self):
         # Determine the path for the ONNX model
