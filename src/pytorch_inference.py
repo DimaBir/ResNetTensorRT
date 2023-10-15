@@ -4,8 +4,8 @@ from src.inference_base import InferenceBase
 
 
 class PyTorchCPUInference(InferenceBase):
-    def __init__(self, model_loader, image_processor):
-        super().__init__(model_loader, image_processor)
+    def __init__(self, model_loader):
+        super().__init__(model_loader)
 
     def load_model(self):
         model = torch.load(self.model_path, map_location="cpu")
@@ -25,8 +25,8 @@ class PyTorchCPUInference(InferenceBase):
 
 
 class PyTorchCUDAInference(InferenceBase):
-    def __init__(self, model_loader, image_processor):
-        super().__init__(model_loader, image_processor)
+    def __init__(self, model_loader):
+        super().__init__(model_loader)
 
     def load_model(self):
         model = torch.load(self.model_path)

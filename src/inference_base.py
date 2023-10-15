@@ -6,12 +6,12 @@ import numpy as np
 
 
 class InferenceBase:
-    def __init__(self, model_loader, model_path, image_processor, onnx_path=None, ov_path=None):
+    def __init__(self, model_loader, model_path, onnx_path=None, ov_path=None):
         self.model_loader = model_loader
         self.model_path = model_path
         self.onnx_path = onnx_path
         self.ov_path = ov_path
-        self.image_processor = image_processor
+
         self.categories = model_loader.categories
         self.local_model_dir = "models"
         self.local_model_path = os.path.join(
@@ -29,10 +29,6 @@ class InferenceBase:
 
     def load_model(self):
         raise NotImplementedError
-
-    def preprocess(self):
-        input_data = self.image_processor.process_image()
-        return input_data
 
     def predict(self, input_data, topk: int):
         raise NotImplementedError
