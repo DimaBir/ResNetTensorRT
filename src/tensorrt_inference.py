@@ -1,7 +1,16 @@
 import torch
-import torch_tensorrt as trt
 import logging
 from src.inference_base import InferenceBase
+
+
+CUDA_AVAILABLE = False
+if torch.cuda.is_available():
+    try:
+        import torch_tensorrt as trt
+
+        CUDA_AVAILABLE = True
+    except ImportError:
+        print("torch-tensorrt is not installed. Running on CPU mode only.")
 
 
 class TensorRTInference(InferenceBase):
