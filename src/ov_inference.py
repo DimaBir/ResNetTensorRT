@@ -11,6 +11,10 @@ class OVInference(InferenceBase):
     def __init__(self, model_loader, model_path):
         super().__init__(model_loader, ov_path=model_path)
 
+        self.core = ov.Core()
+        self.ov_model = self.load_model()
+        self.compiled_model = self.core.compile_model(self.ov_model, "AUTO")
+
     def load_model(self):
         # Determine the path for the ONNX model
         self.onnx_path = self.ov_path.replace(".ov", ".onnx")
@@ -24,14 +28,16 @@ class OVInference(InferenceBase):
         return ov_exporter.export_model()
 
     def predict(self, input_data):
-        # Run the OV model inference
         logging.info(f"Running prediction for OV model")
-        input_name = next(iter(self.model.inputs))
-        outputs = self.model.infer({input_name: input_data})
 
-        # Extract probabilities and log top-k predictions
+        input_name = next(iter(self.model.inputs))
+        outputs = self.compiled_model(inputs={input_name: input_data.cpu().numpy()})
+
+        # Assuming the model returns a dictionary with one key for class probabilities
         prob_key = next(iter(outputs))
         prob = outputs[prob_key]
+
+        # Apply Softmax to get probabilities
         prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
 
         return self.get_top_predictions(prob)
