@@ -27,7 +27,7 @@ class ONNXInference(InferenceBase):
             if prob.ndim > 1:
                 prob = prob[0]
             prob = np.exp(prob) / np.sum(np.exp(prob))
-        return self.get_top_predictions(prob, self.topk)
+        return self.get_top_predictions(prob)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         super().benchmark(input_data, num_runs, warmup_runs)
