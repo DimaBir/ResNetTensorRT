@@ -14,12 +14,9 @@ if torch.cuda.is_available():
 
 
 class TensorRTInference(InferenceBase):
-    def __init__(self, model_loader, precision=torch.float32):
-        self.model_loader = model_loader
-        self.model = None
+    def __init__(self, model_loader, image_processor, precision=torch.float32):
         self.precision = precision
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.load_model()
+        super().__init__(model_loader, image_processor)
 
     def load_model(self):
         # Load the PyTorch model

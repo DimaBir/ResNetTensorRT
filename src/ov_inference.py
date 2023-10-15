@@ -1,5 +1,6 @@
 import os
 import logging
+from typing import List
 import numpy as np
 import openvino as ov
 from src.inference_base import InferenceBase
@@ -8,8 +9,8 @@ from src.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):
-    def __init__(self, model_path, image_processor, categories):
-        super().__init__(model_path, image_processor, categories)
+    def __init__(self, model_loader, model_path, image_processor):
+        super().__init__(model_loader, model_path, image_processor)
 
     def load_model(self):
         # Determine the path for the ONNX model

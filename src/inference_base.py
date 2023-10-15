@@ -2,15 +2,15 @@ import os
 import shutil
 import time
 import logging
-from typing import List
 import numpy as np
 
 
 class InferenceBase:
-    def __init__(self, model_path, image_processor, categories: List[str]):
+    def __init__(self, model_loader, model_path, image_processor):
+        self.model_loader = model_loader
         self.model_path = model_path
         self.image_processor = image_processor
-        self.categories = categories
+        self.categories = model_loader.categories
         self.local_model_dir = "models"
         self.local_model_path = os.path.join(
             self.local_model_dir, os.path.basename(self.model_path)

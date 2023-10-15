@@ -8,6 +8,9 @@ from src.onnx_exporter import ONNXExporter
 
 
 class ONNXInference(InferenceBase):
+    def __init__(self, model_loader, model_path, image_processor):
+        super().__init__(model_loader, model_path, image_processor)
+
     def load_model(self):
         if not os.path.exists(self.model_path):
             exporter = ONNXExporter()
