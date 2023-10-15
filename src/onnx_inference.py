@@ -12,7 +12,7 @@ class ONNXInference(InferenceBase):
         super().__init__(model_loader, onnx_path=model_path)
 
     def load_model(self):
-        if not os.path.exists(self.model_path):
+        if not os.path.exists(self.onnx_path):
             onnx_exporter = ONNXExporter(self.model_loader.model, self.device, self.onnx_path)
             onnx_exporter.export_model()
         return ort.InferenceSession(self.onnx_path, providers=["CPUExecutionProvider"])
