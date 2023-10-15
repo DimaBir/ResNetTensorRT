@@ -1,6 +1,5 @@
 import os
 import logging
-from typing import List
 import numpy as np
 import openvino as ov
 from src.inference_base import InferenceBase
@@ -14,23 +13,15 @@ class OVInference(InferenceBase):
 
     def load_model(self):
         # Determine the path for the ONNX model
-        onnx_model_path = self.model_path.replace(".ov", ".onnx")
+        self.onnx_path = self.ov_path.replace(".ov", ".onnx")
 
         # Check if ONNX model exists
-        if not os.path.exists(onnx_model_path):
-            onnx_exporter = ONNXExporter(self.model_loader.model, self.device, onnx_model_path)
+        if not os.path.exists(self.onnx_path):
+            onnx_exporter = ONNXExporter(self.model_loader.model, self.device, self.onnx_path)
             onnx_exporter.export_model()
 
-        # Check if OV model exists
-        if not os.path.exists(self.model_path):
-            ov_exporter = OVExporter(self.model_path)
-            ov_exporter.export_model()
-
-        # Load the OV model using OpenVINO's API
-        ie = ov.IECore()
-        model = ie.read_network(model=self.model_path)
-        exec_net = ie.load_network(network=model, device_name="CPU")
-        return exec_net
+        ov_exporter = OVExporter(self.onnx_path)
+        return ov_exporter.export_model()
 
     def predict(self, input_data, topk: int):
         # Run the OV model inference
