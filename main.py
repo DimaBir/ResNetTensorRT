@@ -49,28 +49,28 @@ def main():
     if args.mode in ["onnx", "all"]:
         onnx_inference = ONNXInference(model_loader, args.onnx_path)
 
-        benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark()
+        benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark(img_batch)
         onnx_inference.predict(img_batch)
 
     # OpenVINO
     if args.mode in ["ov", "all"]:
         ov_inference = OVInference(model_loader, args.ov_path)
 
-        benchmark_results["OpenVINO (CPU)"] = ov_inference.benchmark()
+        benchmark_results["OpenVINO (CPU)"] = ov_inference.benchmark(img_batch)
         ov_inference.predict(img_batch)
 
     # PyTorch CPU
     if args.mode in ["pytorch_cpu", "all"]:
         pytorch_cpu_inference = PyTorchCPUInference(model_loader)
 
-        benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark()
+        benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark(img_batch)
         pytorch_cpu_inference.predict(img_batch)
 
     # PyTorch CUDA
     if args.mode in ["pytorch_cuda", "all"] and device == "cuda":
         pytorch_cuda_inference = PyTorchCUDAInference(model_loader)
 
-        benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark()
+        benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(img_batch)
         pytorch_cuda_inference.predict(img_batch)
 
     # TensorRT
@@ -81,7 +81,7 @@ def main():
                 model_loader, precision=precision
             )
 
-            benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark()
+            benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(img_batch)
             tensorrt_inference.predict(img_batch)
 
     # Plot graph combining all results
