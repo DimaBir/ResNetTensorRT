@@ -19,7 +19,6 @@ if torch.cuda.is_available():
 from benchmark.benchmark_utils import plot_benchmark_results
 from common.utils import parse_arguments
 from src.image_processor import ImageProcessor
-from prediction.prediction_models import *
 from src.model import ModelLoader
 import warnings
 
