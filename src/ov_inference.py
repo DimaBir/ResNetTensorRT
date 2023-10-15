@@ -2,7 +2,7 @@ import os
 import logging
 import numpy as np
 import openvino as ov
-from inference_base import InferenceBase
+from src.inference_base import InferenceBase
 from onnx_exporter import ONNXExporter
 from ov_exporter import OVExporter
 

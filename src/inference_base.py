@@ -2,10 +2,7 @@ import os
 import shutil
 import time
 import logging
-from typing import List, Tuple, Union, Dict, Any
-import openvino as ov
-import torch
-import onnxruntime as ort
+from typing import List
 import numpy as np
 
 

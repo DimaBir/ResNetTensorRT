@@ -1,6 +1,6 @@
 import logging
 import torch
-from inference_base import InferenceBase
+from src.inference_base import InferenceBase
 
 
 class PyTorchCPUInference(InferenceBase):

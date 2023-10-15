@@ -1,6 +1,6 @@
 import os
 import logging
-from inference_base import InferenceBase
+from src.inference_base import InferenceBase
 import onnxruntime as ort
 import numpy as np
 

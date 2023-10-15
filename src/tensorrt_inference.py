@@ -1,9 +1,10 @@
 import torch
 import torch_tensorrt as trt
 import logging
+from src.inference_base import InferenceBase
 
 
-class TensorRTInference:
+class TensorRTInference(InferenceBase):
     def __init__(self, model_loader, precision=torch.float32):
         self.model_loader = model_loader
         self.model = None
