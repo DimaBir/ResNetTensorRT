@@ -6,15 +6,16 @@
 2. [Requirements](#requirements)
     - [Steps to Run](#steps-to-run)
     - [Example Command](#example-command)
-3. [CPU Results](#cpu-results) ![Static Badge](https://img.shields.io/badge/update-orange)
-4. [GPU (CUDA) Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
-5. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
+3. [Results](#results)
+   - [CPU Results](#cpu-results) ![Static Badge](https://img.shields.io/badge/update-orange)
+   - [GPU (CUDA) Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
+6. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
     - [PyTorch CPU & CUDA](#pytorch-cpu--cuda)
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
-6. [Author](#author)
-7. [References](#references)
+7. [Author](#author)
+8. [References](#references)
 
 
 <img src="./inference/plot_trt.png" width="100%">
@@ -75,15 +76,22 @@ python main.py [--mode all]
 
 ### Example Command
 ```sh
-python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
+python main.py --topk 3 --mode=all --image_path="./inference/cat3.jpg"
 ```
 
-This command will run predictions on the chosen image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
+This command will run predictions on the chosen image (`./inference/cat3.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
-## CPU Results
+## Results
+1. **Average Inference Time**: This plot showcases the average time taken for inference across different model types and optimization techniques. The y-axis represents the model type (e.g., PyTorch CPU, TensorRT FP16, etc.), and the x-axis represents the average inference time in milliseconds. The shorter the bar, the faster the inference time.
+
+2. **Throughput**: This plot compares the throughput achieved by different model types. Throughput is measured in terms of the number of images processed per second. The y-axis represents the model type, and the x-axis represents the throughput. A higher bar indicates better throughput, meaning the model can process more images in a given time frame.
+
+These plots offer a comprehensive view of the performance improvements achieved by various inference optimization techniques, especially when leveraging TensorRT with different precision types like FP16 and FP32.
+
+### CPU Results
 <img src="./inference/plot_laptop.png" width="70%">
 
-### Prediction results
+#### Prediction results
 ```
 #1: 15% Egyptian cat
 #2: 14% tiger cat
@@ -91,16 +99,16 @@ This command will run predictions on the chosen image (`./inference/train.jpg`),
 #4: 2% doormat
 #5: 2% lynx
 ```
-### PC Setup Linux 
+#### PC Setup Linux 
 - CPU: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
 - RAM: 16 GB
 - GPU: None
 
-## GPU (CUDA) Results
-### Inference Benchmark Results
+### GPU (CUDA) Results
+#### Inference Benchmark Results
 <img src="./inference/plot_trt.png" width="100%">
 
-### Results explanation
+#### Results explanation
   - `PyTorch_cpu: 31.93 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
   - `PyTorch_cuda: 5.70 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
   - `TRT_fp32: 1.69 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
