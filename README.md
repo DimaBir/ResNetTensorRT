@@ -17,7 +17,7 @@
 7. [References](#references)
 
 
-<img src="./inference/plot_infer_thrp.png" width="70%">
+<img src="./inference/plot_infer_thrp.png" width="100%">
 
 ## Overview
 This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
