@@ -35,6 +35,9 @@ def main():
     """
     args = parse_arguments()
 
+    if args.DEBUG:
+        print("Debug mode is enabled")
+
     # Model and Image Initialization
     benchmark_results = {}
 
