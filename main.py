@@ -86,7 +86,7 @@ def main():
         pytorch_cuda_inference.predict(img_batch)
 
     # TensorRT
-    if args.mode in ["tensorrt", "all"] and device == "cuda":
+    if args.mode in ["tensorrt", "all"]:
         print("Inside inference for TENSORRT...")
         precisions = [torch.float16, torch.float32]
         for precision in precisions:
