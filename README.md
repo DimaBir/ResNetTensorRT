@@ -55,12 +55,12 @@ Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 ### Running the Docker Container
 1. **CPU Version**:
    ```bash
-   docker run -it --rm my_image_cpu /bin/bash
+   docker run -it --rm cpu_img /bin/bash
    ```
 
 2. **GPU Version**:
    ```bash
-   docker run --gpus all -it --rm my_image_gpu
+   docker run --gpus all -it --rm gpu_img
    ```
 
 ### Run the Script inside the Container
