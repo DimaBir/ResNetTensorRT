@@ -74,7 +74,7 @@ def main():
     # PyTorch CUDA
     print(f"args.mode: {args.mode}")
     print(f"Device: {device}")
-    if args.mode in ["cuda", "all"] and device == "cuda":
+    if args.mode in ["cuda", "all"]:
         print("Inside inference for CUDA...")
         pytorch_cuda_inference = PyTorchInference(
             model_loader, device=device, debug_mode=args.DEBUG
