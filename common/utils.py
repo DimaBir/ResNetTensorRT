@@ -80,4 +80,11 @@ def parse_arguments():
         help="Mode for exporting and running the model. Choices are: onnx, ov, cuda, tensorrt or all.",
     )
 
+    parser.add_argument(
+        "-D",
+        "--DEBUG",
+        action="store_true",
+        help="Enable or disable debug capabilities.",
+    )
+
     return parser.parse_args()

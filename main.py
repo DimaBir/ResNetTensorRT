@@ -45,28 +45,34 @@ def main():
 
     # ONNX
     if args.mode in ["onnx", "all"]:
-        onnx_inference = ONNXInference(model_loader, args.onnx_path)
+        onnx_inference = ONNXInference(
+            model_loader, args.onnx_path, debug_mode=args.DEBUG
+        )
 
         benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark(img_batch)
         onnx_inference.predict(img_batch)
 
     # OpenVINO
     if args.mode in ["ov", "all"]:
-        ov_inference = OVInference(model_loader, args.ov_path)
+        ov_inference = OVInference(model_loader, args.ov_path, debug_mode=args.DEBUG)
 
         benchmark_results["OpenVINO (CPU)"] = ov_inference.benchmark(img_batch)
         ov_inference.predict(img_batch)
 
     # PyTorch CPU
     if args.mode in ["cpu", "all"]:
-        pytorch_cpu_inference = PyTorchInference(model_loader, device="cpu")
+        pytorch_cpu_inference = PyTorchInference(
+            model_loader, device="cpu", debug_mode=args.DEBUG
+        )
 
         benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark(img_batch)
         pytorch_cpu_inference.predict(img_batch)
 
     # PyTorch CUDA
     if args.mode in ["cuda", "all"] and device == "cuda":
-        pytorch_cuda_inference = PyTorchInference(model_loader, device=device)
+        pytorch_cuda_inference = PyTorchInference(
+            model_loader, device=device, debug_mode=args.DEBUG
+        )
 
         benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(
             img_batch
@@ -77,7 +83,9 @@ def main():
     if args.mode in ["tensorrt", "all"] and device == "cuda":
         precisions = [torch.float16, torch.float32]
         for precision in precisions:
-            tensorrt_inference = TensorRTInference(model_loader, precision=precision)
+            tensorrt_inference = TensorRTInference(
+                model_loader, precision=precision, debug_mode=args.DEBUG
+            )
 
             benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(
                 img_batch
