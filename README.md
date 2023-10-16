@@ -55,7 +55,7 @@ Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 ### Running the Docker Container
 1. **CPU Version**:
    ```bash
-   docker run -it --rm my_image_cpu
+   docker run -it --rm my_image_cpu /bin/bash
    ```
 
 2. **GPU Version**:
