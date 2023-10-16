@@ -39,9 +39,10 @@ class TensorRTInference(InferenceBase):
         elif self.precision == torch.float32:
             self.model = self.model.float()
 
-        self.model = torch.jit.trace(
-            self.model, [torch.randn((1, 3, 224, 224)).to(self.device)]
-        )
+        # Convert the input tensor for tracing to the desired precision
+        tracing_input = torch.randn((1, 3, 224, 224)).to(self.device).to(self.precision)
+
+        self.model = torch.jit.trace(self.model, [tracing_input])
 
         # Convert the PyTorch model to TensorRT
         self.model = trt.ts.compile(
