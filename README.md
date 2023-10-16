@@ -6,20 +6,13 @@
 2. [Requirements](#requirements)
     - [Steps to Run](#steps-to-run)
     - [Example Command](#example-command)
-3. [GPU-CUDA Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
-    - [Results explanation](#results-explanation)
-    - [Example Input](#example-input)
-    - [Example prediction results](#example-prediction-results)
-    - [PC Setup](#pc-setup)
-4. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
+3. [CPU Results](#cpu-results)
+4. [GPU (CUDA) Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
+5. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
     - [PyTorch CPU & CUDA](#pytorch-cpu--cuda)
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
-5. [Extra](#extra) ![New](https://img.shields.io/badge/-New-842E5B)
-   - [Linux Server Inference](#linux-server-inference)
-   - [Prediction results](#prediction-results)
-   - [PC Setup Linux](#pc-setup-linux)
 6. [Author](#author)
 7. [References](#references)
 
@@ -87,7 +80,23 @@ python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
 
 This command will run predictions on the chosen image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
-## GPU-CUDA Results
+## CPU Results
+<img src="./inference/plot.png" width="70%">
+
+### Prediction results
+```
+#1: 15% Egyptian cat
+#2: 14% tiger cat
+#3: 9% tabby
+#4: 2% doormat
+#5: 2% lynx
+```
+### PC Setup Linux 
+- CPU: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+- RAM: 16 GB
+- GPU: None
+
+## GPU (CUDA) Results
 ### Inference Benchmark Results
 <img src="./inference/plot_infer_thrp.png" width="70%">
 
@@ -157,23 +166,6 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 3. Create an inference engine using OpenVINO's runtime.
 4. Perform inference on the provided image using the OpenVINO model.
 5. Benchmark results, including average inference time, are logged for the OpenVINO model.
-
-## Extra
-### Linux Server Inference
-<img src="./inference/plot.png" width="70%">
-
-### Prediction results
-```
-#1: 15% Egyptian cat
-#2: 14% tiger cat
-#3: 9% tabby
-#4: 2% doormat
-#5: 2% lynx
-```
-### PC Setup Linux 
-- CPU: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
-- RAM: 16 GB
-- GPU: None
 
 ## Author
 [DimaBir](https://github.com/DimaBir)
