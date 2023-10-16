@@ -59,7 +59,7 @@ class TensorRTInference(InferenceBase):
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
 
-        return self.log_top_predictions(prob, is_benchmark)
+        return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         """
