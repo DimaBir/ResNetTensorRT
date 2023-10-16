@@ -17,7 +17,7 @@
 7. [References](#references)
 
 
-<img src="./inference/plot_infer_thrp.png" width="100%">
+<img src="./inference/plot_new_gpu.png" width="100%">
 
 ## Overview
 This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
@@ -43,13 +43,13 @@ Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 1. **CPU Deployment**:
    For systems without a GPU or CUDA support, simply use the default base image.
    ```bash
-   docker build -t my_image_cpu .
+   docker build -t cpu_img .
    ```
    
 2. **GPU Deployment**:
    If your system has GPU and CUDA support, you can use the TensorRT base image to leverage GPU acceleration.
    ```bash
-   docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t my_project_image_gpu .
+   docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t gpu_img .
    ```
 
 ### Running the Docker Container
@@ -98,15 +98,15 @@ This command will run predictions on the chosen image (`./inference/train.jpg`),
 
 ## GPU (CUDA) Results
 ### Inference Benchmark Results
-<img src="./inference/plot_infer_thrp.png" width="100%">
+<img src="./inference/plot_new_gpu.png" width="100%">
 
 ### Results explanation
-  - `PyTorch_cpu: 31.83 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
-  - `PyTorch_cuda: 5.79 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
-  - `TRT_fp32: 1.68 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
+  - `PyTorch_cpu: 32.83 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
+  - `PyTorch_cuda: 5.59 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
+  - `TRT_fp32: 1.69 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
   - `TRT_fp16: 1.69 ms` indicates the average batch time when running the model with `TensorRT` using `float16` precision.
-  - ![New](https://img.shields.io/badge/-New-842E5B)`ONNX: 16.14 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
-  - ![New](https://img.shields.io/badge/-New-842E5B)`OpenVINO: 15.02 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`ONNX: 16.01 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`OpenVINO: 15.65 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
 
 ### Example Input
 Here is an example of the input image to run predictions and benchmarks on:
