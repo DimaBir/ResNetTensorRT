@@ -53,7 +53,7 @@ class TensorRTInference(InferenceBase):
         super().predict(input_data, is_benchmark=is_benchmark)
 
         with torch.no_grad():
-            outputs = self.model(input_data.to(self.device))
+            outputs = self.model(input_data.to(dtype=self.precision).to(self.device))
 
         # Compute the softmax probabilities
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
