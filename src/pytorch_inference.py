@@ -13,6 +13,7 @@ class PyTorchCPUInference(InferenceBase):
     def predict(self, input_data, is_benchmark=False):
         logging.info(f"Running prediction for PyTorch CPU model")
 
+        self.model.eval()
         with torch.no_grad():
             outputs = self.model(input_data.to(self.model_loader.device))
 

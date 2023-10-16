@@ -19,7 +19,7 @@ class ModelLoader:
         self.categories_path = "models/imagenet_classes.txt"
 
         # Check if model exists locally, if not, download and save
-        if not os.path.exists(self.model_path):
+        '''if not os.path.exists(self.model_path):
             os.makedirs("models", exist_ok=True)
             self.model = models.resnet50(
                 weights=models.ResNet50_Weights.IMAGENET1K_V2
@@ -30,8 +30,11 @@ class ModelLoader:
                 weights=models.ResNet50_Weights.IMAGENET1K_V2
             ).to(device)
             self.model.load_state_dict(torch.load(self.model_path))
+        '''
 
-        self.model.eval()
+        self.model = models.resnet50(
+            weights=models.ResNet50_Weights.IMAGENET1K_V2
+        ).to(device)
 
         # Check if categories exist locally, if not, download and save
         if not os.path.exists(self.categories_path):
