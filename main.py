@@ -90,7 +90,10 @@ def main():
             precisions = [torch.float16, torch.float32]
             for precision in precisions:
                 tensorrt_inference = TensorRTInference(
-                    model_loader, device=device, precision=precision, debug_mode=args.DEBUG
+                    model_loader,
+                    device=device,
+                    precision=precision,
+                    debug_mode=args.DEBUG,
                 )
 
                 benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(
