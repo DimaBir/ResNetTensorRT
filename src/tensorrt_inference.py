@@ -33,6 +33,12 @@ class TensorRTInference(InferenceBase):
         # Load the PyTorch model
         self.model = self.model_loader.model.to(self.device).eval()
 
+        # Convert the model to the desired precision
+        if self.precision == torch.float16:
+            self.model = self.model.half()
+        elif self.precision == torch.float32:
+            self.model = self.model.float()
+
         self.model = torch.jit.trace(
             self.model, [torch.randn((1, 3, 224, 224)).to(self.device)]
         )
@@ -53,7 +59,7 @@ class TensorRTInference(InferenceBase):
         super().predict(input_data, is_benchmark=is_benchmark)
 
         with torch.no_grad():
-            outputs = self.model(input_data.to(dtype=self.precision).to(self.device))
+            outputs = self.model(input_data.to(self.device).to(dtype=self.precision))
 
         # Compute the softmax probabilities
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
