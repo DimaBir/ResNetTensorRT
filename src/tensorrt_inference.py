@@ -1,4 +1,5 @@
 import torch
+import torch_tensorrt
 import logging
 from src.inference_base import InferenceBase
 
@@ -33,20 +34,16 @@ class TensorRTInference(InferenceBase):
         # Load the PyTorch model
         self.model = self.model_loader.model.to(self.device).eval()
 
-        # Convert the model to the desired precision
-        if self.precision == torch.float16:
-            self.model = self.model.half()
-        elif self.precision == torch.float32:
-            self.model = self.model.float()
+        # Convert the PyTorch model to TorchScript
+        scripted_model = torch.jit.trace(
+            self.model, torch.randn((1, 3, 224, 224)).to(self.device)
+        )
 
-        # Convert the input tensor for tracing to the desired precision
-        tracing_input = torch.randn((1, 3, 224, 224)).to(self.device).to(self.precision)
-
-        self.model = torch.jit.trace(self.model, [tracing_input])
-
-        # Convert the PyTorch model to TensorRT
-        self.model = trt.ts.compile(
-            self.model, inputs=[trt.Input((1, 3, 224, 224), dtype=self.precision)]
+        # Compile the TorchScript model with TensorRT
+        self.model = torch_tensorrt.compile(
+            scripted_model,
+            inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=self.precision)],
+            enabled_precisions={self.precision},
         )
 
     def predict(self, input_data, is_benchmark=False):
