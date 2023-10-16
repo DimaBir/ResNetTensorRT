@@ -9,20 +9,14 @@ class PyTorchInference(InferenceBase):
         self.model = self.load_model()
 
     def load_model(self):
-        if self.device == "cuda":
-            model = torch.load(self.model_path)
-        else:
-            model = self.model_loader.model
-        model.to(self.device)
-        model.eval()
-        return model
+        return self.model_loader.model.to(self.model_loader.device)
 
     def predict(self, input_data, is_benchmark=False):
         super().predict(input_data, is_benchmark=is_benchmark)
 
         self.model.eval()
         with torch.no_grad():
-            outputs = self.model(input_data.to(self.device))
+            outputs = self.model(input_data.to(self.model_loader.device))
 
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
@@ -30,4 +24,4 @@ class PyTorchInference(InferenceBase):
         return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
-        super().benchmark(input_data, num_runs, warmup_runs)
+        return super().benchmark(input_data, num_runs, warmup_runs)
