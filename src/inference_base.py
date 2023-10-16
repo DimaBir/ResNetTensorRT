@@ -12,7 +12,7 @@ class InferenceBase:
         ov_path=None,
         topk=5,
         debug_mode=False,
-        batch_size=32,
+        batch_size=8,
     ):
         """
         Base class for inference.
