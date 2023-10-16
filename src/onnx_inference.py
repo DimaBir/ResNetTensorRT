@@ -41,7 +41,7 @@ class ONNXInference(InferenceBase):
         super().predict(input_data, is_benchmark)
 
         input_name = self.model.get_inputs()[0].name
-        ort_inputs = {input_name: input_data.numpy()}
+        ort_inputs = {input_name: input_data.cpu().numpy()}
         ort_outs = self.model.run(None, ort_inputs)
 
         # Extract probabilities from the output and normalize them
