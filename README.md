@@ -98,7 +98,7 @@ This command will run predictions on the chosen image (`./inference/train.jpg`),
 
 ## GPU (CUDA) Results
 ### Inference Benchmark Results
-<img src="./inference/plot_infer_thrp.png" width="70%">
+<img src="./inference/plot_infer_thrp.png" width="100%">
 
 ### Results explanation
   - `PyTorch_cpu: 31.83 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
