@@ -37,25 +37,24 @@ class TensorRTInference(InferenceBase):
             self.model, inputs=[trt.Input((1, 3, 224, 224), dtype=self.precision)]
         )
 
-    def predict(self, img_batch, topk: int):
+    def predict(self, input_data, is_benchmark=False):
         """
         Run prediction on the input data using the TensorRT model.
 
-        :param img_batch: Data to run the prediction on.
-        :param topk: Number of top predictions to return.
+        :param input_data: Data to run the prediction on.
+        :param is_benchmark: If True, the prediction is part of a benchmark run.
         :return: Top predictions based on the probabilities.
         """
-        logging.info(
-            f"Running prediction for TensorRT (CUDA) model with {self.precision} precision"
-        )
+        super().predict(input_data, is_benchmark=is_benchmark)
+
         with torch.no_grad():
-            outputs = self.model(img_batch.to(self.device))
+            outputs = self.model(input_data.to(self.device))
 
         # Compute the softmax probabilities
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
 
-        return self.log_top_predictions(prob, topk)
+        return self.log_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         """
