@@ -11,6 +11,8 @@ def plot_benchmark_results(results: Dict[str, float]):
 
     :param results: Dictionary of average inference times. Key is model type, value is average inference time.
     """
+    plot_path = "./inference/plot.png"
+
     # Convert dictionary to two lists for plotting
     models = list(results.keys())
     times = list(results.values())
@@ -40,8 +42,10 @@ def plot_benchmark_results(results: Dict[str, float]):
     plt.title("ResNet50 - Inference Benchmark Results")
 
     # Save the plot to a file
-    plt.savefig("./inference/plot.png", bbox_inches="tight")
+    plt.savefig(plot_path, bbox_inches="tight")
     plt.show()
+
+    print(f"Plot saved to {plot_path}")
 
 
 def parse_arguments():
