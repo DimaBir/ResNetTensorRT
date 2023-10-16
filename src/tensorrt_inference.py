@@ -33,6 +33,10 @@ class TensorRTInference(InferenceBase):
         # Load the PyTorch model
         self.model = self.model_loader.model.to(self.device).eval()
 
+        self.model = torch.jit.trace(
+            self.model, [torch.randn((1, 3, 224, 224)).to(self.device)]
+        )
+
         # Convert the PyTorch model to TensorRT
         self.model = trt.ts.compile(
             self.model, inputs=[trt.Input((1, 3, 224, 224), dtype=self.precision)]
