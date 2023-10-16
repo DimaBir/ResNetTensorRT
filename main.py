@@ -71,33 +71,32 @@ def main():
         benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark(img_batch)
         pytorch_cpu_inference.predict(img_batch)
 
-    # PyTorch CUDA
-    print(f"args.mode: {args.mode}")
-    print(f"Device: {device}")
-    if args.mode in ["cuda", "all"]:
-        print("Inside inference for CUDA...")
-        pytorch_cuda_inference = PyTorchInference(
-            model_loader, device=device, debug_mode=args.DEBUG
-        )
-
-        benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(
-            img_batch
-        )
-        pytorch_cuda_inference.predict(img_batch)
-
-    # TensorRT
-    if args.mode in ["tensorrt", "all"]:
-        print("Inside inference for TENSORRT...")
-        precisions = [torch.float16, torch.float32]
-        for precision in precisions:
-            tensorrt_inference = TensorRTInference(
-                model_loader, precision=precision, debug_mode=args.DEBUG
+    # PyTorch CUDA + TRT
+    if torch.cuda.is_available():
+        if args.mode in ["cuda", "all"]:
+            print("Inside inference for CUDA...")
+            pytorch_cuda_inference = PyTorchInference(
+                model_loader, device=device, debug_mode=args.DEBUG
             )
 
-            benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(
+            benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(
                 img_batch
             )
-            tensorrt_inference.predict(img_batch)
+            pytorch_cuda_inference.predict(img_batch)
+
+        # TensorRT
+        if args.mode in ["tensorrt", "all"]:
+            print("Inside inference for TENSORRT...")
+            precisions = [torch.float16, torch.float32]
+            for precision in precisions:
+                tensorrt_inference = TensorRTInference(
+                    model_loader, precision=precision, debug_mode=args.DEBUG
+                )
+
+                benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(
+                    img_batch
+                )
+                tensorrt_inference.predict(img_batch)
 
     # Plot graph combining all results
     if args.mode == "all":
