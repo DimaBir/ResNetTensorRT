@@ -4,8 +4,8 @@ from src.inference_base import InferenceBase
 
 class PyTorchInference(InferenceBase):
     def __init__(self, model_loader, device="cpu", debug_mode=False):
-        super().__init__(model_loader, debug_mode=debug_mode)
         self.device = device
+        super().__init__(model_loader, debug_mode=debug_mode)
         self.model = self.load_model()
 
     def load_model(self):
