@@ -13,7 +13,7 @@ if CUDA_AVAILABLE:
 
 
 class TensorRTInference(InferenceBase):
-    def __init__(self, model_loader, precision=torch.float32, debug_mode=False):
+    def __init__(self, model_loader, device, precision=torch.float32, debug_mode=False):
         """
         Initialize the TensorRTInference object.
 
@@ -21,7 +21,8 @@ class TensorRTInference(InferenceBase):
         :param precision: Precision mode for TensorRT (default is torch.float32).
         """
         self.precision = precision
-        super().__init__(model_loader, debug_mode=False)
+        self.device = device
+        super().__init__(model_loader, debug_mode=debug_mode)
         if CUDA_AVAILABLE:
             self.load_model()
 
