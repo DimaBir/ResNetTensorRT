@@ -72,7 +72,9 @@ def main():
         pytorch_cpu_inference.predict(img_batch)
 
     # PyTorch CUDA
+    print(f"args.mode: {args.mode}")
     if args.mode in ["cuda", "all"] and device == "cuda":
+        print("Inside inference for CUDA...")
         pytorch_cuda_inference = PyTorchInference(
             model_loader, device=device, debug_mode=args.DEBUG
         )
