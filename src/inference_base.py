@@ -9,7 +9,7 @@ class InferenceBase:
     def __init__(self, model_loader, onnx_path=None, ov_path=None, topk=5):
         self.model_loader = model_loader
         self.model = self.model_loader.model
-        self.model_path = model_loader.model_path
+        # self.model_path = model_loader.model_path
 
         self.onnx_path = onnx_path
         self.ov_path = ov_path
