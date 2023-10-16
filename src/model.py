@@ -31,6 +31,8 @@ class ModelLoader:
             ).to(device)
             self.model.load_state_dict(torch.load(self.model_path))
 
+        self.model.eval()
+
         # Check if categories exist locally, if not, download and save
         if not os.path.exists(self.categories_path):
             self.categories = pd.read_csv(self.categories_url, header=None)
