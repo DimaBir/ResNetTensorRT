@@ -38,7 +38,8 @@ class ONNXInference(InferenceBase):
         :param is_benchmark: If True, the prediction is part of a benchmark run.
         :return: Top predictions based on the probabilities.
         """
-        logging.info(f"Running prediction for ONNX model")
+        super().predict(input_data, is_benchmark)
+
         input_name = self.model.get_inputs()[0].name
         ort_inputs = {input_name: input_data.numpy()}
         ort_outs = self.model.run(None, ort_inputs)
