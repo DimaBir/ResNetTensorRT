@@ -19,6 +19,8 @@ class ModelLoader:
         self.categories_path = "models/imagenet_classes.txt"
 
         # Check if model exists locally, if not, download and save
+        if not os.path.exists(self.model_path):
+            os.makedirs("models", exist_ok=True)
         '''if not os.path.exists(self.model_path):
             os.makedirs("models", exist_ok=True)
             self.model = models.resnet50(
