@@ -11,7 +11,7 @@ class ModelLoader:
 
         :param device: The device to load the model on ("cpu" or "cuda").
         """
-        self.device = device
+        '''self.device = device
         self.model_path = "models/resnet50.pth"
         self.categories_url = (
             "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt"
@@ -21,7 +21,7 @@ class ModelLoader:
         # Check if model exists locally, if not, download and save
         if not os.path.exists(self.model_path):
             os.makedirs("models", exist_ok=True)
-        '''if not os.path.exists(self.model_path):
+        if not os.path.exists(self.model_path):
             os.makedirs("models", exist_ok=True)
             self.model = models.resnet50(
                 weights=models.ResNet50_Weights.IMAGENET1K_V2
@@ -32,11 +32,6 @@ class ModelLoader:
                 weights=models.ResNet50_Weights.IMAGENET1K_V2
             ).to(device)
             self.model.load_state_dict(torch.load(self.model_path))
-        '''
-
-        self.model = models.resnet50(
-            weights=models.ResNet50_Weights.IMAGENET1K_V2
-        ).to(device)
 
         # Check if categories exist locally, if not, download and save
         if not os.path.exists(self.categories_path):
@@ -44,6 +39,15 @@ class ModelLoader:
             self.categories.to_csv(self.categories_path, index=False)
         else:
             self.categories = pd.read_csv(self.categories_path, header=None)
+        '''
+        self.model = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2).to(
+            device
+        )
+        self.device = device
+        self.categories: pd.DataFrame = pd.read_csv(
+            "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt",
+            header=None,
+        )
 
     def predict(self, img_batch: torch.Tensor) -> torch.Tensor:
         """
