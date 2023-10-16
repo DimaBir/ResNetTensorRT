@@ -38,7 +38,7 @@ class InferenceBase:
         :param is_benchmark: If True, the prediction is part of a benchmark run.
         """
         logging.info(f"Running prediction for {self.__class__.__name__} model")
-        if self.debug_mode:
+        if self.debug_mode and not is_benchmark:
             print(f"Running prediction for {self.__class__.__name__} model")
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
