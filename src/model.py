@@ -1,5 +1,4 @@
 import pandas as pd
-import torch
 from torchvision import models
 
 
@@ -18,20 +17,3 @@ class ModelLoader:
             "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt",
             header=None,
         )
-
-    def predict(self, img_batch: torch.Tensor) -> torch.Tensor:
-        """
-        Make a prediction on the provided image batch.
-
-        :param img_batch: A batch of images to make predictions on.
-        :return: A tensor representing the probabilities of the predictions.
-        """
-        # Set the model to evaluation mode and make a prediction
-        self.model.eval()
-        with torch.no_grad():
-            outputs = self.model(img_batch)
-
-        # Compute the softmax probabilities
-        prob = torch.nn.functional.softmax(outputs[0], dim=0)
-
-        return prob

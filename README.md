@@ -6,25 +6,18 @@
 2. [Requirements](#requirements)
     - [Steps to Run](#steps-to-run)
     - [Example Command](#example-command)
-3. [GPU-CUDA Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
-    - [Results explanation](#results-explanation)
-    - [Example Input](#example-input)
-    - [Example prediction results](#example-prediction-results)
-    - [PC Setup](#pc-setup)
-4. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
+3. [CPU Results](#cpu-results) ![Static Badge](https://img.shields.io/badge/update-orange)
+4. [GPU (CUDA) Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
+5. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
     - [PyTorch CPU & CUDA](#pytorch-cpu--cuda)
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
     - [OpenVINO](#openvino)
-5. [Extra](#extra) ![New](https://img.shields.io/badge/-New-842E5B)
-   - [Linux Server Inference](#linux-server-inference)
-   - [Prediction results](#prediction-results)
-   - [PC Setup Linux](#pc-setup-linux)
 6. [Author](#author)
 7. [References](#references)
 
 
-<img src="./inference/plot_latest.png" width="100%">
+<img src="./inference/plot_new_gpu.png" width="100%">
 
 ## Overview
 This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
@@ -50,13 +43,13 @@ Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 1. **CPU Deployment**:
    For systems without a GPU or CUDA support, simply use the default base image.
    ```bash
-   docker build -t my_image_cpu .
+   docker build -t cpu_img .
    ```
    
 2. **GPU Deployment**:
    If your system has GPU and CUDA support, you can use the TensorRT base image to leverage GPU acceleration.
    ```bash
-   docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t my_project_image_gpu .
+   docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t gpu_img .
    ```
 
 ### Running the Docker Container
@@ -78,7 +71,7 @@ python main.py [--mode all]
 ### Arguments
 - `--image_path`: (Optional) Specifies the path to the image you want to predict.
 - `--topk`: (Optional) Specifies the number of top predictions to show. Defaults to 5 if not provided.
-- `--mode`: (Optional) Specifies the model's mode for exporting and running. Choices are: `onnx`, `ov`, `cuda`, and `all`.  If not provided, it defaults to `all`.
+- `--mode`: (Optional) Specifies the model's mode for exporting and running. Choices are: `onnx`, `ov`, `cpu`, `cuda`, `tensorrt`, and `all`.  If not provided, it defaults to `all`.
 
 ### Example Command
 ```sh
@@ -87,17 +80,33 @@ python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
 
 This command will run predictions on the chosen image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
-## GPU-CUDA Results
+## CPU Results
+<img src="./inference/plot.png" width="70%">
+
+### Prediction results
+```
+#1: 15% Egyptian cat
+#2: 14% tiger cat
+#3: 9% tabby
+#4: 2% doormat
+#5: 2% lynx
+```
+### PC Setup Linux 
+- CPU: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+- RAM: 16 GB
+- GPU: None
+
+## GPU (CUDA) Results
 ### Inference Benchmark Results
-<img src="./inference/plot_latest.png" width="70%">
+<img src="./inference/plot_new_gpu.png" width="100%">
 
 ### Results explanation
-  - `PyTorch_cpu: 978.71 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
-  - `PyTorch_cuda: 30.11 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
-  - `TRT_fp32: 19.20 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
-  - `TRT_fp16: 7.32 ms` indicates the average batch time when running the model with `TensorRT` using `float16` precision.
-  - ![New](https://img.shields.io/badge/-New-842E5B)`ONNX: 15.95 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
-  - ![New](https://img.shields.io/badge/-New-842E5B)`OpenVINO: 13.37 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
+  - `PyTorch_cpu: 32.83 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
+  - `PyTorch_cuda: 5.59 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
+  - `TRT_fp32: 1.69 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
+  - `TRT_fp16: 1.69 ms` indicates the average batch time when running the model with `TensorRT` using `float16` precision.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`ONNX: 16.01 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`OpenVINO: 15.65 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
 
 ### Example Input
 Here is an example of the input image to run predictions and benchmarks on:
@@ -157,33 +166,6 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 3. Create an inference engine using OpenVINO's runtime.
 4. Perform inference on the provided image using the OpenVINO model.
 5. Benchmark results, including average inference time, are logged for the OpenVINO model.
-
-## Extra
-### Linux Server Inference
-<img src="./inference/plot_linux_server.png" width="70%">
-
-### Prediction results
-`model.log` file content
-```
-Running prediction for OV model
-#1: 15% Egyptian cat
-#2: 14% tiger cat
-#3: 9% tabby
-#4: 2% doormat
-#5: 2% lynx
-
-
-Running prediction for ONNX model
-#1: 15% Egyptian cat
-#2: 14% tiger cat
-#3: 9% tabby
-#4: 2% doormat
-#5: 2% lynx
-```
-### PC Setup Linux 
-- CPU: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
-- RAM: 16 GB
-- GPU: None
 
 ## Author
 [DimaBir](https://github.com/DimaBir)
