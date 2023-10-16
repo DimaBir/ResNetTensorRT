@@ -86,7 +86,7 @@ def main():
 
         # TensorRT
         if args.mode in ["tensorrt", "all"]:
-            precisions = [torch.half, torch.float]
+            precisions = [torch.float16, torch.float32]
             for precision in precisions:
                 tensorrt_inference = TensorRTInference(
                     model_loader,

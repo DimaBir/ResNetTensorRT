@@ -81,7 +81,7 @@ python main.py --topk 3 --mode=all --image_path="./inference/train.jpg"
 This command will run predictions on the chosen image (`./inference/train.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
 
 ## CPU Results
-<img src="./inference/plot.png" width="70%">
+<img src="./inference/plot_laptop.png" width="70%">
 
 ### Prediction results
 ```
