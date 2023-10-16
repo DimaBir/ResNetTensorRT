@@ -1,3 +1,4 @@
+import os
 import torch
 from torch.onnx import export, TrainingMode
 
@@ -13,6 +14,9 @@ class ONNXExporter:
 
         # Define dummy input tensor
         x = torch.randn(1, 3, 224, 224).to(self.device)
+
+        if not os.path.exists(self.onnx_path):
+            os.makedirs("models", exist_ok=True)
 
         # Export model as ONNX
         export(
