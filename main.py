@@ -25,7 +25,7 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="torchvision.io.image")
 
 # Configure logging
-logging.basicConfig(filename="model.log", level=logging.INFO)
+logging.basicConfig(filename="inference.log", level=logging.INFO)
 
 
 def main():
