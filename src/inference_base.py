@@ -1,6 +1,7 @@
 import time
 import logging
 import numpy as np
+import torch
 
 
 class InferenceBase:
@@ -42,25 +43,29 @@ class InferenceBase:
             if self.debug_mode:
                 print(f"Running prediction for {self.__class__.__name__} model")
 
-    def benchmark(self, input_data, num_runs=100, warmup_runs=50):
+    def benchmark(self, input_data, num_runs=100, warmup_runs=50, batch_size=32):
         """
         Benchmark the prediction performance.
 
+        :param batch_size:
         :param input_data: Data to run the benchmark on.
         :param num_runs: Number of runs for the benchmark.
         :param warmup_runs: Number of warmup runs before the benchmark.
         :return: Average inference time in milliseconds.
         """
+        # Create a batch of 32 identical images
+        input_batch = torch.stack([input_data] * batch_size)
+
         # Warmup
         logging.info(f"Starting warmup for {self.__class__.__name__} inference...")
         for _ in range(warmup_runs):
-            self.predict(input_data, is_benchmark=True)
+            self.predict(input_batch, is_benchmark=True)
 
         # Benchmark
         logging.info(f"Starting benchmark for {self.__class__.__name__} inference...")
         start_time = time.time()
         for _ in range(num_runs):
-            self.predict(input_data, is_benchmark=True)
+            self.predict(input_batch, is_benchmark=True)
         avg_time = ((time.time() - start_time) / num_runs) * 1000  # Convert to ms
 
         logging.info(f"Average inference time for {num_runs} runs: {avg_time:.4f} ms")
