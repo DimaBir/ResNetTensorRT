@@ -4,7 +4,9 @@ import numpy as np
 
 
 class InferenceBase:
-    def __init__(self, model_loader, onnx_path=None, ov_path=None, topk=5, debug_mode=False):
+    def __init__(
+        self, model_loader, onnx_path=None, ov_path=None, topk=5, debug_mode=False
+    ):
         """
         Base class for inference.
 
@@ -60,7 +62,9 @@ class InferenceBase:
 
         logging.info(f"Average inference time for {num_runs} runs: {avg_time:.4f} ms")
         if self.debug_mode:
-            print(f"Average inference time for {self.__class__.__name__} and {num_runs} runs: {avg_time:.4f} ms")
+            print(
+                f"Average inference time for {self.__class__.__name__} and {num_runs} runs: {avg_time:.4f} ms"
+            )
         return avg_time
 
     def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
@@ -75,7 +79,7 @@ class InferenceBase:
             return None
 
         # Get the top indices and probabilities
-        top_indices = prob.argsort()[-self.topk:][::-1]
+        top_indices = prob.argsort()[-self.topk :][::-1]
         top_probs = prob[top_indices]
 
         # Log and print the top predictions
