@@ -86,7 +86,21 @@ class InferenceBase:
             print(
                 f"Average inference time for {self.__class__.__name__} and {num_runs} runs: {avg_time:.4f} ms"
             )
-        return avg_time
+
+        # Calculate throughput
+        total_samples = input_data.size(0) * num_runs
+        total_time_seconds = time.time() - start_time
+        throughput = total_samples / total_time_seconds
+
+        logging.info(
+            f"Throughput for {self.__class__.__name__}: {throughput:.2f} samples/sec"
+        )
+        if self.debug_mode:
+            print(
+                f"Throughput for {self.__class__.__name__}: {throughput:.2f} samples/sec"
+            )
+
+        return avg_time, throughput
 
     def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
         """

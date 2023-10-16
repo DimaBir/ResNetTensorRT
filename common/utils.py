@@ -2,46 +2,65 @@ import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict
+from typing import Dict, Tuple
 
 
-def plot_benchmark_results(results: Dict[str, float]):
+def plot_benchmark_results(results: Dict[str, Tuple[float, float]]):
     """
     Plot the benchmark results using Seaborn.
 
-    :param results: Dictionary of average inference times. Key is model type, value is average inference time.
+    :param results: Dictionary where the key is the model type and the value is a tuple (average inference time, throughput).
     """
     plot_path = "./inference/plot.png"
 
-    # Convert dictionary to two lists for plotting
+    # Extract data from the results
     models = list(results.keys())
-    times = list(results.values())
+    times = [value[0] for value in results.values()]
+    throughputs = [value[1] for value in results.values()]
 
-    # Create a DataFrame for plotting
-    data = pd.DataFrame({"Model": models, "Time": times})
+    # Create DataFrames for plotting
+    time_data = pd.DataFrame({"Model": models, "Time": times})
+    throughput_data = pd.DataFrame({"Model": models, "Throughput": throughputs})
 
-    # Sort the DataFrame by Time
-    data = data.sort_values("Time", ascending=True)
+    # Sort the DataFrames
+    time_data = time_data.sort_values("Time", ascending=True)
+    throughput_data = throughput_data.sort_values("Throughput", ascending=False)
 
-    # Plot
-    plt.figure(figsize=(10, 6))
-    ax = sns.barplot(
-        x=data["Time"],
-        y=data["Model"],
-        hue=data["Model"],
+    # Create subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
+
+    # Plot inference times
+    sns.barplot(
+        x=time_data["Time"],
+        y=time_data["Model"],
+        hue=time_data["Model"],
         palette="rocket",
+        ax=ax1,
         legend=False,
     )
+    ax1.set_xlabel("Average Inference Time (ms)")
+    ax1.set_ylabel("Model Type")
+    ax1.set_title("ResNet50 - Inference Benchmark Results")
+    for index, value in enumerate(time_data["Time"]):
+        ax1.text(value, index, f"{value:.2f} ms", color="black", ha="left", va="center")
 
-    # Adding the actual values on the bars
-    for index, value in enumerate(data["Time"]):
-        ax.text(value, index, f"{value:.2f} ms", color="black", ha="left", va="center")
-
-    plt.xlabel("Average Inference Time (ms)")
-    plt.ylabel("Model Type")
-    plt.title("ResNet50 - Inference Benchmark Results")
+    # Plot throughputs
+    sns.barplot(
+        x=throughput_data["Throughput"],
+        y=throughput_data["Model"],
+        hue=throughput_data["Model"],
+        palette="viridis",
+        ax=ax2,
+        legend=False,
+    )
+    ax2.set_xlabel("Throughput (samples/sec)")
+    ax2.set_ylabel("")
+    ax2.set_title("ResNet50 - Throughput Benchmark Results")
+    for index, value in enumerate(throughput_data["Throughput"]):
+        ax2.text(value, index, f"{value:.2f}", color="black", ha="left", va="center")
 
     # Save the plot to a file
+    plt.tight_layout()
     plt.savefig(plot_path, bbox_inches="tight")
     plt.show()
 
