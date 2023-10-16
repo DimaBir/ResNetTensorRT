@@ -1,48 +1,33 @@
-import logging
 import torch
 from src.inference_base import InferenceBase
 
 
-class PyTorchCPUInference(InferenceBase):
-    def __init__(self, model_loader):
-        super().__init__(model_loader)
+class PyTorchInference(InferenceBase):
+    def __init__(self, model_loader, device="cpu", debug_mode=False):
+        super().__init__(model_loader, debug_mode=debug_mode)
+        self.device = device
+        self.model = self.load_model()
 
     def load_model(self):
-        return self.model_loader.model.to(self.model_loader.device)
-
-    def predict(self, input_data, is_benchmark=False):
-        logging.info(f"Running prediction for PyTorch CPU model")
-
-        self.model.eval()
-        with torch.no_grad():
-            outputs = self.model(input_data.to(self.model_loader.device))
-
-        prob = torch.nn.functional.softmax(outputs[0], dim=0)
-        prob = prob.cpu().numpy()
-        return self.get_top_predictions(prob, is_benchmark)
-
-    def benchmark(self, input_data, num_runs=100, warmup_runs=50):
-        return super().benchmark(input_data, num_runs, warmup_runs)
-
-
-class PyTorchCUDAInference(InferenceBase):
-    def __init__(self, model_loader):
-        super().__init__(model_loader)
-
-    def load_model(self):
-        model = torch.load(self.model_path)
-        model.to("cuda")
+        if self.device == "cuda":
+            model = torch.load(self.model_path)
+        else:
+            model = self.model_loader.model
+        model.to(self.device)
         model.eval()
         return model
 
-    def predict(self, input_data, topk: int):
-        logging.info(f"Running prediction for PyTorch CUDA model")
-        input_data = input_data.to("cuda")
+    def predict(self, input_data, is_benchmark=False):
+        super().predict(input_data, is_benchmark=is_benchmark)
+
+        self.model.eval()
         with torch.no_grad():
-            outputs = self.model(input_data)
+            outputs = self.model(input_data.to(self.device))
+
         prob = torch.nn.functional.softmax(outputs[0], dim=0)
         prob = prob.cpu().numpy()
-        return self.get_top_predictions(prob, topk)
+
+        return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         super().benchmark(input_data, num_runs, warmup_runs)

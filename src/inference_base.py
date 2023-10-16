@@ -6,7 +6,9 @@ import numpy as np
 
 
 class InferenceBase:
-    def __init__(self, model_loader, onnx_path=None, ov_path=None, topk=5):
+    def __init__(
+        self, model_loader, onnx_path=None, ov_path=None, topk=5, debug_mode=False
+    ):
         self.model_loader = model_loader
         self.model = self.model_loader.model
         # self.model_path = model_loader.model_path
@@ -17,12 +19,13 @@ class InferenceBase:
         self.categories = model_loader.categories
         self.model = self.load_model()
         self.topk = topk
+        self.debug_mode = debug_mode
 
     def load_model(self):
         raise NotImplementedError
 
     def predict(self, input_data, is_benchmark=False):
-        raise NotImplementedError
+        logging.info(f"Running prediction for {self.__class__.__name__} model")
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         # Warmup
@@ -37,9 +40,10 @@ class InferenceBase:
             self.predict(input_data, is_benchmark=True)
         avg_time = ((time.time() - start_time) / num_runs) * 1000  # To ms
         logging.info(f"Average inference time for {num_runs} runs: {avg_time:.4f} ms")
-        print(
-            f"Average inference time for {self.__class__.__name__} and {num_runs} runs: {avg_time:.4f} ms"
-        )
+        if self.debug_mode:
+            print(
+                f"Average inference time for {self.__class__.__name__} and {num_runs} runs: {avg_time:.4f} ms"
+            )
         return avg_time
 
     def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
@@ -52,4 +56,6 @@ class InferenceBase:
             probability = top_probs[i]
             class_label = self.categories[0][int(top_indices[i])]
             logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
+            if self.debug_mode:
+                print(f"#{i + 1}: {int(probability * 100)}% {class_label}")
         return prob

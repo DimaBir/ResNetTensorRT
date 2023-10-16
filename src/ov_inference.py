@@ -8,8 +8,8 @@ from src.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):
-    def __init__(self, model_loader, model_path):
-        super().__init__(model_loader, ov_path=model_path)
+    def __init__(self, model_loader, model_path, debug_mode=False):
+        super().__init__(model_loader, ov_path=model_path, debug_mode=debug_mode)
 
         self.core = ov.Core()
         self.ov_model = self.load_model()
@@ -30,7 +30,7 @@ class OVInference(InferenceBase):
         return ov_exporter.export_model()
 
     def predict(self, input_data, is_benchmark=False):
-        logging.info(f"Running prediction for OV model")
+        super().predict(input_data, is_benchmark=is_benchmark)
 
         input_name = next(iter(self.compiled_model.inputs))
         outputs = self.compiled_model(inputs={input_name: input_data.cpu().numpy()})

@@ -3,7 +3,7 @@ import torch
 
 from src.onnx_inference import ONNXInference
 from src.ov_inference import OVInference
-from src.pytorch_inference import PyTorchCPUInference, PyTorchCUDAInference
+from src.pytorch_inference import PyTorchInference
 
 from src.tensorrt_inference import TensorRTInference
 
@@ -59,14 +59,14 @@ def main():
 
     # PyTorch CPU
     if args.mode in ["cpu", "all"]:
-        pytorch_cpu_inference = PyTorchCPUInference(model_loader)
+        pytorch_cpu_inference = PyTorchInference(model_loader, device="cpu")
 
         benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark(img_batch)
         pytorch_cpu_inference.predict(img_batch)
 
     # PyTorch CUDA
     if args.mode in ["cuda", "all"] and device == "cuda":
-        pytorch_cuda_inference = PyTorchCUDAInference(model_loader)
+        pytorch_cuda_inference = PyTorchInference(model_loader, device=device)
 
         benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(
             img_batch
