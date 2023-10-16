@@ -24,7 +24,7 @@
 7. [References](#references)
 
 
-<img src="./inference/plot.png" width="70%">
+<img src="./inference/plot_infer_thrp.png" width="70%">
 
 ## Overview
 This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
@@ -78,7 +78,7 @@ python main.py [--mode all]
 ### Arguments
 - `--image_path`: (Optional) Specifies the path to the image you want to predict.
 - `--topk`: (Optional) Specifies the number of top predictions to show. Defaults to 5 if not provided.
-- `--mode`: (Optional) Specifies the model's mode for exporting and running. Choices are: `onnx`, `ov`, `cuda`, and `all`.  If not provided, it defaults to `all`.
+- `--mode`: (Optional) Specifies the model's mode for exporting and running. Choices are: `onnx`, `ov`, `cpu`, `cuda`, `tensorrt`, and `all`.  If not provided, it defaults to `all`.
 
 ### Example Command
 ```sh
@@ -89,15 +89,15 @@ This command will run predictions on the chosen image (`./inference/train.jpg`),
 
 ## GPU-CUDA Results
 ### Inference Benchmark Results
-<img src="./inference/plot.png" width="70%">
+<img src="./inference/plot_infer_thrp.png" width="70%">
 
 ### Results explanation
-  - `PyTorch_cpu: 978.71 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
-  - `PyTorch_cuda: 30.11 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
-  - `TRT_fp32: 19.20 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
-  - `TRT_fp16: 7.32 ms` indicates the average batch time when running the model with `TensorRT` using `float16` precision.
-  - ![New](https://img.shields.io/badge/-New-842E5B)`ONNX: 15.95 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
-  - ![New](https://img.shields.io/badge/-New-842E5B)`OpenVINO: 13.37 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
+  - `PyTorch_cpu: 31.83 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
+  - `PyTorch_cuda: 5.79 ms` indicates the average batch time when running the `PyTorch` model on the `CUDA` device.
+  - `TRT_fp32: 1.68 ms` shows the average batch time when running the model with `TensorRT` using `float32` precision.
+  - `TRT_fp16: 1.69 ms` indicates the average batch time when running the model with `TensorRT` using `float16` precision.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`ONNX: 16.14 ms` indicates the average batch inference time when running the `PyTorch` converted to the `ONNX` model on the `CPU` device.
+  - ![New](https://img.shields.io/badge/-New-842E5B)`OpenVINO: 15.02 ms` indicates the average batch inference time when running the `ONNX` model converted to `OpenVINO` on the `CPU` device.
 
 ### Example Input
 Here is an example of the input image to run predictions and benchmarks on:
@@ -163,17 +163,7 @@ OpenVINO is a toolkit from Intel that optimizes deep learning model inference fo
 <img src="./inference/plot.png" width="70%">
 
 ### Prediction results
-`model.log` file content
 ```
-Running prediction for OV model
-#1: 15% Egyptian cat
-#2: 14% tiger cat
-#3: 9% tabby
-#4: 2% doormat
-#5: 2% lynx
-
-
-Running prediction for ONNX model
 #1: 15% Egyptian cat
 #2: 14% tiger cat
 #3: 9% tabby
