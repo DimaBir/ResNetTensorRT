@@ -53,7 +53,9 @@ class InferenceBase:
         :param warmup_runs: Number of warmup runs before the benchmark.
         :return: Average inference time in milliseconds.
         """
-        # Create a batch of 32 identical images
+        # Expand batch size to stack identical images to load the system for benchmark
+        if len(input_data.shape) == 4:
+            input_data = input_data.squeeze(0)
         input_batch = torch.stack([input_data] * batch_size)
 
         # Warmup
