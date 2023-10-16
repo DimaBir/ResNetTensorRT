@@ -17,7 +17,7 @@
 7. [References](#references)
 
 
-<img src="./inference/plot_new_gpu.png" width="100%">
+<img src="./inference/plot_trt.png" width="100%">
 
 ## Overview
 This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
@@ -35,7 +35,7 @@ Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 - NVIDIA GPU (for CUDA and TensorRT benchmarks and optimizations)
 - Python 3.x
 - NVIDIA drivers installed on the host machine.
-- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide) (for running the Docker container with GPU support). Pre-installed withing the GPU docker image.
+- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide) (for running the Docker container with GPU support). Pre-installed within the GPU docker image.
 
 ## Steps to Run
 ### Building the Docker Image
@@ -98,7 +98,7 @@ This command will run predictions on the chosen image (`./inference/train.jpg`),
 
 ## GPU (CUDA) Results
 ### Inference Benchmark Results
-<img src="./inference/plot_new_gpu.png" width="100%">
+<img src="./inference/plot_trt.png" width="100%">
 
 ### Results explanation
   - `PyTorch_cpu: 32.83 ms` indicates the average batch time when running the `PyTorch` model on `CPU` device.
