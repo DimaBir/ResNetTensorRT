@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-center">Results</h2>
+<div class="mt-4">
+    {% if results %}
+    <h4>Prediction Results:</h4>
+    <div class="alert alert-info">
+        {{ results }}
+    </div>
+    <h4>Uploaded Image:</h4>
+    <img src="{{ image_path }}" alt="Uploaded Image" class="img-fluid">
+    {% endif %}
+
+    {% if plot_path %}
+    <h4>Benchmark Results:</h4>
+    <img src="{{ plot_path }}" alt="Benchmark Plot" class="img-fluid">
+    {% endif %}
+</div>
+{% endblock %}
