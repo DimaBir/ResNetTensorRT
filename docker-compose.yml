@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  resnet_tensorrt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+
+  flask_app:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    ports:
+      - "5000:5000"
+    depends_on:
+      - resnet_tensorrt

@@ -1,3 +1,5 @@
+import torch
+import logging
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -111,3 +113,25 @@ def parse_arguments():
     )
 
     return parser.parse_args()
+
+
+def cuda_is_available() -> bool:
+    """
+    Check the availability of CUDA and TensorRT on the system.
+
+    Determines if CUDA is available and if the 'torch_tensorrt' package is
+    installed. Logs a warning if 'torch_tensorrt' is not installed.
+
+    :return: True if CUDA is available and 'torch_tensorrt' is installed, False otherwise.
+    """
+    cuda_available = False
+    if torch.cuda.is_available():
+        try:
+            import torch_tensorrt
+
+            cuda_available = True
+        except ImportError:
+            logging.warning(
+                "torch-tensorrt is not installed. Running on CPU mode only."
+            )
+    return cuda_available
