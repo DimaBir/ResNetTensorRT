@@ -97,4 +97,4 @@ def process_request():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000,ssl_context=(SSL_CERT_PATH, SSL_KEY_PATH), debug=True)

@@ -13,6 +13,7 @@ RUN pip install -r requirements.flask.txt
 COPY ./src /usr/src/app/src
 COPY ./common /usr/src/app/common
 COPY ./inference /usr/src/app/inference
+COPY ./keys /usr/src/app/keys
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
