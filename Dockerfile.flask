@@ -11,7 +11,7 @@ COPY requirements.flask.txt ./
 RUN pip install --no-cache-dir -r requirements.flask.txt
 
 # Copy the Flask app directory into the container
-COPY ./src/web ./src/web
+COPY ./src/web /usr/src/app/src/web
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
