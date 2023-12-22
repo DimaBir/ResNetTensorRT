@@ -3,3 +3,4 @@ Flask
 gunicorn
 requests
 Pillow
+pandas
