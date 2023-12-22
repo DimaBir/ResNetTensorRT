@@ -10,10 +10,10 @@ COPY requirements.flask.txt ./
 # Install any needed packages specified in requirements.flask.txt
 RUN pip install -r requirements.flask.txt
 
-# Copy the Flask app directory into the container
 COPY ./src /usr/src/app/src
 COPY ./common /usr/src/app/common
 COPY ./inference /usr/src/app/inference
+COPY ./keys /usr/src/app/keys
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
