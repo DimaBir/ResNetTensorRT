@@ -11,7 +11,7 @@ COPY requirements.flask.txt ./
 RUN pip install -r requirements.flask.txt
 
 # Copy the Flask app directory into the container
-COPY ./src/web_demo ./src/web_demo
+COPY ./src /usr/src/app/src
 COPY ./common /usr/src/app/common
 COPY ./inference /usr/src/app/inference
 
