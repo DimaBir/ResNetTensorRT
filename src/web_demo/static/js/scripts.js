@@ -10,6 +10,7 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data)
         document.getElementById('spinner').style.display = 'none';
         if (data.predictions) {
             displayPredictions(data.predictions);
