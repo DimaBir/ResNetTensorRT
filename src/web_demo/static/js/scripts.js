@@ -35,28 +35,48 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 
 function displayPredictions(predictions) {
     const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = ''; // Clear previous results
+    const processedImageContainer = document.getElementById('processedImageContainer');
+    const probGraphContainer = document.getElementById('probGraphContainer');
 
+    resultsDiv.innerHTML = ''; // Clear previous results
+    processedImageContainer.style.display = 'block';
+    probGraphContainer.style.display = 'block';
+
+    // Display predictions in text format
     predictions.forEach(prediction => {
         const p = document.createElement('p');
         p.textContent = `Label: ${prediction.label}, Confidence: ${prediction.confidence.toFixed(2)}`;
         resultsDiv.appendChild(p);
     });
 
-    // Prepare data for the graph
-    const labels = predictions.map(prediction => prediction.label);
-    const probs = predictions.map(prediction => prediction.confidence * 100);
+    // Display the mini image
+    let imageInput = document.getElementById('image');
+    if (imageInput.files && imageInput.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('processedImage').src = e.target.result;
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+    }
 
+    // Render prediction probabilities graph
+    renderProbGraph(predictions);
+}
+
+function renderProbGraph(predictions) {
     const ctx = document.getElementById('probGraph').getContext('2d');
+    const labels = predictions.map(prediction => prediction.label);
+    const probs = predictions.map(prediction => prediction.confidence);
+
     new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Probability (%)',
+                label: 'Confidence',
                 data: probs,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
         },
@@ -69,7 +89,6 @@ function displayPredictions(predictions) {
         }
     });
 }
-
 
 function displayBenchmark(benchmarkResults) {
     const resultsDiv = document.getElementById('results');
