@@ -137,6 +137,9 @@ def process_request():
     logging.info(
         "manage_file_limit:"
     )
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+
     # Manage file limit
     manage_file_limit(app.config["UPLOAD_FOLDER"])
 
