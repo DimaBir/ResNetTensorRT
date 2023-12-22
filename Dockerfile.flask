@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY requirements.flask.txt ./
 
 # Install any needed packages specified in requirements.flask.txt
-RUN pip install --no-cache-dir -r requirements.flask.txt
+RUN pip install -r requirements.flask.txt
 
 # Copy the Flask app directory into the container
 COPY ./src/web_demo ./src/web_demo
