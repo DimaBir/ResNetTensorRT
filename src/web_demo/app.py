@@ -167,7 +167,7 @@ def process_request():
         return jsonify({"error": "No selected file"}), 400
 
     # Process the uploaded image
-    img_batch = process_image(image_file)
+    img_batch = process_image(file_path)
 
     if img_batch is None:
         return jsonify({"error": "Invalid file type"}), 400
