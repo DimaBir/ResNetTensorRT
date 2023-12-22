@@ -83,7 +83,10 @@ def process_request():
     # Add logging statements
     logging.info("Received request with model_type: %s and mode: %s", model_type, mode)
 
+    logging.info("Processing image")
     img_batch = process_image(image_file)
+
+    logging.info("Loading pre-trained model")
     model_loader = ModelLoader(device="cpu")
 
     if mode == "benchmark" and model_type == "all":
