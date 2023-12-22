@@ -125,12 +125,7 @@ def process_request():
     mode = request.form.get("mode")
 
     # Add logging statements
-    logging.info(
-        "Received request with model_type: %s, mode: %s, image_file: %s",
-        model_type,
-        mode,
-        image_file.filename,
-    )
+    logging.info("Received request with model_type: %s, mode: %s, image_file: %s", model_type, mode, image_file.filename)
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
 
@@ -179,10 +174,9 @@ def process_request():
     if mode == "predict":
         logging.info("Running prediction")
         results = inference_class.predict(img_batch)
-        predictions = [
-            {"label": label, "confidence": confidence} for label, confidence in results
-        ]
-        return jsonify({"predictions": predictions})
+        if isinstance(results, np.ndarray):
+            results = results.tolist()
+        return jsonify({"predictions": results})
     elif mode == "benchmark":
         logging.info("Running benchmark")
         results = inference_class.benchmark(img_batch)
