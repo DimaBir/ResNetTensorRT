@@ -109,6 +109,10 @@ function displayBenchmark(benchmarkResults) {
     }
 }
 
+function randomRGB() {
+    return Math.floor(Math.random() * 255);
+}
+
 
 function displayLineGraph(data) {
     document.getElementById('lineGraphContainer').style.display = 'block';
