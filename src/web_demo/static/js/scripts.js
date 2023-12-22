@@ -29,7 +29,8 @@ function displayPredictions(predictions) {
 
     predictions.forEach(prediction => {
         const p = document.createElement('p');
-        p.textContent = `Label: ${prediction.label}, Confidence: ${prediction.confidence.toFixed(2)}`;
+        const confidence = prediction.confidence ? prediction.confidence.toFixed(2) : 'N/A';
+        p.textContent = `Label: ${prediction.label}, Confidence: ${confidence}`;
         resultsDiv.appendChild(p);
     });
 }
