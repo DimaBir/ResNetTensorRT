@@ -125,6 +125,8 @@ def process_request():
 
     # Add logging statements
     logging.info("Received request with model_type: %s, mode: %s, image_file: %s", model_type, mode, image_file.filename)
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
 
     if image_file is None or image_file.filename == "":
         logging.error("No file part or no selected file")
