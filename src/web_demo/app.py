@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from PIL import Image
 from io import BytesIO
+import sys
+sys.path.append('../../')
 from common.utils import cuda_is_available
 
 # Importing model and inference classes
