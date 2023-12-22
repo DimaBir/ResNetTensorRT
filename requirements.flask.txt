@@ -13,3 +13,4 @@ onnxruntime
 openvino==2023.1.0.dev20230811
 seaborn
 matplotlib
+cryptography
