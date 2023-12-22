@@ -17,4 +17,4 @@ COPY ./src/web_demo ./src/web_demo
 EXPOSE 5000
 
 # Define the command to run the Flask app
-CMD ["python", "./src/web/app.py"]
+CMD ["python", "./src/web_demo/app.py"]
