@@ -3,7 +3,10 @@ let probChart = null; // Global variable to hold the chart instance
 document.getElementById('image-form').addEventListener('submit', function(e) {
     e.preventDefault();
     let formData = new FormData(this);
+    let submitButton = document.querySelector("#image-form button[type='submit']");
 
+    // Disable the submit button and show the spinner
+    submitButton.disabled = true;
     document.getElementById('spinner').style.display = 'block';
 
     // Display the mini image
@@ -23,7 +26,10 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     .then(response => response.json())
     .then(data => {
         console.log(data)
+        // Enable the submit button and hide the spinner
+        submitButton.disabled = false;
         document.getElementById('spinner').style.display = 'none';
+
         if (data.predictions) {
             displayPredictions(data.predictions);
         } else if (data.benchmark) {
@@ -32,6 +38,9 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     })
     .catch(error => {
         console.error('Error:', error);
+        // Enable the submit button in case of an error
+        submitButton.disabled = false;
+        document.getElementById('spinner').style.display = 'none';
     });
 });
 
