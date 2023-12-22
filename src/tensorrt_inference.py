@@ -1,5 +1,5 @@
 import torch
-import torch_tensorrt
+# import torch_tensorrt
 import logging
 from src.inference_base import InferenceBase
 
@@ -40,11 +40,12 @@ class TensorRTInference(InferenceBase):
         )
 
         # Compile the TorchScript model with TensorRT
-        self.model = torch_tensorrt.compile(
-            scripted_model,
-            inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=self.precision)],
-            enabled_precisions={self.precision},
-        )
+        if CUDA_AVAILABLE:
+            self.model = torch_tensorrt.compile(
+                scripted_model,
+                inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=self.precision)],
+                enabled_precisions={self.precision},
+            )
 
     def predict(self, input_data, is_benchmark=False):
         """
