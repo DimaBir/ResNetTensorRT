@@ -124,25 +124,16 @@ def process_request():
     mode = request.form.get("mode")
 
     # Add logging statements
-    logging.info(
-        "Received request with model_type: %s and mode: %s, image_file: %s",
-        model_type,
-        mode,
-        image_file,
-    )
+    logging.info("Received request with model_type: %s, mode: %s, image_file: %s", model_type, mode, image_file.filename)
 
-    logging.info(
-        "manage_file_limit:"
-    )
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
+    if image_file is None or image_file.filename == "":
+        logging.error("No file part or no selected file")
+        return jsonify({"error": "No file part or no selected file"}), 400
 
-    # Manage file limit
-    manage_file_limit(app.config["UPLOAD_FOLDER"])
+    if not allowed_file(image_file.filename):
+        logging.error("Invalid file type: %s", image_file.filename)
+        return jsonify({"error": "Invalid file type"}), 400
 
-    logging.info(
-        "Generate file name"
-    )
     # Generate a unique filename using UUID
     ext = image_file.filename.rsplit(".", 1)[1].lower()  # Get the file extension
     unique_filename = f"{uuid.uuid4().hex}.{ext}"
@@ -152,23 +143,12 @@ def process_request():
     image_file.seek(0)  # Reset the file pointer
     image_file.save(file_path)
 
-    logging.info(
-        "Result file name: %s",
-        file_path
-    )
+    logging.info("Saved file: %s", file_path)
 
-    if image_file is None:
-        return jsonify({"error": "No file part"}), 400
-
-    if image_file.filename == "":
-        return jsonify({"error": "No selected file"}), 400
-
-    logging.info(
-        "Process image: %s",
-        file_path
-    )
-    # Process the uploaded image
-    img_batch = process_image(file_path)
+    # Process the uploaded image using ImageProcessor
+    device = "cuda" if cuda_is_available() else "cpu"
+    img_processor = ImageProcessor(img_path=file_path, device=device)
+    img_batch = img_processor.process_image()
 
     if img_batch is None:
         return jsonify({"error": "Invalid file type"}), 400
@@ -181,11 +161,13 @@ def process_request():
         results = run_all_benchmarks(img_batch)
         return jsonify({"benchmark": results})
 
+    logging.info("Getting inference Class for: %s", mode)
     inference_class = get_inference_class(model_type, model_loader)
     if inference_class is None:
         logging.error("Invalid model type selected: %s", model_type)
         return jsonify({"error": "Invalid model type selected"}), 400
 
+    logging.info("Running prediction for: %s", mode)
     if mode == "predict":
         logging.info("Running prediction")
         results = inference_class.predict(img_batch)
