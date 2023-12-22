@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from PIL import Image
 from io import BytesIO
+from config import SSL_CERT_PATH, SSL_KEY_PATH
+
 import sys
 sys.path.append('/usr/src/app')
 from common.utils import cuda_is_available
@@ -95,4 +97,4 @@ def process_request():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, ssl_context=(SSL_CERT_PATH, SSL_KEY_PATH), debug=True)
