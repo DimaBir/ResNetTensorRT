@@ -45,14 +45,11 @@ def allowed_file(filename):
 
 
 # Function to process the uploaded image
-def process_image(file):
-    # Check if the file is allowed
-    if not allowed_file(file.filename):
-        return None
-
-    image = Image.open(BytesIO(file.read()))
-    img_processor = ImageProcessor(device="cpu")
-    return img_processor.process_image(image)
+def process_image(file_path):
+    # Open the image file
+    with Image.open(file_path) as image:
+        img_processor = ImageProcessor(device="cpu")
+        return img_processor.process_image(image)
 
 
 # Function to manage file limit in the upload folder
@@ -166,6 +163,10 @@ def process_request():
     if image_file.filename == "":
         return jsonify({"error": "No selected file"}), 400
 
+    logging.info(
+        "Process image: %s",
+        file_path
+    )
     # Process the uploaded image
     img_batch = process_image(file_path)
 
