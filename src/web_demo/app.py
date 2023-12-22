@@ -134,9 +134,15 @@ def process_request():
         image_file,
     )
 
+    logging.info(
+        "manage_file_limit:"
+    )
     # Manage file limit
     manage_file_limit(app.config["UPLOAD_FOLDER"])
 
+    logging.info(
+        "Generate file name"
+    )
     # Generate a unique filename using UUID
     ext = image_file.filename.rsplit(".", 1)[1].lower()  # Get the file extension
     unique_filename = f"{uuid.uuid4().hex}.{ext}"
@@ -145,6 +151,11 @@ def process_request():
     # Save the uploaded file with the unique name
     image_file.seek(0)  # Reset the file pointer
     image_file.save(file_path)
+
+    logging.info(
+        "Result file name: %s",
+        file_path
+    )
 
     if image_file is None:
         return jsonify({"error": "No file part"}), 400
