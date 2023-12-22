@@ -26,9 +26,9 @@ def get_inference_class(model_type, model_loader):
     if model_type == "pytorch":
         return PyTorchInference(model_loader, device="cpu")
     elif model_type == "onnx":
-        return ONNXInference(model_loader, "path_to_onnx_model")
+        return ONNXInference(model_loader, "./models/model.onnx")
     elif model_type == "ov":
-        return OVInference(model_loader, "path_to_ov_model")
+        return OVInference(model_loader, "./models/model.ov")
     elif model_type == "tensorrt":
         return TensorRTInference(model_loader, device="cpu")
     elif model_type == "all":
