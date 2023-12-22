@@ -1,8 +1,12 @@
+import torch
+import logging
 import argparse
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Type
+from src.model import ModelLoader
+from src.inference_base import InferenceBase
 
 
 def plot_benchmark_results(results: Dict[str, Tuple[float, float]]):
@@ -111,3 +115,49 @@ def parse_arguments():
     )
 
     return parser.parse_args()
+
+
+def check_cuda_availability() -> bool:
+    """
+    Check the availability of CUDA and TensorRT on the system.
+
+    Determines if CUDA is available and if the 'torch_tensorrt' package is
+    installed. Logs a warning if 'torch_tensorrt' is not installed.
+
+    :return: True if CUDA is available and 'torch_tensorrt' is installed, False otherwise.
+    """
+    cuda_available = False
+    if torch.cuda.is_available():
+        try:
+            import torch_tensorrt
+            cuda_available = True
+        except ImportError:
+            logging.warning("torch-tensorrt is not installed. Running on CPU mode only.")
+    return cuda_available
+
+
+def run_inference_for_mode(
+    inference_type: Type[InferenceBase],
+    model_loader: ModelLoader,
+    img_batch: torch.Tensor,
+    device: torch.device,
+    debug_mode: bool,
+    benchmark_results: Dict[str, float]
+) -> None:
+    """
+    Run the inference process for a given inference type and accumulate benchmark results.
+
+    Initializes the specified inference type, performs benchmarking, and runs predictions
+    on the provided image batch. The benchmark results are updated with the new results.
+
+    :param inference_type: The class of the inference type to be used.
+    :param model_loader: The model loader used to load the inference model.
+    :param img_batch: The batch of images to run the inference on.
+    :param device: The device (CPU or CUDA) to run the inference on.
+    :param debug_mode: If True, additional debug information will be printed.
+    :param benchmark_results: A dictionary to store the benchmark results.
+    :return: None.
+    """
+    inference = inference_type(model_loader, device=device, debug_mode=debug_mode)
+    benchmark_results[inference.name()] = inference.benchmark(img_batch)
+    inference.predict(img_batch)
