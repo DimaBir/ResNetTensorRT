@@ -45,35 +45,34 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 });
 
 function displayPredictions(predictions) {
-    // Clear previous results and hide the processed image and graph container
+    // Clear previous results
     const resultsDiv = document.getElementById('results');
-    const processedImageDiv = document.getElementById('processedImageContainer');
-    const probGraphDiv = document.getElementById('probGraphContainer');
     resultsDiv.innerHTML = '';
-    processedImageDiv.style.display = 'none';
-    probGraphDiv.style.display = 'none';
 
-    // Check if a chart instance already exists
-    if (window.probChart) {
-        window.probChart.destroy(); // Destroy the existing chart
-    }
-
-    // Display the processed image
+    // Display the processed image with a smaller size
     let imageInput = document.getElementById('image');
     if (imageInput.files && imageInput.files[0]) {
         let reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('processedImage').src = e.target.result;
+            let processedImage = document.getElementById('processedImage');
+            processedImage.src = e.target.result;
+            processedImage.style.width = '150px'; // Adjust width as needed
+            processedImage.style.height = 'auto';
             processedImageDiv.style.display = 'block';
         };
         reader.readAsDataURL(imageInput.files[0]);
     }
 
     // Prepare data for the probability graph
-    const labels = predictions.map(prediction => prediction.label);
-    const data = predictions.map(prediction => prediction.confidence * 100); // Convert to percentage
+    const labels = predictions.map(p => p.label);
+    const probs = predictions.map(p => p.confidence * 100); // Convert to percentage
 
-    // Create a new chart
+    // Destroy the previous chart if it exists
+    if (window.probChart) {
+        window.probChart.destroy();
+    }
+
+    // Create a new chart with datalabels for percentages
     const ctx = document.getElementById('probGraph').getContext('2d');
     window.probChart = new Chart(ctx, {
         type: 'bar',
@@ -81,23 +80,33 @@ function displayPredictions(predictions) {
             labels: labels,
             datasets: [{
                 label: 'Confidence (%)',
-                data: data,
-                backgroundColor: generateColors(data.length), // Generate different colors for each bar
+                data: probs,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
             }]
         },
         options: {
-            indexAxis: 'y', // Horizontal bar chart
             scales: {
-                xAxes: [{
+                yAxes: [{
                     ticks: {
                         beginAtZero: true
                     }
                 }]
+            },
+            plugins: {
+                datalabels: {
+                    color: '#000',
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: (value, context) => {
+                        return value.toFixed(2) + '%'; // Format the label with percentage
+                    }
+                }
             }
-        }
+        },
+        plugins: [ChartDataLabels] // Ensure this plugin is included in your project
     });
-
-    probGraphDiv.style.display = 'block'; // Display the graph container
 }
 
 // Function to generate random colors
