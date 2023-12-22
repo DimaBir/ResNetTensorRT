@@ -45,58 +45,71 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 });
 
 function displayPredictions(predictions) {
-    const processedImageContainer = document.getElementById('processedImageContainer');
-    const probGraphContainer = document.getElementById('probGraphContainer');
+    // Clear previous results and hide the processed image and graph container
+    const resultsDiv = document.getElementById('results');
+    const processedImageDiv = document.getElementById('processedImageContainer');
+    const probGraphDiv = document.getElementById('probGraphContainer');
+    resultsDiv.innerHTML = '';
+    processedImageDiv.style.display = 'none';
+    probGraphDiv.style.display = 'none';
 
-    processedImageContainer.style.display = 'block';
-    probGraphContainer.style.display = 'block';
+    // Check if a chart instance already exists
+    if (window.probChart) {
+        window.probChart.destroy(); // Destroy the existing chart
+    }
 
-    // Display the mini image
+    // Display the processed image
     let imageInput = document.getElementById('image');
     if (imageInput.files && imageInput.files[0]) {
         let reader = new FileReader();
         reader.onload = function(e) {
             document.getElementById('processedImage').src = e.target.result;
+            processedImageDiv.style.display = 'block';
         };
         reader.readAsDataURL(imageInput.files[0]);
     }
 
-    // Render prediction probabilities graph
-    renderProbGraph(predictions);
-}
-
-function renderProbGraph(predictions) {
-    const ctx = document.getElementById('probGraph').getContext('2d');
-
-    // Destroy the existing chart if it exists
-    if (probChart) {
-        probChart.destroy();
-    }
-
+    // Prepare data for the probability graph
     const labels = predictions.map(prediction => prediction.label);
-    const probs = predictions.map(prediction => (prediction.confidence * 100).toFixed(2)); // Convert to percentage
-    const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.2)`); // Random colors
+    const data = predictions.map(prediction => prediction.confidence * 100); // Convert to percentage
 
-    probChart = new Chart(ctx, {
-        type: 'horizontalBar',
+    // Create a new chart
+    const ctx = document.getElementById('probGraph').getContext('2d');
+    window.probChart = new Chart(ctx, {
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Confidence (%)',
-                data: probs,
-                backgroundColor: backgroundColors,
-                borderColor: backgroundColors.map(color => color.replace('0.2', '1')), // Darker border color
-                borderWidth: 1
+                data: data,
+                backgroundColor: generateColors(data.length), // Generate different colors for each bar
             }]
         },
         options: {
+            indexAxis: 'y', // Horizontal bar chart
             scales: {
-                x: {
-                    beginAtZero: true
-                }
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
             }
         }
     });
+
+    probGraphDiv.style.display = 'block'; // Display the graph container
+}
+
+// Function to generate random colors
+function generateColors(count) {
+    const colors = [];
+    for (let i = 0; i < count; i++) {
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 255);
+        const b = Math.floor(Math.random() * 255);
+        colors.push(`rgba(${r}, ${g}, ${b}, 0.5)`);
+    }
+    return colors;
 }
 
 function displayBenchmark(benchmarkResults) {
@@ -117,11 +130,6 @@ function displayBenchmark(benchmarkResults) {
         displayLineGraph(benchmarkResults['all']);
     }
 }
-
-function randomRGB() {
-    return Math.floor(Math.random() * 255);
-}
-
 
 function displayLineGraph(data) {
     document.getElementById('lineGraphContainer').style.display = 'block';
