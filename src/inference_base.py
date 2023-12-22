@@ -108,20 +108,23 @@ class InferenceBase:
 
         :param prob: Array of probabilities.
         :param is_benchmark: If True, the method is called during a benchmark run.
-        :return: Array of probabilities.
+        :return: List of dictionaries with label and confidence.
         """
         if is_benchmark:
             return None
 
         # Get the top indices and probabilities
-        top_indices = prob.argsort()[-self.topk :][::-1]
+        top_indices = prob.argsort()[-self.topk:][::-1]
         top_probs = prob[top_indices]
 
-        # Log and print the top predictions
+        # Prepare the list of predictions
+        predictions = []
         for i in range(self.topk):
             probability = top_probs[i]
             class_label = self.categories[0][int(top_indices[i])]
-            logging.info(f"#{i + 1}: {int(probability * 100)}% {class_label}")
-            if self.debug_mode:
-                print(f"#{i + 1}: {int(probability * 100)}% {class_label}")
-        return prob
+            predictions.append({"label": class_label, "confidence": float(probability)})
+
+            # Log the top predictions
+            logging.info(f"#{i + 1}: {probability * 100:.2f}% {class_label}")
+
+        return predictions

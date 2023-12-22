@@ -172,9 +172,9 @@ def process_request():
     logging.info("Running prediction for: %s", mode)
     if mode == "predict":
         logging.info("Running prediction")
-        results = inference_class.predict(img_batch)
-        logging.info(f"Prediction results are: {results}")
-        return jsonify({"predictions": results})
+        predictions = inference_class.predict(img_batch)
+        logging.info(f"Prediction results are: {predictions}")
+        return jsonify({"predictions": predictions})
     elif mode == "benchmark":
         logging.info("Running benchmark")
         results = inference_class.benchmark(img_batch)
