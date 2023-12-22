@@ -1,10 +1,13 @@
+import logging
+
 from flask import Flask, render_template, request, jsonify
 from PIL import Image
 from io import BytesIO
 from config import SSL_CERT_PATH, SSL_KEY_PATH
 
 import sys
-sys.path.append('/usr/src/app')
+
+sys.path.append("/usr/src/app")
 from common.utils import cuda_is_available
 
 # Importing model and inference classes
@@ -77,24 +80,35 @@ def process_request():
     model_type = request.form.get("model")
     mode = request.form.get("mode")
 
+    # Add logging statements
+    logging.info("Received request with model_type: %s and mode: %s", model_type, mode)
+
     img_batch = process_image(image_file)
     model_loader = ModelLoader(device="cpu")
 
     if mode == "benchmark" and model_type == "all":
+        logging.info("Running all benchmarks")
         results = run_all_benchmarks(img_batch)
         return jsonify({"benchmark": results})
 
     inference_class = get_inference_class(model_type, model_loader)
     if inference_class is None:
+        logging.error("Invalid model type selected: %s", model_type)
         return jsonify({"error": "Invalid model type selected"}), 400
 
     if mode == "predict":
+        logging.info("Running prediction")
         results = inference_class.predict(img_batch)
         return jsonify({"predictions": results})
     elif mode == "benchmark":
+        logging.info("Running benchmark")
         results = inference_class.benchmark(img_batch)
         return jsonify({"benchmark": results})
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000,ssl_context=(SSL_CERT_PATH, SSL_KEY_PATH), debug=True)
+    # Configure logging
+    logging.basicConfig(level=logging.INFO)
+    app.run(
+        host="0.0.0.0", port=5000, ssl_context=(SSL_CERT_PATH, SSL_KEY_PATH), debug=True
+    )
