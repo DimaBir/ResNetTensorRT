@@ -1,9 +1,14 @@
 import logging
 
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
 from PIL import Image
 from io import BytesIO
 from config import SSL_CERT_PATH, SSL_KEY_PATH
+from werkzeug.exceptions import RequestEntityTooLarge
+from flask_limiter.util import get_remote_address
+from flask_limiter import Limiter
+import os
+import uuid
 
 import sys
 
@@ -21,10 +26,46 @@ from src.tensorrt_inference import TensorRTInference
 app = Flask(__name__)
 
 
-def process_image(image_file):
-    image = Image.open(BytesIO(image_file.read()))
+UPLOAD_FOLDER = "static/user_files"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+MAX_CONTENT_LENGTH = 500 * 1024 * 1024  # 500MB
+MAX_FILES_IN_UPLOAD_FOLDER = 10
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
+
+
+# Configure rate limiting
+limiter = Limiter(key_func=get_remote_address, app=app, default_limits=["5 per minute"])
+
+
+# Function to check if the file extension is allowed
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+# Function to process the uploaded image
+def process_image(file):
+    # Check if the file is allowed
+    if not allowed_file(file.filename):
+        return None
+
+    image = Image.open(BytesIO(file.read()))
     img_processor = ImageProcessor(device="cpu")
     return img_processor.process_image(image)
+
+
+# Function to manage file limit in the upload folder
+def manage_file_limit(upload_folder):
+    files_in_directory = os.listdir(upload_folder)
+    number_of_files = len(files_in_directory)
+
+    if number_of_files >= MAX_FILES_IN_UPLOAD_FOLDER:
+        oldest_file = min(
+            files_in_directory,
+            key=lambda x: os.path.getctime(os.path.join(upload_folder, x)),
+        )
+        os.remove(os.path.join(upload_folder, oldest_file))
 
 
 def get_inference_class(model_type, model_loader):
@@ -69,6 +110,11 @@ def run_all_benchmarks(img_batch):
     return benchmark_results
 
 
+@app.errorhandler(RequestEntityTooLarge)
+def handle_file_too_large(e):
+    return "File is too large", 413
+
+
 @app.route("/demo")
 def index():
     return render_template("demo.html")
@@ -81,10 +127,36 @@ def process_request():
     mode = request.form.get("mode")
 
     # Add logging statements
-    logging.info("Received request with model_type: %s and mode: %s", model_type, mode)
+    logging.info(
+        "Received request with model_type: %s and mode: %s, image_file: %s",
+        model_type,
+        mode,
+        image_file,
+    )
 
-    logging.info("Processing image")
+    # Manage file limit
+    manage_file_limit(app.config["UPLOAD_FOLDER"])
+
+    # Generate a unique filename using UUID
+    ext = image_file.filename.rsplit(".", 1)[1].lower()  # Get the file extension
+    unique_filename = f"{uuid.uuid4().hex}.{ext}"
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
+
+    # Save the uploaded file with the unique name
+    image_file.seek(0)  # Reset the file pointer
+    image_file.save(file_path)
+
+    if image_file is None:
+        return jsonify({"error": "No file part"}), 400
+
+    if image_file.filename == "":
+        return jsonify({"error": "No selected file"}), 400
+
+    # Process the uploaded image
     img_batch = process_image(image_file)
+
+    if img_batch is None:
+        return jsonify({"error": "Invalid file type"}), 400
 
     logging.info("Loading pre-trained model")
     model_loader = ModelLoader(device="cpu")
