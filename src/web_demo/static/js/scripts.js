@@ -1,3 +1,5 @@
+let probChart = null; // Global variable to hold the chart instance
+
 document.getElementById('image-form').addEventListener('submit', function(e) {
     e.preventDefault();
     let formData = new FormData(this);
@@ -34,20 +36,11 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 });
 
 function displayPredictions(predictions) {
-    const resultsDiv = document.getElementById('results');
     const processedImageContainer = document.getElementById('processedImageContainer');
     const probGraphContainer = document.getElementById('probGraphContainer');
 
-    resultsDiv.innerHTML = ''; // Clear previous results
     processedImageContainer.style.display = 'block';
     probGraphContainer.style.display = 'block';
-
-    // Display predictions in text format
-    predictions.forEach(prediction => {
-        const p = document.createElement('p');
-        p.textContent = `Label: ${prediction.label}, Confidence: ${prediction.confidence.toFixed(2)}`;
-        resultsDiv.appendChild(p);
-    });
 
     // Display the mini image
     let imageInput = document.getElementById('image');
@@ -65,24 +58,31 @@ function displayPredictions(predictions) {
 
 function renderProbGraph(predictions) {
     const ctx = document.getElementById('probGraph').getContext('2d');
-    const labels = predictions.map(prediction => prediction.label);
-    const probs = predictions.map(prediction => prediction.confidence);
 
-    new Chart(ctx, {
-        type: 'bar',
+    // Destroy the existing chart if it exists
+    if (probChart) {
+        probChart.destroy();
+    }
+
+    const labels = predictions.map(prediction => prediction.label);
+    const probs = predictions.map(prediction => (prediction.confidence * 100).toFixed(2)); // Convert to percentage
+    const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.2)`); // Random colors
+
+    probChart = new Chart(ctx, {
+        type: 'horizontalBar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Confidence',
+                label: 'Confidence (%)',
                 data: probs,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors.map(color => color.replace('0.2', '1')), // Darker border color
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
-                y: {
+                x: {
                     beginAtZero: true
                 }
             }
