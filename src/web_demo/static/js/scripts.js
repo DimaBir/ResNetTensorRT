@@ -11,15 +11,27 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     .then(response => response.json())
     .then(data => {
         console.log(data)
-        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('spinner').style.display = 'none'; // Hide spinner
+
         if (data.predictions) {
             displayPredictions(data.predictions);
         } else if (data.benchmark) {
             displayBenchmark(data.benchmark);
-        }
+        } else {
+            // Handle other types of responses or show a message if the response is unexpected
+            console.log("Unexpected response format:", data);
     })
     .catch(error => {
         console.error('Error:', error);
+        document.getElementById('spinner').style.display = 'none'; // Hide spinner
+
+        // Update the UI to show an error message
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = ''; // Clear previous results
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = 'An error occurred while processing your request.';
+        errorMessage.style.color = 'red';
+        resultsDiv.appendChild(errorMessage);
     });
 });
 
