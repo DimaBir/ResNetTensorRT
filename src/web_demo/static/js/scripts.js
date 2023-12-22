@@ -4,6 +4,16 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 
     document.getElementById('spinner').style.display = 'block';
 
+    // Display the mini image
+    let imageInput = document.getElementById('image');
+    if (imageInput.files && imageInput.files[0]) {
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('processedImage').src = e.target.result;
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+    }
+
     fetch('/process', {
         method: 'POST',
         body: formData
@@ -31,6 +41,32 @@ function displayPredictions(predictions) {
         const p = document.createElement('p');
         p.textContent = `Label: ${prediction.label}, Confidence: ${prediction.confidence.toFixed(2)}`;
         resultsDiv.appendChild(p);
+    });
+
+    // Prepare data for the graph
+    const labels = predictions.map(prediction => prediction.label);
+    const probs = predictions.map(prediction => prediction.confidence * 100);
+
+    const ctx = document.getElementById('probGraph').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Probability (%)',
+                data: probs,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
     });
 }
 

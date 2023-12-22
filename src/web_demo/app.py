@@ -160,6 +160,7 @@ def process_request():
 
     if mode == "benchmark" and model_type == "all":
         logging.info("Running all benchmarks")
+
         results = run_all_benchmarks(img_batch)
         return jsonify({"benchmark": results})
 
@@ -172,11 +173,12 @@ def process_request():
     logging.info("Running prediction for: %s", mode)
     if mode == "predict":
         logging.info("Running prediction")
+
         predictions = inference_class.predict(img_batch)
-        logging.info(f"Prediction results are: {predictions}")
         return jsonify({"predictions": predictions})
     elif mode == "benchmark":
         logging.info("Running benchmark")
+
         results = inference_class.benchmark(img_batch)
         return jsonify({"benchmark": results})
 
