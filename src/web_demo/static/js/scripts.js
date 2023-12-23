@@ -154,6 +154,12 @@ function randomRGB() {
 }
 
 function displayBenchmark(benchmarkResults) {
+    // Hide the processed image and probability graph containers
+    const processedImageContainer = document.getElementById('processedImageContainer');
+    const probGraphContainer = document.getElementById('probGraphContainer');
+    if (processedImageContainer) processedImageContainer.style.display = 'none';
+    if (probGraphContainer) probGraphContainer.style.display = 'none';
+
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = ''; // Clear previous results
 
