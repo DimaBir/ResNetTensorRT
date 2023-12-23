@@ -68,8 +68,11 @@ class PyTorchInference(InferenceBase):
         if is_benchmark:
             return None
 
+        # Convert the NumPy array to a PyTorch tensor
+        output_tensor = torch.from_numpy(output)
+
         # Apply softmax to convert logits to probabilities
-        probabilities = F.softmax(output, dim=1)
+        probabilities = F.softmax(output_tensor, dim=1)
 
         # Get the top indices and probabilities
         top_probs, top_indices = torch.topk(probabilities, self.topk)
