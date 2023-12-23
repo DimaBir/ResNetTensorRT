@@ -177,7 +177,7 @@ function displayLineGraph(labels, times, throughputs) {
     // Inference Time Graph
     const timeCtx = document.getElementById('timeGraph').getContext('2d');
     new Chart(timeCtx, {
-        type: 'horizontalBar',
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
@@ -200,7 +200,7 @@ function displayLineGraph(labels, times, throughputs) {
     // Throughput Graph
     const throughputCtx = document.getElementById('throughputGraph').getContext('2d');
     new Chart(throughputCtx, {
-        type: 'horizontalBar',
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
