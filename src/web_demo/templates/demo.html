@@ -55,18 +55,8 @@
         </div>
     </div>
 
-    <!-- Row for prediction probabilities graph and processed image -->
+    <!-- New row for image and prediction probabilities graph -->
     <div class="row mt-4">
-        <div class="col-md-6" id="probGraphContainer" style="display:none;">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5>Prediction Probabilities</h5>
-                    <canvas id="probGraph"></canvas>
-                </div>
-                <div id="inferenceTime" class="inference-time-container mt-3"></div>
-                <div id="topPrediction" class="top-prediction-container mt-3"></div>
-            </div>
-        </div>
         <div class="col-md-6" id="processedImageContainer" style="display:none;">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -75,9 +65,20 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6" id="probGraphContainer" style="display:none;">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Prediction Probabilities</h5>
+                    <canvas id="probGraph"></canvas>
+                </div>
+            </div>
+            <div id="inferenceTime" class="inference-time-container mt-3"></div>
+            <div id="topPrediction" class="top-prediction-container mt-3"></div>
+        </div>
     </div>
 
-    <!-- Row for benchmarks and line graph -->
+
+    <!-- Existing row for benchmarks and line graph -->
     <div class="row mt-4">
         <div class="col-md-12">
             <div id="lineGraphContainer" class="mt-3" style="display:none;">
