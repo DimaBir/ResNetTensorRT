@@ -73,7 +73,9 @@ class PyTorchInference(InferenceBase):
         print(output_tensor)
 
         # Apply softmax to convert logits to probabilities
-        probabilities = F.softmax(output_tensor, dim=0)
+        probabilities = F.softmax(output_tensor, dim=1)
+
+        print(f"\n\n\n\n{probabilities}")
 
         # Get the top indices and probabilities
         top_probs, top_indices = torch.topk(probabilities, self.topk)
