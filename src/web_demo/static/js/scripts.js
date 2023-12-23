@@ -49,7 +49,7 @@ function displayPredictions(predictions) {
     const resultsDiv = document.getElementById('results');
     resultsDiv.innerHTML = '';
 
-    // Display the processed image with a smaller size
+    // Display the processed image
     let imageInput = document.getElementById('image');
     if (imageInput.files && imageInput.files[0]) {
         let reader = new FileReader();
@@ -57,7 +57,10 @@ function displayPredictions(predictions) {
             let processedImage = document.getElementById('processedImage');
             processedImage.src = e.target.result;
             processedImage.style.width = '150px'; // Adjust width as needed
-            processedImage.style.height = 'auto';
+            processedImage.style.height = 'auto'; // Maintain aspect ratio
+
+            // Display the div containing the processed image
+            let processedImageDiv = document.getElementById('processedImageDiv');
             processedImageDiv.style.display = 'block';
         };
         reader.readAsDataURL(imageInput.files[0]);
