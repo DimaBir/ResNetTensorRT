@@ -26,12 +26,13 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     .then(response => response.json())
     .then(data => {
         console.log(data)
+
         // Enable the submit button and hide the spinner
         submitButton.disabled = false;
         document.getElementById('spinner').style.display = 'none';
 
         if (data.predictions) {
-            displayPredictions(data.predictions);
+            displayPredictions(data.predictions, data.inferenceTime);
         } else if (data.benchmark) {
             displayBenchmark(data.benchmark);
         }
@@ -50,6 +51,11 @@ function displayPredictions(predictions) {
 
     processedImageContainer.style.display = 'block';
     probGraphContainer.style.display = 'block';
+
+    // Display inference time
+    const timeDiv = document.createElement('div');
+    timeDiv.textContent = `Inference time: ${inferenceTime.toFixed(3)} ms`;
+    document.getElementById('results').appendChild(timeDiv);
 
     // Display the mini image
     let imageInput = document.getElementById('image');
