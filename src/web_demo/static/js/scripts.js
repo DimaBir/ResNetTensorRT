@@ -70,20 +70,27 @@ function displayPredictions(predictions, inferenceTime) {
     renderProbGraph(predictions);
 
     // Update the inference time container
+    updateInferenceTimeDiv(inferenceTime);
+
+    // Update the top prediction container
+    updatePredictionDiv(predictions[0].label);
+}
+
+function updateInferenceTimeDiv(inferenceTime) {
     let inferenceTimeDiv = document.getElementById('inferenceTime');
     if (inferenceTimeDiv) {
-        // Remove the element
-        inferenceTimeDiv.remove();
+        inferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
+    }
+}
 
-        // Create a new div element for inference time
-        let newInferenceTimeDiv = document.createElement('div');
-        newInferenceTimeDiv.id = 'inferenceTime';
-        newInferenceTimeDiv.className = 'inference-time-container';
-        newInferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
-
-        // Re-add the element to the DOM
-        let probGraphContainer = document.getElementById('probGraphContainer');
-        probGraphContainer.appendChild(newInferenceTimeDiv);
+function updatePredictionDiv(topPrediction) {
+    let predictionDiv = document.getElementById('predictionDiv');
+    if (predictionDiv) {
+        let topPredictionSpan = document.getElementById('topPrediction');
+        if (topPredictionSpan) {
+            topPredictionSpan.textContent = topPrediction;
+        }
+        predictionDiv.style.display = 'block';
     }
 }
 
