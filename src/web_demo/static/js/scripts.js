@@ -56,7 +56,12 @@ function displayPredictions(predictions) {
     if (imageInput.files && imageInput.files[0]) {
         let reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('processedImage').src = e.target.result;
+            let processedImage = document.getElementById('processedImage');
+            if (processedImage) {
+                processedImage.src = e.target.result;
+                processedImage.style.maxWidth = '150px'; // Adjust width as needed
+                processedImage.style.height = 'auto'; // Maintain aspect ratio
+            }
         };
         reader.readAsDataURL(imageInput.files[0]);
     }
