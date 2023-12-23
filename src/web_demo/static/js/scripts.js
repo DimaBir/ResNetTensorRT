@@ -74,6 +74,7 @@ function displayPredictions(predictions) {
     // Prepare data for the probability graph
     const labels = predictions.map(p => p.label);
     const probs = predictions.map(p => p.confidence * 100); // Convert to percentage
+    const backgroundColors = generateColors(predictions.length); // Generate random colors for each bar
 
     // Destroy the previous chart if it exists
     if (window.probChart) {
@@ -89,18 +90,21 @@ function displayPredictions(predictions) {
             datasets: [{
                 label: 'Confidence (%)',
                 data: probs,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors.map(color => color.replace('0.5', '1')), // Darker border color
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
-                yAxes: [{
+                y: { // Updated for Chart.js v3
+                    beginAtZero: true,
                     ticks: {
-                        beginAtZero: true
+                        callback: function(value) {
+                            return value + '%'; // Append '%' to y-axis labels
+                        }
                     }
-                }]
+                }
             },
             plugins: {
                 datalabels: {
