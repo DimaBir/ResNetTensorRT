@@ -46,12 +46,13 @@ class ONNXInference(InferenceBase):
         ort_inputs = {input_name: input_data.cpu().numpy()}
         ort_outs = self.model.run(None, ort_inputs)
 
-        # Extract probabilities from the output and normalize them
+        # Extract probabilities from the output
         if len(ort_outs) > 0:
             prob = ort_outs[0]
             if prob.ndim > 1:
                 prob = prob[0]
-            prob = np.exp(prob) / np.sum(np.exp(prob))
+            prob = F.softmax(torch.from_numpy(prob), dim=0).numpy()
+
         return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
@@ -76,13 +77,7 @@ class ONNXInference(InferenceBase):
         if is_benchmark:
             return None
 
-        # Apply softmax to the probabilities if not already done
-        if prob.ndim > 1:
-            prob = F.softmax(torch.from_numpy(prob), dim=1).numpy()
-        else:
-            prob = F.softmax(torch.from_numpy(prob), dim=0).numpy()
-
-        # Get the top indices and probabilities
+            # Get the top indices and probabilities
         top_indices = prob.argsort()[-self.topk:][::-1]
         top_probs = prob[top_indices]
 
