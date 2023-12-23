@@ -59,7 +59,7 @@ function displayPredictions(predictions) {
             let processedImage = document.getElementById('processedImage');
             if (processedImage) {
                 processedImage.src = e.target.result;
-                processedImage.style.maxWidth = '150px'; // Adjust width as needed
+                processedImage.style.maxWidth = '300px'; // Adjust width as needed
                 processedImage.style.height = 'auto'; // Maintain aspect ratio
             }
         };
@@ -90,7 +90,7 @@ function renderProbGraph(predictions) {
                 label: 'Confidence (%)',
                 data: probs,
                 backgroundColor: backgroundColors,
-                borderColor: backgroundColors.map(color => color.replace('0.2', '1')), // Darker border color
+                borderColor: backgroundColors.map(color => color.replace('0.45', '1')), // Darker border color
                 borderWidth: 1
             }]
         },
