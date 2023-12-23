@@ -30,15 +30,34 @@
     }
 }
 
-#processedImage {
-    width: 100%; /* Makes the image take the full width of its parent */
-    height: auto; /* Maintains the aspect ratio of the image */
-    max-width: 450px; /* Optional: Sets a maximum width for larger screens */
+/* Flexbox settings for the parent row */
+.row {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap in smaller screens */
 }
 
-#processedImageContainer .card-body {
+/* Equal height for card containers */
+.row .card {
     display: flex;
-    justify-content: center; /* Centers the image horizontally */
-    align-items: center; /* Centers the image vertically */
-    padding: 15px; /* Adds some padding around the image */
+    flex-direction: column; /* Stack card contents vertically */
+    height: 100%; /* Full height of parent */
+}
+
+/* Responsive image settings */
+#processedImageContainer .card-body img {
+    max-width: 100%; /* Maximum width is the width of the container */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 100%; /* Maximum height is the height of the container */
+}
+
+/* Adjust graph size */
+#probGraphContainer .card-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#probGraph {
+    width: 100%; /* Full width of the container */
+    height: auto; /* Adjust height automatically */
 }
