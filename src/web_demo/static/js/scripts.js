@@ -208,3 +208,28 @@ function displayLineGraph(data) {
         }
     });
 }
+
+function updateModelOptions() {
+    const modeSelect = document.getElementById('mode');
+    const modelSelect = document.getElementById('model');
+
+    // Clear existing options
+    modelSelect.innerHTML = '';
+
+    if (modeSelect.value === 'predict') {
+        // Options for 'Predict' mode
+        const options = ['ov', 'pytorch', 'onnx'];
+        options.forEach(opt => {
+            let option = document.createElement('option');
+            option.value = opt;
+            option.text = opt.charAt(0).toUpperCase() + opt.slice(1); // Capitalize first letter
+            modelSelect.appendChild(option);
+        });
+    } else if (modeSelect.value === 'benchmark') {
+        // Only 'ALL' option for 'Benchmark' mode
+        let option = document.createElement('option');
+        option.value = 'all';
+        option.text = 'ALL';
+        modelSelect.appendChild(option);
+    }
+}
