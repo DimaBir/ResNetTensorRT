@@ -124,7 +124,7 @@ function renderProbGraph(predictions) {
     ];
 
     // Assign colors from the palette to each bar
-    const backgroundColors = probs.map((_, index) => blueGreenPalette[index % blueGreenPalette.length]);
+    const backgroundColors = probs.map((_, index) => bluePurplePalette[index % bluePurplePalette.length]);
 
     probChart = new Chart(ctx, {
         type: 'bar',
