@@ -46,7 +46,11 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 
 function displayPredictions(predictions) {
     // Clear previous results
+    // Clear previous results and hide the processed image and graph container
     const resultsDiv = document.getElementById('results');
+    const processedImageDiv = document.getElementById('processedImageContainer');
+    const probGraphDiv = document.getElementById('probGraphContainer');
+
     resultsDiv.innerHTML = '';
 
     // Display the processed image
