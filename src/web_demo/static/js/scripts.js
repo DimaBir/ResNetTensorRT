@@ -70,27 +70,36 @@ function displayPredictions(predictions, inferenceTime) {
     renderProbGraph(predictions);
 
     // Update the inference time container
-    updateInferenceTimeDiv(inferenceTime);
-
-    // Update the top prediction container
-    updatePredictionDiv(predictions[0].label);
-}
-
-function updateInferenceTimeDiv(inferenceTime) {
     let inferenceTimeDiv = document.getElementById('inferenceTime');
     if (inferenceTimeDiv) {
-        inferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
-    }
-}
+        // Remove the element
+        inferenceTimeDiv.remove();
 
-function updatePredictionDiv(topPrediction) {
-    let predictionDiv = document.getElementById('predictionDiv');
-    if (predictionDiv) {
-        let topPredictionSpan = document.getElementById('topPrediction');
-        if (topPredictionSpan) {
-            topPredictionSpan.textContent = topPrediction;
-        }
-        predictionDiv.style.display = 'block';
+        // Create a new div element for inference time
+        let newInferenceTimeDiv = document.createElement('div');
+        newInferenceTimeDiv.id = 'inferenceTime';
+        newInferenceTimeDiv.className = 'inference-time-container';
+        newInferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
+
+        // Re-add the element to the DOM
+        let probGraphContainer = document.getElementById('probGraphContainer');
+        probGraphContainer.appendChild(newInferenceTimeDiv);
+    }
+    // Update the inference time container
+    let topPrediction = document.getElementById('topPrediction');
+    if (topPrediction) {
+        // Remove the element
+        topPrediction.remove();
+
+        // Create a new div element for inference time
+        let newTopPrediction = document.createElement('div');
+        newTopPrediction.id = 'topPrediction';
+        newTopPrediction.className = 'top-prediction-container';
+        newTopPrediction.innerHTML = `ResNet50 thinks it is: ${predictions[0].label`;
+
+        // Re-add the element to the DOM
+        let probGraphContainer = document.getElementById('probGraphContainer');
+        probGraphContainer.appendChild(newTopPrediction);
     }
 }
 
