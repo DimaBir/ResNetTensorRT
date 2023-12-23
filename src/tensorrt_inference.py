@@ -1,4 +1,6 @@
 import torch
+import numpy as np
+
 # import torch_tensorrt
 import logging
 from src.inference_base import InferenceBase
@@ -41,9 +43,9 @@ class TensorRTInference(InferenceBase):
 
         # Compile the TorchScript model with TensorRT
         if CUDA_AVAILABLE:
-            self.model = torch_tensorrt.compile(
+            self.model = trt.compile(
                 scripted_model,
-                inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=self.precision)],
+                inputs=[trt.Input((1, 3, 224, 224), dtype=self.precision)],
                 enabled_precisions={self.precision},
             )
 
@@ -76,3 +78,6 @@ class TensorRTInference(InferenceBase):
         :return: Average inference time in milliseconds.
         """
         return super().benchmark(input_data, num_runs, warmup_runs)
+
+    def get_top_predictions(self, logits: np.ndarray, is_benchmark=False):
+        return super().get_top_predictions(logits, is_benchmark)

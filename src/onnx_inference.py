@@ -1,4 +1,6 @@
 import os
+import torch
+import torch.nn.functional as F
 import logging
 import onnxruntime as ort
 import numpy as np
@@ -62,3 +64,26 @@ class ONNXInference(InferenceBase):
         :return: Average inference time in milliseconds.
         """
         return super().benchmark(input_data, num_runs, warmup_runs)
+
+    def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
+        if is_benchmark:
+            return None
+
+        # Apply softmax to the probabilities
+        prob = F.softmax(torch.from_numpy(prob), dim=0).numpy()
+
+        # Get the top indices and probabilities
+        top_indices = prob.argsort()[-self.topk :][::-1]
+        top_probs = prob[top_indices]
+
+        # Prepare the list of predictions
+        predictions = []
+        for i in range(self.topk):
+            probability = top_probs[i]
+            class_label = self.categories[0][int(top_indices[i])]
+            predictions.append({"label": class_label, "confidence": float(probability)})
+
+            # Log the top predictions
+            logging.info(f"#{i + 1}: {probability * 100:.2f}% {class_label}")
+
+        return predictions

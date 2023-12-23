@@ -102,20 +102,27 @@ class InferenceBase:
 
         return avg_time, throughput
 
-    def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
+    def get_top_predictions(self, logits: np.ndarray, is_benchmark=False):
         """
-        Get the top predictions based on the probabilities.
+        Get the top predictions based on the logits.
 
-        :param prob: Array of probabilities.
+        :param logits: Array of logits.
         :param is_benchmark: If True, the method is called during a benchmark run.
         :return: List of dictionaries with label and confidence.
         """
         if is_benchmark:
             return None
 
-        # Get the top indices and probabilities
-        top_indices = prob.argsort()[-self.topk:][::-1]
-        top_probs = prob[top_indices]
+        # Convert logits to tensor and apply softmax
+        logits_tensor = torch.from_numpy(logits)
+        probs_tensor = F.softmax(logits_tensor, dim=0)
+
+        # Extract top probabilities and indices
+        top_probs, top_indices = torch.topk(probs_tensor, self.topk)
+
+        # Convert to numpy arrays for processing
+        top_probs = top_probs.detach().numpy()
+        top_indices = top_indices.detach().numpy()
 
         # Prepare the list of predictions
         predictions = []

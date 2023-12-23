@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 from src.inference_base import InferenceBase
 
 
@@ -53,3 +54,6 @@ class PyTorchInference(InferenceBase):
         :return: Average inference time in milliseconds.
         """
         return super().benchmark(input_data, num_runs, warmup_runs)
+
+    def get_top_predictions(self, logits: np.ndarray, is_benchmark=False):
+        return super().get_top_predictions(logits, is_benchmark)
