@@ -69,14 +69,21 @@ function displayPredictions(predictions, inferenceTime) {
     // Render prediction probabilities graph
     renderProbGraph(predictions);
 
-    // Display inference time
-    const inferenceTimeDiv = document.getElementById('inferenceTime');
+    // Update the inference time container
+    let inferenceTimeDiv = document.getElementById('inferenceTime');
     if (inferenceTimeDiv) {
-        if (typeof inferenceTime === 'number') {
-            inferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
-        } else {
-            inferenceTimeDiv.innerHTML = 'Inference Time: N/A';
-        }
+        // Remove the element
+        inferenceTimeDiv.remove();
+
+        // Create a new div element for inference time
+        let newInferenceTimeDiv = document.createElement('div');
+        newInferenceTimeDiv.id = 'inferenceTime';
+        newInferenceTimeDiv.className = 'inference-time-container';
+        newInferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
+
+        // Re-add the element to the DOM
+        let probGraphContainer = document.getElementById('probGraphContainer');
+        probGraphContainer.appendChild(newInferenceTimeDiv);
     }
 }
 
