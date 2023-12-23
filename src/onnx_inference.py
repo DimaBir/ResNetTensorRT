@@ -40,18 +40,20 @@ class ONNXInference(InferenceBase):
         :param is_benchmark: If True, the prediction is part of a benchmark run.
         :return: Top predictions based on the probabilities.
         """
-        super().predict(input_data, is_benchmark)
+        super().predict(input_data, is_benchmark=is_benchmark)
 
-        input_name = self.model.get_inputs()[0].name
-        ort_inputs = {input_name: input_data.cpu().numpy()}
-        ort_outs = self.model.run(None, ort_inputs)
+        # Prepare the input data for ONNX Runtime
+        ort_inputs = {self.ort_session.get_inputs()[0].name: input_data.cpu().numpy()}
 
-        # Extract probabilities from the output and normalize them
-        if len(ort_outs) > 0:
-            prob = ort_outs[0]
-            if prob.ndim > 1:
-                prob = prob[0]
-            prob = np.exp(prob) / np.sum(np.exp(prob))
+        # Run the model inference
+        ort_outputs = self.ort_session.run(None, ort_inputs)
+
+        # Extract probabilities from the output
+        prob = ort_outputs[0]
+
+        # Apply softmax to the probabilities
+        prob = F.softmax(torch.from_numpy(prob), dim=1).numpy()
+
         return self.get_top_predictions(prob, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
@@ -66,14 +68,14 @@ class ONNXInference(InferenceBase):
         return super().benchmark(input_data, num_runs, warmup_runs)
 
     def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
+        """
+        Get the top predictions based on the probabilities.
+        """
         if is_benchmark:
             return None
 
-        # Apply softmax to the probabilities
-        prob = F.softmax(torch.from_numpy(prob), dim=0).numpy()
-
         # Get the top indices and probabilities
-        top_indices = prob.argsort()[-self.topk :][::-1]
+        top_indices = prob.argsort()[-self.topk:][::-1]
         top_probs = prob[top_indices]
 
         # Prepare the list of predictions

@@ -55,10 +55,12 @@ class OVInference(InferenceBase):
         input_name = next(iter(self.compiled_model.inputs))
         outputs = self.compiled_model(inputs={input_name: input_data.cpu().numpy()})
 
-        # Extract probabilities from the output and normalize them
+        # Extract probabilities from the output
         prob_key = next(iter(outputs))
         prob = outputs[prob_key]
-        prob = np.exp(prob[0]) / np.sum(np.exp(prob[0]))
+
+        # Apply softmax to the probabilities
+        prob = F.softmax(torch.from_numpy(prob[0]), dim=0).numpy()
 
         return self.get_top_predictions(prob, is_benchmark)
 
@@ -74,11 +76,11 @@ class OVInference(InferenceBase):
         return super().benchmark(input_data, num_runs, warmup_runs)
 
     def get_top_predictions(self, prob: np.ndarray, is_benchmark=False):
+        """
+        Get the top predictions based on the probabilities.
+        """
         if is_benchmark:
             return None
-
-        # Apply softmax to the probabilities
-        prob = F.softmax(torch.from_numpy(prob), dim=0).numpy()
 
         # Get the top indices and probabilities
         top_indices = prob.argsort()[-self.topk :][::-1]
