@@ -12,42 +12,43 @@
             <h1 class="text-center mb-4">ResNetTensorRT Image Processing Demo</h1>
             <div class="card shadow-lg">
                 <div class="card-body">
-                    <!-- Form content -->
+                    <form id="image-form" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="image">Upload Image:</label>
+                            <input type="file" class="form-control-file" id="image" name="image" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="model">Select Model:</label>
+                            <select class="form-control" id="model" name="model">
+                                <option value="ov">OV</option>
+                                <option value="pytorch">PyTorch CPU</option>
+                                <option value="onnx">ONNX</option>
+                                <option value="all">ALL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mode">Select Mode:</label>
+                            <select class="form-control" id="mode" name="mode">
+                                <option value="predict">Predict</option>
+                                <option value="benchmark">Benchmark</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </form>
                 </div>
             </div>
             <div id="spinner" class="text-center mt-3" style="display:none;">
-                <!-- Spinner content -->
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
             </div>
             <div id="results" class="mt-3"></div>
         </div>
     </div>
 
-    <!-- Inference Time -->
+    <!-- New row for image and prediction probabilities graph -->
     <div class="row mt-4">
-        <div class="col-md-12" id="inferenceTime" class="inference-time-container" style="display:none;">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <!-- Inference time will be displayed here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Prediction Probabilities Graph -->
-    <div class="row mt-4">
-        <div class="col-md-12" id="probGraphContainer" style="display:none;">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5>Prediction Probabilities</h5>
-                    <canvas id="probGraph"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Processed Image -->
-    <div class="row mt-4">
-        <div class="col-md-12" id="processedImageContainer" style="display:none;">
+        <div class="col-md-6" id="processedImageContainer" style="display:none;">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5>Processed Image</h5>
@@ -55,9 +56,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-6" id="probGraphContainer" style="display:none;">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5>Prediction Probabilities</h5>
+                    <canvas id="probGraph"></canvas>
+                </div>
+            </div>
+            <div id="inferenceTime" class="inference-time-container mt-3"></div>
+        </div>
     </div>
 
-    <!-- Benchmarks and Line Graph -->
+
+    <!-- Existing row for benchmarks and line graph -->
     <div class="row mt-4">
         <div class="col-md-12">
             <div id="lineGraphContainer" class="mt-3" style="display:none;">
