@@ -40,11 +40,8 @@ class PyTorchInference(InferenceBase):
         with torch.no_grad():
             outputs = self.model(input_data.to(self.device))
 
-        # Compute the softmax probabilities
-        prob = torch.nn.functional.softmax(outputs[0], dim=0)
-        prob = prob.cpu().numpy()
-
-        return self.get_top_predictions(prob, is_benchmark)
+        # Pass the raw output tensor to get_top_predictions
+        return self.get_top_predictions(outputs, is_benchmark)
 
     def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         """
@@ -57,29 +54,19 @@ class PyTorchInference(InferenceBase):
         """
         return super().benchmark(input_data, num_runs, warmup_runs)
 
-    def get_top_predictions(self, output, is_benchmark=False):
+    def get_top_predictions(self, output_tensor, is_benchmark=False):
         """
         Get the top predictions based on the model's output.
-
-        :param output: Raw output (logits) from the model.
-        :param is_benchmark: If True, the method is called during a benchmark run.
-        :return: List of dictionaries with label and confidence.
         """
         if is_benchmark:
             return None
 
-        # Convert the NumPy array to a PyTorch tensor
-        output_tensor = torch.from_numpy(output)
-        print(output_tensor)
-
         # Apply softmax to convert logits to probabilities
         probabilities = F.softmax(output_tensor, dim=1)
 
-        print(f"\n\n\n\n{probabilities}")
-
-        # Get the top indices and probabilities
+        # Get the top probabilities and their indices
         top_probs, top_indices = torch.topk(probabilities, self.topk)
-        top_probs = top_probs[0].tolist()  # Convert to list
+        top_probs = top_probs[0].tolist()
         top_indices = top_indices[0].tolist()
 
         # Prepare the list of predictions
