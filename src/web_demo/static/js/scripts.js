@@ -170,42 +170,47 @@ function displayBenchmark(benchmarkResults) {
 function displayLineGraph(labels, times, throughputs) {
     document.getElementById('lineGraphContainer').style.display = 'block';
 
-    const ctx = document.getElementById('lineGraph').getContext('2d');
-
-    new Chart(ctx, {
-        type: 'line',
+    // Inference Time Graph
+    const timeCtx = document.getElementById('timeGraph').getContext('2d');
+    new Chart(timeCtx, {
+        type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Inference Time (ms)',
+                label: 'Average Inference Time (ms)',
                 data: times,
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
                 borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
-                yAxisID: 'y-axis-time',
-            }, {
-                label: 'Throughput',
-                data: throughputs,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-                yAxisID: 'y-axis-throughput',
+                borderWidth: 1
             }]
         },
         options: {
             scales: {
-                'y-axis-time': {
-                    type: 'linear',
-                    display: true,
-                    position: 'left',
-                },
-                'y-axis-throughput': {
-                    type: 'linear',
-                    display: true,
-                    position: 'right',
-                    grid: {
-                        drawOnChartArea: false,
-                    },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Throughput Graph
+    const throughputCtx = document.getElementById('throughputGraph').getContext('2d');
+    new Chart(throughputCtx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Average Throughput',
+                data: throughputs,
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
         }
