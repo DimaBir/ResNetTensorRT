@@ -1,4 +1,5 @@
 from torchvision import transforms
+from torchvision.models import resnet50, ResNet50_Weights
 from PIL import Image
 import torch
 
@@ -35,6 +36,19 @@ class ImageProcessor:
 
         # Apply transformations and prepare a batch
         img_transformed = transform(img)
+        img_batch = torch.unsqueeze(img_transformed, 0).to(self.device)
+
+        return img_batch
+
+    def process_image_official(self) -> torch.Tensor:
+        img = Image.open(self.img_path)
+
+        # Initialize the Weight Transforms
+        weights = ResNet50_Weights.DEFAULT
+        preprocess = weights.transforms()
+
+        # Apply it to the input image
+        img_transformed = preprocess(img)
         img_batch = torch.unsqueeze(img_transformed, 0).to(self.device)
 
         return img_batch

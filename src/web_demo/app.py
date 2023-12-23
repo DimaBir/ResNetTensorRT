@@ -157,7 +157,8 @@ def process_request():
     # Process the uploaded image using ImageProcessor
     device = "cuda" if cuda_is_available() else "cpu"
     img_processor = ImageProcessor(img_path=file_path, device=device)
-    img_batch = img_processor.process_image()
+    # img_batch = img_processor.process_image()
+    img_batch = img_processor.process_image_official()
 
     if img_batch is None:
         return jsonify({"error": "Invalid file type"}), 400
