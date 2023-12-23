@@ -218,11 +218,11 @@ function updateModelOptions() {
 
     if (modeSelect.value === 'predict') {
         // Options for 'Predict' mode
-        const options = ['ov', 'pytorch', 'onnx'];
+        const options = ['OV', 'PyTorch CPU', 'ONNX'];
         options.forEach(opt => {
             let option = document.createElement('option');
             option.value = opt;
-            option.text = opt.charAt(0).toUpperCase() + opt.slice(1); // Capitalize first letter
+            option.text = opt; // Capitalize first letter
             modelSelect.appendChild(option);
         });
     } else if (modeSelect.value === 'benchmark') {

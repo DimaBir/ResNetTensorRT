@@ -149,7 +149,7 @@ def process_request():
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
 
     # Save the uploaded file with the unique name
-    image_file.seek(0)  # Reset the file pointer
+    image_file.seek(0)
     image_file.save(file_path)
 
     logging.info("Saved file: %s", file_path)
@@ -166,21 +166,21 @@ def process_request():
     logging.info("Loading pre-trained model")
     model_loader = ModelLoader(device="cpu")
 
-    if mode == "benchmark" and model_type == "all":
-        logging.info("Running all benchmarks")
+    if mode == "benchmark":
 
+        # Benchmark mode logic
+        logging.info("Running all benchmarks")
         results = run_all_benchmarks(img_batch)
         return jsonify({"benchmark": results})
 
-    logging.info("Getting inference Class for: %s", mode)
-    inference_class = get_inference_class(model_type, model_loader)
-    if inference_class is None:
-        logging.error("Invalid model type selected: %s", model_type)
-        return jsonify({"error": "Invalid model type selected"}), 400
+    elif mode == "predict":
 
-    logging.info("Running prediction for: %s", mode)
-    if mode == "predict":
-        logging.info("Running prediction")
+        # Predict mode logic
+        logging.info("Running prediction for model type: %s", model_type)
+        inference_class = get_inference_class(model_type, model_loader)
+        if inference_class is None:
+            logging.error("Invalid model type selected: %s", model_type)
+            return jsonify({"error": "Invalid model type selected"}), 400
 
         start_time = time.time()
         predictions = inference_class.predict(img_batch)
@@ -188,11 +188,10 @@ def process_request():
         inference_time = (end_time - start_time) * 1000
 
         return jsonify({"predictions": predictions, "inference_time": inference_time})
-    elif mode == "benchmark":
-        logging.info("Running benchmark")
-
-        results = inference_class.benchmark(img_batch)
-        return jsonify({"benchmark": results})
+    else:
+        # Handle unexpected mode
+        logging.error("Invalid mode selected: %s", mode)
+        return jsonify({"error": "Invalid mode selected"}), 400
 
 
 if __name__ == "__main__":
