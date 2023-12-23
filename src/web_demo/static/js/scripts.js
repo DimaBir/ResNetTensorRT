@@ -55,13 +55,14 @@ function displayPredictions(predictions) {
         let reader = new FileReader();
         reader.onload = function(e) {
             let processedImage = document.getElementById('processedImage');
-            processedImage.src = e.target.result;
-            processedImage.style.width = '150px'; // Adjust width as needed
-            processedImage.style.height = 'auto'; // Maintain aspect ratio
+            let processedImageContainer = document.getElementById('processedImageContainer');
 
-            // Display the div containing the processed image
-            let processedImageDiv = document.getElementById('processedImageDiv');
-            processedImageDiv.style.display = 'block';
+            if (processedImage && processedImageContainer) {
+                processedImage.src = e.target.result;
+                processedImage.style.maxWidth = '150px'; // Adjust width as needed
+                processedImage.style.height = 'auto'; // Maintain aspect ratio
+                processedImageContainer.style.display = 'block';
+            }
         };
         reader.readAsDataURL(imageInput.files[0]);
     }
