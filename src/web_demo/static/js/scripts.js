@@ -95,7 +95,7 @@ function displayPredictions(predictions, inferenceTime) {
         let newTopPrediction = document.createElement('div');
         newTopPrediction.id = 'topPrediction';
         newTopPrediction.className = 'top-prediction-container';
-        newTopPrediction.innerHTML = `ResNet50 thinks it is: ${predictions[0].label`;
+        newTopPrediction.innerHTML = `ResNet50 thinks it is: ${predictions[0].label}`;
 
         // Re-add the element to the DOM
         let probGraphContainer = document.getElementById('probGraphContainer');
