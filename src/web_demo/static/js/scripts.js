@@ -80,7 +80,7 @@ function renderProbGraph(predictions) {
 
     const labels = predictions.map(prediction => prediction.label);
     const probs = predictions.map(prediction => (prediction.confidence * 100).toFixed(2)); // Convert to percentage
-    const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.2)`); // Random colors
+    const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.45)`); // Random colors
 
     probChart = new Chart(ctx, {
         type: 'bar',
@@ -90,7 +90,7 @@ function renderProbGraph(predictions) {
                 label: 'Confidence (%)',
                 data: probs,
                 backgroundColor: backgroundColors,
-                borderColor: backgroundColors.map(color => color.replace('0.15', '1')), // Darker border color
+                borderColor: backgroundColors.map(color => color.replace('0.2', '1')), // Darker border color
                 borderWidth: 1
             }]
         },
