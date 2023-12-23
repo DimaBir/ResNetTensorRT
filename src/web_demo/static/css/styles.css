@@ -29,16 +29,3 @@
         opacity: 1;
     }
 }
-
-#processedImage {
-    width: 100%; /* Makes the image take the full width of its parent */
-    height: auto; /* Maintains the aspect ratio of the image */
-    max-width: 450px; /* Optional: Sets a maximum width for larger screens */
-}
-
-#processedImageContainer .card-body {
-    display: flex;
-    justify-content: center; /* Centers the image horizontally */
-    align-items: center; /* Centers the image vertically */
-    padding: 15px; /* Adds some padding around the image */
-}

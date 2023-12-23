@@ -59,6 +59,8 @@ function displayPredictions(predictions, inferenceTime) {
             let processedImage = document.getElementById('processedImage');
             if (processedImage) {
                 processedImage.src = e.target.result;
+                processedImage.style.maxWidth = '450px'; // Adjust width as needed
+                processedImage.style.height = 'auto'; // Maintain aspect ratio
             }
         };
         reader.readAsDataURL(imageInput.files[0]);
