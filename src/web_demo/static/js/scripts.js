@@ -70,6 +70,7 @@ function displayPredictions(predictions) {
     renderProbGraph(predictions);
 
     // Display inference time
+    const inferenceTimeDiv = document.getElementById('inferenceTime');
     if (inferenceTimeDiv) {
         inferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
     }
@@ -85,7 +86,7 @@ function renderProbGraph(predictions) {
 
     const labels = predictions.map(prediction => prediction.label);
     const probs = predictions.map(prediction => (prediction.confidence * 100).toFixed(2)); // Convert to percentage
-    const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.45)`); // Random colors
+    const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.8)`);
 
     probChart = new Chart(ctx, {
         type: 'bar',
