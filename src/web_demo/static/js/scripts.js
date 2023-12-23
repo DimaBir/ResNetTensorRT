@@ -154,31 +154,23 @@ function randomRGB() {
 }
 
 function displayBenchmark(benchmarkResults) {
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = ''; // Clear previous results
+    // Hide the image and prediction graph containers
+    document.getElementById('processedImageContainer').style.display = 'none';
+    document.getElementById('probGraphContainer').style.display = 'none';
 
-    for (const model in benchmarkResults) {
-        const time = benchmarkResults[model][0]; // Average Time
-        const throughput = benchmarkResults[model][1]; // Average Throughput
+    // Prepare data for line graphs
+    const labels = Object.keys(benchmarkResults);
+    const times = labels.map(label => benchmarkResults[label][0]);
+    const throughputs = labels.map(label => benchmarkResults[label][1]);
 
-        const p = document.createElement('p');
-        p.textContent = `${model} - Average Time: ${time.toFixed(2)} ms, Throughput: ${throughput.toFixed(2)}`;
-        resultsDiv.appendChild(p);
-    }
-
-    // If you have data for plotting (e.g., for 'ALL' mode), call displayLineGraph
-    if (benchmarkResults['all']) {
-        displayLineGraph(benchmarkResults['all']);
-    }
+    // Display line graphs
+    displayLineGraph(labels, times, throughputs);
 }
 
-function displayLineGraph(data) {
+function displayLineGraph(labels, times, throughputs) {
     document.getElementById('lineGraphContainer').style.display = 'block';
 
     const ctx = document.getElementById('lineGraph').getContext('2d');
-    const labels = Object.keys(data);
-    const times = labels.map(label => data[label].time);
-    const throughputs = labels.map(label => data[label].throughput);
 
     new Chart(ctx, {
         type: 'line',
