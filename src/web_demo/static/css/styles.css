@@ -1,0 +1,15 @@
+.inference-time-container {
+    background-color: #ADD8E6; /* Light blue background */
+    border-radius: 20px; /* Makes it oval-shaped */
+    padding: 10px 20px; /* Adds some padding inside the container */
+    text-align: center; /* Centers the text */
+    margin: 0 auto; /* Centers the container horizontally */
+    width: fit-content; /* Adjusts width to fit the content */
+    animation: pop 0.5s ease; /* Adds a popping animation */
+}
+
+@keyframes pop {
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}

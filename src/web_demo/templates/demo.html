@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block head %}
+<!-- Add your stylesheet link here if not added in base.html -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -57,11 +62,11 @@
                     <h5>Prediction Probabilities</h5>
                     <canvas id="probGraph"></canvas>
                 </div>
-                <!-- Add this inside your HTML where you want to display the inference time -->
-                <div id="inferenceTime" class="mt-3"></div>
+                <div id="inferenceTime" class="inference-time-container mt-3"></div>
             </div>
         </div>
     </div>
+
 
     <!-- Existing row for benchmarks and line graph -->
     <div class="row mt-4">
