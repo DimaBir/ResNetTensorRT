@@ -35,10 +35,6 @@ class ONNXInference(InferenceBase):
     def predict(self, input_data, is_benchmark=False):
         """
         Run prediction on the input data using the ONNX model.
-
-        :param input_data: Data to run the prediction on.
-        :param is_benchmark: If True, the prediction is part of a benchmark run.
-        :return: Top predictions based on the probabilities.
         """
         super().predict(input_data, is_benchmark=is_benchmark)
 
@@ -75,7 +71,7 @@ class ONNXInference(InferenceBase):
             return None
 
         # Get the top indices and probabilities
-        top_indices = prob.argsort()[-self.topk:][::-1]
+        top_indices = prob.argsort()[-self.topk :][::-1]
         top_probs = prob[top_indices]
 
         # Prepare the list of predictions
