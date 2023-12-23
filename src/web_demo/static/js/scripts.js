@@ -44,7 +44,7 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     });
 });
 
-function displayPredictions(predictions) {
+function displayPredictions(predictions, inferenceTime) {
     const processedImageContainer = document.getElementById('processedImageContainer');
     const probGraphContainer = document.getElementById('probGraphContainer');
 
@@ -72,7 +72,11 @@ function displayPredictions(predictions) {
     // Display inference time
     const inferenceTimeDiv = document.getElementById('inferenceTime');
     if (inferenceTimeDiv) {
-        inferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
+        if (typeof inferenceTime === 'number') {
+            inferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
+        } else {
+            inferenceTimeDiv.innerHTML = 'Inference Time: N/A';
+        }
     }
 }
 
