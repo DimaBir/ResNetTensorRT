@@ -6,17 +6,17 @@
     border-radius: 20px;
     margin-top: 15px;
     animation: popIn 0.5s ease;
+    animation-delay: 0.5s; /* Delay the animation */
 }
 
 .top-prediction-container {
-    background-color: #FFd166;
+    background-color: #d8315b;
     color: white;
     text-align: center;
     padding: 10px;
     border-radius: 20px;
     margin-top: 15px;
     animation: popIn 0.5s;
-    animation-delay: 0.5s; /* Delay the animation */
 }
 
 @keyframes popIn {
