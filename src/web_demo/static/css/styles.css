@@ -16,7 +16,7 @@
     border-radius: 20px;
     margin-top: 7px;
     animation: popIn 0.5s;
-    animation-delay: 0.5s; /* Delay the animation */
+    animation-delay: 0.25s; /* Delay the animation */
 }
 
 @keyframes popIn {
