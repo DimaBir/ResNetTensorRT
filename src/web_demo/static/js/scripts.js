@@ -78,7 +78,7 @@ function renderProbGraph(predictions) {
     const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.2)`); // Random colors
 
     probChart = new Chart(ctx, {
-        type: 'horizontalBar',
+        type: 'bAR',
         data: {
             labels: labels,
             datasets: [{
@@ -90,6 +90,7 @@ function renderProbGraph(predictions) {
             }]
         },
         options: {
+            indexAxis: 'y', // Set to 'y' for horizontal bars
             scales: {
                 x: {
                     beginAtZero: true
