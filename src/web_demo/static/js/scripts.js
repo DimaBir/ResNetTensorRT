@@ -189,6 +189,7 @@ function displayLineGraph(labels, times, throughputs) {
             }]
         },
         options: {
+            indexAxis: 'y', // Set to 'y' for horizontal bars
             scales: {
                 x: {
                     beginAtZero: true
@@ -212,6 +213,7 @@ function displayLineGraph(labels, times, throughputs) {
             }]
         },
         options: {
+            indexAxis: 'y', // Set to 'y' for horizontal bars
             scales: {
                 x: {
                     beginAtZero: true
