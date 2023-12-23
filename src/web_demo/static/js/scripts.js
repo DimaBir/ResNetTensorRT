@@ -161,9 +161,14 @@ function displayBenchmark(benchmarkResults) {
         const time = benchmarkResults[model].avgTime;
         const throughput = benchmarkResults[model].avgThroughput;
 
-        const p = document.createElement('p');
-        p.textContent = `${model} - Average Time: ${time.toFixed(2)} ms, Throughput: ${throughput.toFixed(2)}`;
-        resultsDiv.appendChild(p);
+        // Check if time and throughput are defined and are numbers
+        if (typeof time === 'number' && typeof throughput === 'number') {
+            const p = document.createElement('p');
+            p.textContent = `${model} - Average Time: ${time.toFixed(2)} ms, Throughput: ${throughput.toFixed(2)}`;
+            resultsDiv.appendChild(p);
+        } else {
+            console.error('Invalid data for benchmark results:', time, throughput);
+        }
     }
 
     // If you have data for plotting (e.g., for 'ALL' mode), call displayLineGraph
