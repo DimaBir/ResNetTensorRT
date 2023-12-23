@@ -31,7 +31,7 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
         document.getElementById('spinner').style.display = 'none';
 
         if (data.predictions) {
-            displayPredictions(data.predictions);
+            displayPredictions(data.predictions, data.inference_time);
         } else if (data.benchmark) {
             displayBenchmark(data.benchmark);
         }
@@ -68,6 +68,11 @@ function displayPredictions(predictions) {
 
     // Render prediction probabilities graph
     renderProbGraph(predictions);
+
+    // Display inference time
+    if (inferenceTimeDiv) {
+        inferenceTimeDiv.innerHTML = `Inference Time: ${inferenceTime.toFixed(2)} ms`;
+    }
 }
 
 function renderProbGraph(predictions) {

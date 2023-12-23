@@ -1,3 +1,4 @@
+import time
 import logging
 
 from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
@@ -174,8 +175,12 @@ def process_request():
     if mode == "predict":
         logging.info("Running prediction")
 
+        start_time = time.time()
         predictions = inference_class.predict(img_batch)
-        return jsonify({"predictions": predictions})
+        end_time = time.time()
+        inference_time = (end_time - start_time) * 1000
+
+        return jsonify({"predictions": predictions, "inference_time": inference_time})
     elif mode == "benchmark":
         logging.info("Running benchmark")
 
