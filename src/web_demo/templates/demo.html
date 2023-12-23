@@ -7,6 +7,16 @@
 
 {% block content %}
 <div class="container mt-5">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="text-center mb-4">ResNetTensorRT Image Processing Demo</h1>

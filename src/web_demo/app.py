@@ -135,7 +135,8 @@ def process_request():
 
     if not allowed_file(image_file.filename):
         logging.error("Invalid file type: %s", image_file.filename)
-        return jsonify({"error": "Invalid file type"}), 400
+        flash('Invalid file format. Allowed formats are png, jpg, jpeg, gif.', 'danger')
+        return redirect(url_for('index'))
 
     # Generate a unique filename using UUID
     ext = image_file.filename.rsplit(".", 1)[1].lower()  # Get the file extension
