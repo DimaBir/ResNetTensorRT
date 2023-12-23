@@ -45,92 +45,81 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 });
 
 function displayPredictions(predictions) {
-    // Clear previous results
-    // Clear previous results and hide the processed image and graph container
-    const resultsDiv = document.getElementById('results');
-    const processedImageDiv = document.getElementById('processedImageContainer');
-    const probGraphDiv = document.getElementById('probGraphContainer');
+    const processedImageContainer = document.getElementById('processedImageContainer');
+    const probGraphContainer = document.getElementById('probGraphContainer');
 
-    resultsDiv.innerHTML = '';
+    processedImageContainer.style.display = 'block';
+    probGraphContainer.style.display = 'block';
 
-    // Display the processed image
+    // Display the mini image
     let imageInput = document.getElementById('image');
     if (imageInput.files && imageInput.files[0]) {
         let reader = new FileReader();
         reader.onload = function(e) {
-            let processedImage = document.getElementById('processedImage');
-            let processedImageContainer = document.getElementById('processedImageContainer');
-
-            if (processedImage && processedImageContainer) {
-                processedImage.src = e.target.result;
-                processedImage.style.maxWidth = '150px'; // Adjust width as needed
-                processedImage.style.height = 'auto'; // Maintain aspect ratio
-                processedImageContainer.style.display = 'block';
-            }
+            document.getElementById('processedImage').src = e.target.result;
         };
         reader.readAsDataURL(imageInput.files[0]);
     }
 
-    // Prepare data for the probability graph
-    const labels = predictions.map(p => p.label);
-    const probs = predictions.map(p => p.confidence * 100); // Convert to percentage
-    const backgroundColors = generateColors(predictions.length); // Generate random colors for each bar
+    // Render prediction probabilities graph
+    renderProbGraph(predictions);
+}
 
-    // Destroy the previous chart if it exists
-    if (window.probChart) {
-        window.probChart.destroy();
+function renderProbGraph(predictions) {
+    const ctx = document.getElementById('probGraph').getContext('2d');
+
+    // Destroy the existing chart if it exists
+    if (probChart) {
+        probChart.destroy();
     }
 
-    // Create a new chart with datalabels for percentages
-    const ctx = document.getElementById('probGraph').getContext('2d');
-    window.probChart = new Chart(ctx, {
-        type: 'bar',
+    const labels = predictions.map(prediction => prediction.label);
+    const probs = predictions.map(prediction => (prediction.confidence * 100).toFixed(2)); // Convert to percentage
+    const backgroundColors = predictions.map(() => `rgba(${randomRGB()}, ${randomRGB()}, ${randomRGB()}, 0.2)`); // Random colors
+
+    probChart = new Chart(ctx, {
+        type: 'horizontalBar',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Confidence (%)',
                 data: probs,
                 backgroundColor: backgroundColors,
-                borderColor: backgroundColors.map(color => color.replace('0.5', '1')), // Darker border color
+                borderColor: backgroundColors.map(color => color.replace('0.2', '1')), // Darker border color
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
-                y: { // Updated for Chart.js v3
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value + '%'; // Append '%' to y-axis labels
-                        }
-                    }
-                }
-            },
-            plugins: {
-                datalabels: {
-                    color: '#000',
-                    anchor: 'end',
-                    align: 'top',
-                    formatter: (value, context) => {
-                        return value.toFixed(2) + '%'; // Format the label with percentage
-                    }
+                x: {
+                    beginAtZero: true
                 }
             }
-        },
-        plugins: [ChartDataLabels] // Ensure this plugin is included in your project
+        }
     });
 }
 
-// Function to generate random colors
-function generateColors(count) {
-    const colors = [];
-    for (let i = 0; i < count; i++) {
-        const r = Math.floor(Math.random() * 255);
-        const g = Math.floor(Math.random() * 255);
-        const b = Math.floor(Math.random() * 255);
-        colors.push(`rgba(${r}, ${g}, ${b}, 0.5)`);
+function displayBenchmark(benchmarkResults) {
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = ''; // Clear previous results
+
+    for (const model in benchmarkResults) {
+        const time = benchmarkResults[model].avgTime;
+        const throughput = benchmarkResults[model].avgThroughput;
+
+        const p = document.createElement('p');
+        p.textContent = `${model} - Average Time: ${time.toFixed(2)} ms, Throughput: ${throughput.toFixed(2)}`;
+        resultsDiv.appendChild(p);
     }
-    return colors;
+
+    // If you have data for plotting (e.g., for 'ALL' mode), call displayLineGraph
+    if (benchmarkResults['all']) {
+        displayLineGraph(benchmarkResults['all']);
+    }
+}
+
+function randomRGB() {
+    return Math.floor(Math.random() * 255);
 }
 
 function displayBenchmark(benchmarkResults) {
