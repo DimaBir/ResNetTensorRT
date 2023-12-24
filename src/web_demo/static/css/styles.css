@@ -116,8 +116,8 @@
 }
 
 .info-card-help {
-    width: 20px; /* Adjust size as desired */
-    height: 20px; /* Adjust size as desired */
+    width: 30px; /* Adjust size as desired */
+    height: 30px; /* Adjust size as desired */
     border-radius: 50%;
     background-color: white;
     color: #007bff;
@@ -126,6 +126,7 @@
     align-items: center;
     font-size: 16px; /* Adjust font size as desired */
     margin-right: 5px;
+    margin-bottom: 5px;
 }
 
 .info-card-close {
