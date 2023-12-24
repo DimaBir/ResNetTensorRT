@@ -150,19 +150,22 @@
     border: none;
     background: rgba(255, 255, 255, 0.5); /* Half-transparent white background */
     border-radius: 50%; /* Circular shape */
-    font-size: 20px;
-    color: black;
-    width: 30px; /* Size of the circle */
-    height: 30px; /* Size of the circle */
+    font-size: 10px; /* Smaller font size */
+    color: #007bff;
+    width: 15px; /* Half the previous size */
+    height: 15px; /* Half the previous size */
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
+    margin-left: auto; /* To align to the right */
+    margin-right: 5px; /* Adjust spacing */
 }
 
 .info-card-close:hover {
     background: rgba(255, 255, 255, 0.7); /* Slightly more visible on hover */
 }
+
 
 .info-card-line {
     border-top: 2px solid white;
