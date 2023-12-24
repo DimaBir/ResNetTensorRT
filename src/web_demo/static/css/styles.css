@@ -142,8 +142,8 @@
     width: 20px; /* Adjust size as desired */
     height: 20px; /* Adjust size as desired */
     border-radius: 50%;
-    background-color: #007bff;
-    color: white;
+    background-color: white;
+    color: #007bff;
     display: flex;
     justify-content: center;
     align-items: center;
