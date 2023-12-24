@@ -125,13 +125,13 @@ function renderProbGraph(predictions) {
     const labels = predictions.map(prediction => prediction.label);
     const probs = predictions.map(prediction => (prediction.confidence * 100).toFixed(2)); // Convert to percentage
 
-    // Define a blue-purple color palette
-    const bluePurplePalette = [
-        'rgba(63, 81, 181, 0.8)', // Blue
-        'rgba(94, 53, 177, 0.8)', // Indigo
-        'rgba(123, 31, 162, 0.8)', // Deep Purple
-        'rgba(156, 39, 176, 0.8)', // Purple
-        'rgba(186, 104, 200, 0.8)' // Light Purple
+    // Define a blue color palette
+    const bluePalette = [
+        'rgba(0, 123, 255, 0.8)', // Bootstrap primary blue
+        'rgba(23, 162, 184, 0.8)', // A lighter shade of blue
+        'rgba(40, 167, 69, 0.8)', // A greenish-blue shade
+        'rgba(0, 105, 217, 0.8)', // A darker shade of blue
+        'rgba(3, 169, 244, 0.8)'  // A sky blue shade
     ];
 
     // Assign colors from the palette to each bar
@@ -185,6 +185,10 @@ function displayBenchmark(benchmarkResults) {
 function displayLineGraph(labels, times, throughputs) {
     const timeGraphContainer = document.getElementById('timeGraphContainer');
     const throughputGraphContainer = document.getElementById('throughputGraphContainer');
+
+    // Colors for the benchmark graphs
+    const timeGraphColor = 'rgba(0, 123, 255, 0.8)'; // Bootstrap primary blue for the time graph
+    const throughputGraphColor = 'rgba(23, 162, 184, 0.8)'; // A lighter shade of blue for the throughput graph
 
     if (timeGraphContainer && throughputGraphContainer) {
         timeGraphContainer.style.display = 'block';
