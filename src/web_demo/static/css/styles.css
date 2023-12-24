@@ -99,26 +99,13 @@
 }
 
 .info-card-list {
-    list-style-type: decimal; /* Use numbers for list items */
-    padding-left: 20px; /* Add padding to create indentation (tabbing effect) */
-    counter-reset: list-counter; /* Create a counter for the list items */
+    list-style: none;
+    padding: 0;
 }
 
 .info-card-list li {
-    counter-increment: list-counter; /* Increment the list item counter */
     margin-bottom: 10px;
     font-size: 16px;
-    text-align: left; /* Ensure text alignment is consistent */
-    position: relative; /* Position relative to allow absolute positioning of the number */
-}
-
-.info-card-list li::before {
-    content: counter(list-counter) ". "; /* Add the counter number and a period before the item */
-    position: absolute; /* Position the number absolutely to align it within the padding */
-    left: -20px; /* Align numbers to the left, adjust as needed based on padding */
-    top: 0;
-    color: #007bff; /* Use the primary color for numbers */
-    font-weight: bold; /* Make numbers bold */
 }
 
 .info-card-header {
@@ -178,7 +165,7 @@
         rgba(0, 123, 255, 0.8)
     );
     background-size: 200% 200%;
-    animation: GradientAnimation 15s ease infinite;
+    animation: gradientAnimation 15s ease infinite;
     border-radius: 5px;
     padding: 20px;
     color: white;
