@@ -183,59 +183,61 @@ function displayBenchmark(benchmarkResults) {
 }
 
 function displayLineGraph(labels, times, throughputs) {
-    document.getElementById('lineGraphContainer').style.display = 'block';
+    const timeGraphContainer = document.getElementById('timeGraphContainer');
+    const throughputGraphContainer = document.getElementById('throughputGraphContainer');
 
-    // Colors from the blue-purple palette
-    const timeGraphColor = 'rgba(103, 58, 183, 0.8)'; // Purple
-    const throughputGraphColor = 'rgba(63, 81, 181, 0.8)'; // Blue
+    if (timeGraphContainer && throughputGraphContainer) {
+        timeGraphContainer.style.display = 'block';
+        throughputGraphContainer.style.display = 'block';
 
-    // Inference Time Graph
-    const timeCtx = document.getElementById('timeGraph').getContext('2d');
-    new Chart(timeCtx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Average Inference Time (ms)',
-                data: times,
-                backgroundColor: timeGraphColor,
-                borderColor: timeGraphColor.replace('0.8', '1'),
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y', // Set to 'y' for horizontal bars
-            scales: {
-                x: {
-                    beginAtZero: true
+        // Inference Time Graph
+        const timeCtx = document.getElementById('timeGraph').getContext('2d');
+        new Chart(timeCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Inference Time (ms)',
+                    data: times,
+                    backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
+        });
 
-    // Throughput Graph
-    const throughputCtx = document.getElementById('throughputGraph').getContext('2d');
-    new Chart(throughputCtx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Average Throughput (samples/sec)',
-                data: throughputs,
-                backgroundColor: throughputGraphColor,
-                borderColor: throughputGraphColor.replace('0.8', '1'),
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y', // Set to 'y' for horizontal bars
-            scales: {
-                x: {
-                    beginAtZero: true
+        // Throughput Graph
+        const throughputCtx = document.getElementById('throughputGraph').getContext('2d');
+        new Chart(throughputCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Average Throughput',
+                    data: throughputs,
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
+        });
+    } else {
+        console.error('Error: Graph containers not found');
+    }
 }
 
 function updateModelOptions() {
