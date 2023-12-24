@@ -91,3 +91,27 @@
     right: 10px;
     top: 5px;
 }
+
+.info-card {
+    background: linear-gradient(135deg, #007bff, #28a745, #6c757d); /* Blue, Green, and a matching Grey */
+    border-radius: 5px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px; /* Spacing between the info card and the user form */
+}
+
+.info-card-title {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.info-card-list {
+    list-style: none;
+    padding: 0;
+}
+
+.info-card-list li {
+    margin-bottom: 10px;
+    font-size: 16px;
+}

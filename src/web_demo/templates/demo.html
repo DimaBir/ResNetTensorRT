@@ -20,6 +20,18 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="text-center mb-4">CNN Model Inference Live Demo</h1>
+            <!-- Place this section right after your header and before the user form -->
+            <div class="container mt-5">
+                <div class="info-card" id="info-card">
+                    <h5 class="info-card-title">How to Use This Demo</h5>
+                    <ul class="info-card-list">
+                        <li>Select a CNN Model Type: Choose between ResNet50 or EfficientNet for image processing.</li>
+                        <li>Choose Prediction Mode: Run the model to get predictions on your uploaded image.</li>
+                        <li>Select Inference Mode: Choose between OV, PyTorch CPU, or ONNX for model inference.</li>
+                        <li>Opt for Benchmarking: Compare performance across different models and inference settings.</li>
+                    </ul>
+                </div>
+            </div>
             <div class="card shadow-lg">
                 <div class="card-body">
                     <form id="image-form" method="post" enctype="multipart/form-data">

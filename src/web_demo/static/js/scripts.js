@@ -7,6 +7,9 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     let mode = document.getElementById('mode').value;
     let cnnModel = document.getElementById('cnnModel').value;
 
+    // Hide the info card
+    document.getElementById('info-card').style.display = 'none';
+
     // Hide benchmark graphs when switching to prediction mode
     if (mode === 'predict') {
         document.getElementById('timeGraphContainer').style.display = 'none';
