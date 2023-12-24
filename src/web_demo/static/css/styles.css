@@ -32,17 +32,17 @@
 
 .benchmark-info {
     background: linear-gradient(
-      217deg,
-      rgba(63, 81, 181, 0.8), /* Blue */
-      rgba(63, 81, 181, 0) 70.71%
+        217deg,
+        rgba(0, 123, 255, 0.8),
+        rgba(0, 123, 255, 0) 70.71%
     ), linear-gradient(
-      127deg,
-      rgba(94, 53, 177, 0.8), /* Indigo */
-      rgba(94, 53, 177, 0) 70.71%
+        127deg,
+        rgba(23, 162, 184, 0.8),
+        rgba(23, 162, 184, 0) 70.71%
     ), linear-gradient(
-      336deg,
-      rgba(156, 39, 176, 0.8), /* Purple */
-      rgba(156, 39, 176, 0) 70.71%
+        336deg,
+        rgba(40, 167, 69, 0.8),
+        rgba(40, 167, 69, 0) 70.71%
     );
     color: white;
     padding: 20px;

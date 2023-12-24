@@ -34,6 +34,7 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
         // Enable the submit button and hide the spinner
         submitButton.disabled = false;
         document.getElementById('spinner').style.display = 'none';
+        document.getElementById('benchmarkInfo').style.display = 'none';
 
         if (data.predictions) {
             displayPredictions(data.predictions, data.inference_time);
@@ -46,13 +47,12 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
         // Enable the submit button in case of an error
         submitButton.disabled = false;
         document.getElementById('spinner').style.display = 'none';
+        document.getElementById('benchmarkInfo').style.display = 'none';
     });
 });
 
-// Add event listener to the 'mode' select element
-document.getElementById('mode').addEventListener('change', updateModelOptions);
 
-// Call updateModelOptions initially to set the correct options based on the current mode
+document.getElementById('mode').addEventListener('change', updateModelOptions);
 updateModelOptions();
 
 function displayPredictions(predictions, inferenceTime) {
@@ -199,14 +199,15 @@ function displayLineGraph(labels, times, throughputs) {
                 datasets: [{
                     label: 'Average Inference Time (ms)',
                     data: times,
-                    backgroundColor: 'rgba(255, 99, 132, 0.8)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: timeGraphColor,
+                    borderColor: timeGraphColor.replace('0.8', '1'),
                     borderWidth: 1
                 }]
             },
             options: {
+                indexAxis: 'y', // Set to 'y' for horizontal bars
                 scales: {
-                    y: {
+                    x: {
                         beginAtZero: true
                     }
                 }
@@ -220,16 +221,17 @@ function displayLineGraph(labels, times, throughputs) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Average Throughput',
+                    label: 'Average Throughput (samples/sec)',
                     data: throughputs,
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: throughputGraphColor,
+                    borderColor: throughputGraphColor.replace('0.8', '1'),
                     borderWidth: 1
                 }]
             },
             options: {
+                indexAxis: 'y', // Set to 'y' for horizontal bars
                 scales: {
-                    y: {
+                    x: {
                         beginAtZero: true
                     }
                 }
