@@ -79,30 +79,42 @@ function displayFlashMessage(category, message) {
     countdownBar.className = 'countdown-bar';
     flashMessageDiv.appendChild(countdownBar);
 
+    // Create the close button
+    let closeButton = document.createElement('button');
+    closeButton.className = 'close-button';
+    closeButton.innerHTML = '&times;';
+    closeButton.onclick = function() {
+        clearInterval(countdownInterval);
+        flashMessageDiv.remove();
+    };
+    flashMessageDiv.appendChild(closeButton);
+
     // Insert the flash message into the container
     container.insertBefore(flashMessageDiv, container.firstChild);
 
     // Start the countdown
     let timeLeft = 5; // Duration in seconds
     let countdownInterval = setInterval(() => {
+        countdownBar.style.width = `${(timeLeft / 5) * 100}%`;
+        countdownBar.style.backgroundColor = `rgba(255, 0, 0, ${timeLeft / 5})`;
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
-            fadeOutElement(flashMessageDiv);
-        } else {
-            countdownBar.style.width = `${(timeLeft / 5) * 100}%`;
-            countdownBar.style.backgroundColor = `rgba(255, 0, 0, ${timeLeft / 5})`;
-            timeLeft--;
+            fadeOutElement(flashMessageDiv, countdownBar);
         }
+        timeLeft--;
     }, 1000);
 }
 
-function fadeOutElement(element) {
+function fadeOutElement(element, excludeElement) {
     var fadeEffect = setInterval(function () {
         if (!element.style.opacity) {
             element.style.opacity = 1;
         }
         if (element.style.opacity > 0) {
             element.style.opacity -= 0.1;
+            if (excludeElement) {
+                excludeElement.style.opacity = 1; // Keep the countdown bar fully visible
+            }
         } else {
             clearInterval(fadeEffect);
             element.remove();
