@@ -62,13 +62,38 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
 });
 
 function displayFlashMessage(category, message) {
-    let flashMessageDiv = document.createElement('div');
-    flashMessageDiv.className = `alert alert-${category}`;
-    flashMessageDiv.role = 'alert';
-    flashMessageDiv.textContent = message;
-
     let container = document.querySelector('.container');
+
+    // Create the flash message div
+    let flashMessageDiv = document.createElement('div');
+    flashMessageDiv.className = `alert alert-${category} flash-message`;
+    flashMessageDiv.role = 'alert';
+
+    // Create the message text
+    let messageText = document.createElement('span');
+    messageText.textContent = message;
+    flashMessageDiv.appendChild(messageText);
+
+    // Create the countdown bar
+    let countdownBar = document.createElement('div');
+    countdownBar.className = 'countdown-bar';
+    flashMessageDiv.appendChild(countdownBar);
+
+    // Insert the flash message into the container
     container.insertBefore(flashMessageDiv, container.firstChild);
+
+    // Start the countdown
+    let timeLeft = 5; // Duration in seconds
+    let countdownInterval = setInterval(() => {
+        if (timeLeft <= 0) {
+            clearInterval(countdownInterval);
+            $(flashMessageDiv).fadeOut('slow', () => flashMessageDiv.remove());
+        } else {
+            countdownBar.style.width = `${(timeLeft / 5) * 100}%`;
+            countdownBar.style.backgroundColor = `rgba(255, 0, 0, ${timeLeft / 5})`;
+            timeLeft--;
+        }
+    }, 1000);
 }
 
 document.getElementById('mode').addEventListener('change', updateModelOptions);
