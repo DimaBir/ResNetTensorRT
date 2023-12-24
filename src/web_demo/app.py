@@ -7,8 +7,7 @@ from io import BytesIO
 from config import SSL_CERT_PATH, SSL_KEY_PATH
 from werkzeug.exceptions import RequestEntityTooLarge
 from flask_limiter.util import get_remote_address
-from flask_limiter import Limiter
-from flask_limiter.exceptions import RateLimitExceeded
+from flask_limiter import Limiter, RateLimitExceeded
 import os
 import uuid
 
