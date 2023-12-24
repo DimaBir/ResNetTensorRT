@@ -127,47 +127,60 @@
 
 .info-card-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 10px; /* Adjust as needed for spacing */
     color: white;
 }
 
+.info-card-title {
+    margin-bottom: 0;
+    flex-grow: 1;
+    text-align: center;
+}
+
 .info-card-help {
-    width: 25px;
-    height: 25px;
+    width: 20px; /* Adjust size as desired */
+    height: 20px; /* Adjust size as desired */
     border-radius: 50%;
-    background-color: white;
-    color: #007bff;
+    background-color: #007bff;
+    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
-    margin-right: 10px;
+    font-size: 16px; /* Adjust font size as desired */
+    margin-right: 5px;
 }
 
 .info-card-close {
     cursor: pointer;
     border: none;
-    background: rgba(255, 255, 255, 0.5); /* Half-transparent white background */
-    border-radius: 50%; /* Circular shape */
-    font-size: 10px; /* Smaller font size */
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    font-size: 12px;
     color: #007bff;
-    width: 15px; /* Half the previous size */
-    height: 15px; /* Half the previous size */
+    line-height: 0;
+    width: 20px; /* Smaller size */
+    height: 20px; /* Smaller size */
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    margin-left: auto; /* To align to the right */
-    margin-right: 5px; /* Adjust spacing */
+    margin-left: auto;
+    margin-right: 5px;
+    outline: none;
 }
 
 .info-card-close:hover {
-    background: rgba(255, 255, 255, 0.7); /* Slightly more visible on hover */
+    background: rgba(255, 255, 255, 0.7);
 }
 
+.info-card {
+    background: linear-gradient(135deg, #007bff, #00b0ff, #82d4f2, #b3d4fc); /* Added a third color */
+    /* ... (Other .info-card styles remain unchanged) ... */
+}
 
 .info-card-line {
-    border-top: 2px solid white;
+    border-top: 3px solid white; /* Made the line wider */
     margin-top: 0;
+    margin-bottom: 15px; /* Provide spacing between the line and the list */
 }
