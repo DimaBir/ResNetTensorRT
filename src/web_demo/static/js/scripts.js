@@ -265,16 +265,28 @@ function updateBenchmarkInfo() {
         "Evaluating throughput metrics..."
     ];
     let currentSentence = 0;
+    let currentChar = 0;
 
     const animatedText = document.getElementById('animatedText');
     const benchmarkInfo = document.getElementById('benchmarkInfo');
     benchmarkInfo.style.display = 'block';
 
     function typeSentence() {
-        animatedText.textContent = sentences[currentSentence];
-        currentSentence = (currentSentence + 1) % sentences.length;
-        setTimeout(typeSentence, 4000); // Change sentence every 4 seconds
+        if (currentChar < sentences[currentSentence].length) {
+            animatedText.textContent += sentences[currentSentence].charAt(currentChar);
+            currentChar++;
+            setTimeout(typeSentence, 100); // Delay between each character
+        } else {
+            // Wait before starting the next sentence
+            setTimeout(() => {
+                currentSentence = (currentSentence + 1) % sentences.length;
+                animatedText.textContent = ''; // Clear the text
+                currentChar = 0; // Reset character position
+                typeSentence(); // Start typing the next sentence
+            }, 3000); // Delay between sentences
+        }
     }
 
     typeSentence();
 }
+
