@@ -148,7 +148,23 @@
 .info-card-close {
     cursor: pointer;
     border: none;
-    background: none;
+    background: rgba(255, 255, 255, 0.5); /* Half-transparent white background */
+    border-radius: 50%; /* Circular shape */
     font-size: 20px;
     color: black;
+    width: 30px; /* Size of the circle */
+    height: 30px; /* Size of the circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.info-card-close:hover {
+    background: rgba(255, 255, 255, 0.7); /* Slightly more visible on hover */
+}
+
+.info-card-line {
+    border-top: 2px solid white;
+    margin-top: 0;
 }
