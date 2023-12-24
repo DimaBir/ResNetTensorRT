@@ -129,14 +129,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: white;
 }
 
 .info-card-help {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background-color: #007bff;
-    color: white;
+    background-color: white;
+    color: #007bff;
     display: flex;
     justify-content: center;
     align-items: center;
