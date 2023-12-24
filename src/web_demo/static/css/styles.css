@@ -175,8 +175,27 @@
 }
 
 .info-card {
-    background: linear-gradient(135deg, #007bff, #00b0ff, #82d4f2, #b3d4fc); /* Added a third color */
-    /* ... (Other .info-card styles remain unchanged) ... */
+    background: linear-gradient(
+        135deg,
+        rgba(0, 123, 255, 0.4),
+        rgba(0, 176, 255, 0.4),
+        rgba(130, 212, 242, 0.4),
+        rgba(179, 212, 252, 0.4),
+        rgba(0, 123, 255, 0.4)
+    );
+    background-size: 200% 200%;
+    animation: GradientAnimation 15s ease infinite;
+    border-radius: 5px;
+    padding: 20px;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+@keyframes GradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .info-card-line {
