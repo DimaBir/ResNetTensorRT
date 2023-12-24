@@ -10,8 +10,6 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     if (mode === 'predict') {
         document.getElementById('timeGraphContainer').style.display = 'none';
         document.getElementById('throughputGraphContainer').style.display = 'none';
-        document.getElementById('processedImageContainer').style.display = 'block';
-        document.getElementById('probGraphContainer').style.display = 'block';
     } else {
         // Hide prediction elements when switching to benchmark mode
         document.getElementById('processedImageContainer').style.display = 'none';
