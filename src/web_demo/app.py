@@ -8,6 +8,7 @@ from config import SSL_CERT_PATH, SSL_KEY_PATH
 from werkzeug.exceptions import RequestEntityTooLarge
 from flask_limiter.util import get_remote_address
 from flask_limiter import Limiter
+from flask_limiter.exceptions import RateLimitExceeded
 import os
 import uuid
 
@@ -38,6 +39,13 @@ app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
 
 # Configure rate limiting
 limiter = Limiter(key_func=get_remote_address, app=app, default_limits=["5 per minute"])
+
+
+@app.errorhandler(RateLimitExceeded)
+def handle_rate_limit_error(e):
+    response = jsonify({"error": "Rate limit exceeded"})
+    response.status_code = 429  # Too Many Requests
+    return response
 
 
 # Function to check if the file extension is allowed
@@ -141,8 +149,7 @@ def process_request():
 
     if not allowed_file(image_file.filename):
         logging.error("Invalid file type: %s", image_file.filename)
-        flash("Invalid file format. Allowed formats are png, jpg, jpeg, gif.", "danger")
-        return redirect(url_for("index"))
+        return jsonify({"error": "Invalid file format. Allowed formats are png, jpg, jpeg, gif."}), 400
 
     # Generate a unique filename using UUID
     ext = image_file.filename.rsplit(".", 1)[1].lower()  # Get the file extension

@@ -28,7 +28,15 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.status === 400) {  // Check for rate limit exceeded
+            throw new Error("File format invalid. Please use: JPG, Jpeg, PNG, Gif. Max 500MB");
+        }
+        if (response.status === 429) {  // Check for rate limit exceeded
+            throw new Error("Rate limit exceeded. Please try again later.");
+        }
+        return response.json();
+    })
     .then(data => {
         // Enable the submit button and hide the spinner
         submitButton.disabled = false;
@@ -43,6 +51,9 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     })
     .catch(error => {
         console.error('Error:', error);
+
+        // Display error message to the user
+        displayFlashMessage("danger", error.message);
         // Enable the submit button in case of an error
         submitButton.disabled = false;
         document.getElementById('spinner').style.display = 'none';
@@ -50,6 +61,15 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     });
 });
 
+function displayFlashMessage(category, message) {
+    let flashMessageDiv = document.createElement('div');
+    flashMessageDiv.className = `alert alert-${category}`;
+    flashMessageDiv.role = 'alert';
+    flashMessageDiv.textContent = message;
+
+    let container = document.querySelector('.container');
+    container.insertBefore(flashMessageDiv, container.firstChild);
+}
 
 document.getElementById('mode').addEventListener('change', updateModelOptions);
 updateModelOptions();
