@@ -49,6 +49,12 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     });
 });
 
+// Add event listener to the 'mode' select element
+document.getElementById('mode').addEventListener('change', updateModelOptions);
+
+// Call updateModelOptions initially to set the correct options based on the current mode
+updateModelOptions();
+
 function displayPredictions(predictions, inferenceTime) {
     const processedImageContainer = document.getElementById('processedImageContainer');
     const probGraphContainer = document.getElementById('probGraphContainer');
