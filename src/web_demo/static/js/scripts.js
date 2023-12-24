@@ -16,6 +16,9 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
         // Hide prediction elements when switching to benchmark mode
         document.getElementById('processedImageContainer').style.display = 'none';
         document.getElementById('probGraphContainer').style.display = 'none';
+
+        // Start updating benchmark info
+        updateBenchmarkInfo();
     }
 
     // Disable the submit button and show the spinner
@@ -35,7 +38,6 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
         if (data.predictions) {
             displayPredictions(data.predictions, data.inference_time);
         } else if (data.benchmark) {
-            updateBenchmarkInfo();
             displayBenchmark(data.benchmark);
         }
     })
