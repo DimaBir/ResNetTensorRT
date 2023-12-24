@@ -93,12 +93,20 @@
 }
 
 .info-card {
-    background: linear-gradient(135deg, #007bff, #0056b3, #003d79); /* Different shades of blue */
+    background: linear-gradient(135deg, #007bff, #009688, #007bff, #28a745, #007bff);
+    background-size: 200% 200%;
+    animation: GradientAnimation 15s ease infinite;
     border-radius: 5px;
     padding: 20px;
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+}
+
+@keyframes GradientAnimation {
+    0% { background-position: 0% 50% }
+    50% { background-position: 100% 50% }
+    100% { background-position: 0% 50% }
 }
 
 /* Additional styles for the title and list */
