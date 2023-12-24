@@ -49,6 +49,7 @@
     border-radius: 10px;
     margin-top: 20px;
     text-align: center;
+    animation: gradientAnimation 15s ease infinite;
 }
 
 @keyframes gradientAnimation {
