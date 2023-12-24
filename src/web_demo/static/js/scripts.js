@@ -87,7 +87,7 @@ function displayFlashMessage(category, message) {
     let countdownInterval = setInterval(() => {
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
-            $(flashMessageDiv).fadeOut('slow', () => flashMessageDiv.remove());
+            fadeOutElement(flashMessageDiv);
         } else {
             countdownBar.style.width = `${(timeLeft / 5) * 100}%`;
             countdownBar.style.backgroundColor = `rgba(255, 0, 0, ${timeLeft / 5})`;
@@ -95,6 +95,21 @@ function displayFlashMessage(category, message) {
         }
     }, 1000);
 }
+
+function fadeOutElement(element) {
+    var fadeEffect = setInterval(function () {
+        if (!element.style.opacity) {
+            element.style.opacity = 1;
+        }
+        if (element.style.opacity > 0) {
+            element.style.opacity -= 0.1;
+        } else {
+            clearInterval(fadeEffect);
+            element.remove();
+        }
+    }, 100);
+}
+
 
 document.getElementById('mode').addEventListener('change', updateModelOptions);
 updateModelOptions();
