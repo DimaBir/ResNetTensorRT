@@ -93,7 +93,7 @@
 }
 
 .info-card {
-    background: linear-gradient(135deg, #007bff, #009688, #007bff, #28a745, #007bff);
+    background: linear-gradient(135deg, #007bff, #00b0ff, #007bff, #82d4f2, #007bff);
     background-size: 200% 200%;
     animation: GradientAnimation 15s ease infinite;
     border-radius: 5px;
