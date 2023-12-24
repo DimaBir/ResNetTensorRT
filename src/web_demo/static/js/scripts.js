@@ -126,7 +126,7 @@ function renderProbGraph(predictions) {
     const probs = predictions.map(prediction => (prediction.confidence * 100).toFixed(2)); // Convert to percentage
 
     // Define a blue color palette
-    const bluePalette = [
+    const bluePurplePalette = [
         'rgba(0, 123, 255, 0.8)', // Bootstrap primary blue
         'rgba(23, 162, 184, 0.8)', // A lighter shade of blue
         'rgba(40, 167, 69, 0.8)', // A greenish-blue shade
