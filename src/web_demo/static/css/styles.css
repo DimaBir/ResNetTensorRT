@@ -124,3 +124,30 @@
     margin-bottom: 10px;
     font-size: 16px;
 }
+
+.info-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-card-help {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.info-card-close {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 20px;
+    color: black;
+}
