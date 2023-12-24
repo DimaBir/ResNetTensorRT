@@ -4,20 +4,23 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     e.preventDefault();
     let formData = new FormData(this);
     let submitButton = document.querySelector("#image-form button[type='submit']");
+    let mode = document.getElementById('mode').value;
+
+    // Hide benchmark graphs when switching to prediction mode
+    if (mode === 'predict') {
+        document.getElementById('timeGraphContainer').style.display = 'none';
+        document.getElementById('throughputGraphContainer').style.display = 'none';
+        document.getElementById('processedImageContainer').style.display = 'block';
+        document.getElementById('probGraphContainer').style.display = 'block';
+    } else {
+        // Hide prediction elements when switching to benchmark mode
+        document.getElementById('processedImageContainer').style.display = 'none';
+        document.getElementById('probGraphContainer').style.display = 'none';
+    }
 
     // Disable the submit button and show the spinner
     submitButton.disabled = true;
     document.getElementById('spinner').style.display = 'block';
-
-    // Display the mini image
-    let imageInput = document.getElementById('image');
-    if (imageInput.files && imageInput.files[0]) {
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('processedImage').src = e.target.result;
-        };
-        reader.readAsDataURL(imageInput.files[0]);
-    }
 
     fetch('/process', {
         method: 'POST',
@@ -25,7 +28,6 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data)
         // Enable the submit button and hide the spinner
         submitButton.disabled = false;
         document.getElementById('spinner').style.display = 'none';
@@ -33,6 +35,7 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
         if (data.predictions) {
             displayPredictions(data.predictions, data.inference_time);
         } else if (data.benchmark) {
+            updateBenchmarkInfo();
             displayBenchmark(data.benchmark);
         }
     })
@@ -154,9 +157,13 @@ function randomRGB() {
 }
 
 function displayBenchmark(benchmarkResults) {
-    // Hide the image and prediction graph containers
+    // Hide prediction elements
     document.getElementById('processedImageContainer').style.display = 'none';
     document.getElementById('probGraphContainer').style.display = 'none';
+
+    // Display benchmark graphs
+    document.getElementById('timeGraphContainer').style.display = 'block';
+    document.getElementById('throughputGraphContainer').style.display = 'block';
 
     // Prepare data for line graphs
     const labels = Object.keys(benchmarkResults);
@@ -246,4 +253,26 @@ function updateModelOptions() {
         option.text = 'ALL';
         modelSelect.appendChild(option);
     }
+}
+
+function updateBenchmarkInfo() {
+    const sentences = [
+        "Analyzing model performance...",
+        "Running benchmarks on different models...",
+        "Calculating average inference time...",
+        "Evaluating throughput metrics..."
+    ];
+    let currentSentence = 0;
+
+    const animatedText = document.getElementById('animatedText');
+    const benchmarkInfo = document.getElementById('benchmarkInfo');
+    benchmarkInfo.style.display = 'block';
+
+    function typeSentence() {
+        animatedText.textContent = sentences[currentSentence];
+        currentSentence = (currentSentence + 1) % sentences.length;
+        setTimeout(typeSentence, 4000); // Change sentence every 4 seconds
+    }
+
+    typeSentence();
 }

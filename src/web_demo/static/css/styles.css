@@ -29,3 +29,26 @@
         opacity: 1;
     }
 }
+
+.benchmark-info {
+    background: radial-gradient(circle, rgba(156, 39, 176, 0.8), rgba(103, 58, 183, 0.8), rgba(63, 81, 181, 0.8));
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Typing animation */
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+#animatedText {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 2s steps(40, end), blink-caret 0.75s step-end infinite;
+    border-right: 2px solid;
+}
