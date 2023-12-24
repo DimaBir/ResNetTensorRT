@@ -121,8 +121,9 @@ def index():
 @app.route("/process", methods=["POST"])
 def process_request():
     image_file = request.files.get("image")
-    model_type = request.form.get("model")
+    model_type = request.form.get("inferenceMode")
     mode = request.form.get("mode")
+    cnn_model = request.form.get("cnnModel")  # Retrieve the selected CNN model
 
     # Add logging statements
     logging.info(
@@ -157,14 +158,14 @@ def process_request():
     # Process the uploaded image using ImageProcessor
     device = "cuda" if cuda_is_available() else "cpu"
     img_processor = ImageProcessor(img_path=file_path, device=device)
-    # img_batch = img_processor.process_image()
-    img_batch = img_processor.process_image_official()
+    img_batch = img_processor.process_image()
+    # img_batch = img_processor.process_image_official()
 
     if img_batch is None:
         return jsonify({"error": "Invalid file type"}), 400
 
-    logging.info("Loading pre-trained model")
-    model_loader = ModelLoader(device="cpu")
+    logging.info("Loading pre-trained model, for %s", cnn_model)
+    model_loader = ModelLoader(model_type=cnn_model, device=device)
 
     if mode == "benchmark":
 

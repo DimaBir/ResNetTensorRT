@@ -5,6 +5,7 @@ document.getElementById('image-form').addEventListener('submit', function(e) {
     let formData = new FormData(this);
     let submitButton = document.querySelector("#image-form button[type='submit']");
     let mode = document.getElementById('mode').value;
+    let cnnModel = document.getElementById('cnnModel').value;
 
     // Hide benchmark graphs when switching to prediction mode
     if (mode === 'predict') {
@@ -94,7 +95,9 @@ function displayPredictions(predictions, inferenceTime) {
         let probGraphContainer = document.getElementById('probGraphContainer');
         probGraphContainer.appendChild(newInferenceTimeDiv);
     }
+
     // Update the inference time container
+    let cnnModel = document.getElementById('cnnModel').value;
     let topPrediction = document.getElementById('topPrediction');
     if (topPrediction) {
         // Remove the element
@@ -104,7 +107,7 @@ function displayPredictions(predictions, inferenceTime) {
         let newTopPrediction = document.createElement('div');
         newTopPrediction.id = 'topPrediction';
         newTopPrediction.className = 'top-prediction-container';
-        newTopPrediction.innerHTML = `ResNet50 thinks it is: ${predictions[0].label}`;
+        newTopPrediction.innerHTML = `${cnnModel.toUpperCase()} thinks it is: ${predictions[0].label}`;
 
         // Re-add the element to the DOM
         let probGraphContainer = document.getElementById('probGraphContainer');
@@ -246,7 +249,7 @@ function displayLineGraph(labels, times, throughputs) {
 
 function updateModelOptions() {
     const modeSelect = document.getElementById('mode');
-    const modelSelect = document.getElementById('model');
+    const modelSelect = document.getElementById('inferenceMode');
 
     // Clear existing options
     modelSelect.innerHTML = '';

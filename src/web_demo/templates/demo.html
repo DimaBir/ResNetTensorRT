@@ -19,10 +19,10 @@
     {% endwith %}
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <h1 class="text-center mb-4">ResNetTensorRT Image Processing Demo</h1>
+            <h1 class="text-center mb-4">CNN Model Image Processing Demo</h1>
             <div class="card shadow-lg">
                 <div class="card-body">
-                    <form id="image-form" method="post" enctype="multipart/form-data">
+                    <!--<form id="image-form" method="post" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="image">Upload Image:</label>
                             <input type="file" class="form-control-file" id="image" name="image" required>
@@ -30,9 +30,40 @@
                         <div class="form-group">
                             <label for="model">Select Model:</label>
                             <select class="form-control" id="model" name="model">
+                                <option value="resnet50">ResNet50</option>
+                                <option value="efficientnet">EfficientNet</option>
                                 <option value="ov">OV</option>
                                 <option value="pytorch">PyTorch CPU</option>
                                 <option value="onnx">ONNX</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mode">Select Mode:</label>
+                            <select class="form-control" id="mode" name="mode">
+                                <option value="predict">Predict</option>
+                                <option value="benchmark">Benchmark</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </form>-->
+                    <form id="image-form" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="image">Upload Image:</label>
+                            <input type="file" class="form-control-file" id="image" name="image" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inferenceMode">Select Inference Mode:</label>
+                            <select class="form-control" id="inferenceMode" name="inferenceMode">
+                                <option value="ov">OV</option>
+                                <option value="pytorch">PyTorch CPU</option>
+                                <option value="onnx">ONNX</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cnnModel">Select CNN Model:</label>
+                            <select class="form-control" id="cnnModel" name="cnnModel">
+                                <option value="resnet50">ResNet50</option>
+                                <option value="efficientnet">EfficientNet</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -93,7 +124,7 @@
         </div>
         <div class="col-md-6" id="throughputGraphContainer" style="display:none;">
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div the="card-body">
                     <h5>Average Throughput</h5>
                     <canvas id="throughputGraph"></canvas>
                 </div>
