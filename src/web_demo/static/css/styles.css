@@ -109,12 +109,6 @@
     100% { background-position: 0% 50% }
 }
 
-/* Additional styles for the title and list */
-.info-card-title {
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
 .info-card-list {
     list-style: none;
     padding: 0;
@@ -127,28 +121,27 @@
 
 .info-card-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    color: white;
+    justify-content: space-between;
 }
 
 .info-card-help {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background-color: white;
-    color: #007bff;
+    /* Existing styles */
+}
+
+.info-card-title {
+    margin-bottom: 0; /* Remove bottom margin */
+    flex-grow: 1; /* Allow the title to take up available space */
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-weight: bold;
-    margin-right: 10px;
+    justify-content: center;
 }
 
 .info-card-close {
-    cursor: pointer;
-    border: none;
-    background: none;
-    font-size: 20px;
-    color: black;
+    /* Existing styles */
+}
+
+.info-card-line {
+    border-top: 2px solid white; /* Wider and white line */
+    margin-top: 0; /* Optional: Adjust top margin if needed */
 }
