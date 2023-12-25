@@ -160,18 +160,22 @@
         135deg,
         rgba(0, 123, 255, 0.8),
         rgba(0, 176, 255, 0.8),
-        rgba(130, 212, 242, 0.8),
-        rgba(179, 212, 252, 0.8),
-        rgba(0, 123, 255, 0.8)
+        rgba(130, 212, 242, 0.8)
     );
-    background-size: 200% 200%;
-    animation: gradientAnimation 15s ease infinite;
     border-radius: 5px;
     padding: 20px;
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     position: relative;
+    overflow: hidden; /* Ensure the inner card does not overflow the rounded corners */
+}
+
+.info-card-inner {
+    background-color: white; /* White background for inner card */
+    border-radius: 5px; /* Match the border-radius of the outer card */
+    padding: 20px;
+    color: #007bff; /* Blue color for the text inside the inner card */
 }
 
 @keyframes gradientAnimation {

@@ -20,21 +20,23 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1 class="text-center mb-4">CNN Model Inference Live Demo</h1>
-            <!-- Place this section right after your header and before the user form -->
             <div class="container mt-5">
                 <div class="info-card" id="info-card">
                     <div class="info-card-header">
                         <span class="info-card-help">?</span>
+                        <h5 class="info-card-title">Instructions: </h5>
                         <button class="info-card-close" onclick="document.getElementById('info-card').style.display='none'">&times;</button>
                     </div>
-                    <hr class="info-card-line"> <!-- Custom class for styling -->
-                    <ol class="info-card-list">
-                        <li>Choose and upload an image in PNG, JPG, JPEG, or GIF format.</li>
-                        <li>Choose between ResNet50 or EfficientNet for image processing.</li>
-                        <li>Run the model to get predictions on your uploaded image.</li>
-                        <li>Choose between OV, PyTorch CPU, or ONNX for model inference.</li>
-                        <li>Compare performance across different models and inference settings.</li>
-                    </ol>
+                    <hr class="info-card-line">
+                    <div class="info-card-inner">
+                        <ol class="info-card-list">
+                            <li>Choose and upload an image in PNG, JPG, JPEG, or GIF format.</li>
+                            <li>Choose between ResNet50 or EfficientNet for image processing.</li>
+                            <li>Run the model to get predictions on your uploaded image.</li>
+                            <li>Choose between OV, PyTorch CPU, or ONNX for model inference.</li>
+                            <li>Compare performance across different models and inference settings.</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
             <div class="card shadow-lg">
