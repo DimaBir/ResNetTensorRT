@@ -241,6 +241,21 @@ function randomRGB() {
 }
 
 function displayBenchmark(benchmarkResults) {
+    let benchmarkContainer = document.getElementById('benchmarkContainer');
+
+    if (!benchmarkContainer) {
+        console.error('Benchmark container not found');
+        return;
+    }
+
+    let modelGraph = benchmarkContainer.querySelector(`#benchmarkGraph-${modelName}`);
+    if (!modelGraph) {
+        // Create a new graph container for this model
+        modelGraph = document.createElement('canvas');
+        modelGraph.id = `benchmarkGraph-${modelName}`;
+        benchmarkContainer.appendChild(modelGraph);
+    }
+
     // Hide prediction elements
     document.getElementById('processedImageContainer').style.display = 'none';
     document.getElementById('probGraphContainer').style.display = 'none';
@@ -359,6 +374,10 @@ function updateBenchmarkInfo() {
 
     const animatedText = document.getElementById('animatedText');
     const benchmarkInfo = document.getElementById('benchmarkInfo');
+
+    // Clear existing text and stop any ongoing animation
+    animatedText.textContent = '';
+    clearInterval(typeSentence.intervalId);
     benchmarkInfo.style.display = 'block';
 
     function typeSentence() {
@@ -377,6 +396,12 @@ function updateBenchmarkInfo() {
         }
     }
 
-    typeSentence();
+    // Store the interval ID so it can be cleared later
+    typeSentence.intervalId = setInterval(typeSentence, 100);
+}
+
+// Call this function to stop the animation when needed
+function stopBenchmarkInfoAnimation() {
+    clearInterval(typeSentence.intervalId);
 }
 

@@ -177,6 +177,51 @@
     color: #007bff; /* Blue color for the text inside the inner card */
 }
 
+.footer {
+    background: linear-gradient(
+        60deg,
+        rgba(0, 123, 255, 0.8),
+        rgba(23, 162, 184, 0.8),
+        rgba(40, 167, 69, 0.8)
+    );
+    background-size: 300% 300%;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    animation: gradientAnimation 15s ease infinite;
+    margin-top: 20px;
+    border-top: 3px solid white;
+}
+
+.footer-text {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.footer-text small {
+    display: block; /* Make it a separate line */
+    font-size: 0.8rem; /* Adjust the font size as needed */
+    margin-top: 5px; /* Add some space above the email address */
+}
+
+.footer-text small a {
+    color: white; /* Keep the link color consistent with the rest of the footer */
+}
+
+.footer-text small a:hover {
+    text-decoration: underline; /* Style for hover state */
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
