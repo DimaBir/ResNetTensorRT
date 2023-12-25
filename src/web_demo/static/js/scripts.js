@@ -1,6 +1,4 @@
 let probChart = null; // Global variable to hold the chart instance
-// Global variable to keep track of the interval
-let typingInterval;
 
 document.getElementById('image-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -375,28 +373,35 @@ function updateBenchmarkInfo() {
     let currentChar = 0;
 
     const animatedText = document.getElementById('animatedText');
-    animatedText.textContent = ''; // Clear existing text
+    const benchmarkInfo = document.getElementById('benchmarkInfo');
 
-    // Clear any existing interval to avoid overlapping animations
-    clearInterval(typingInterval);
+    // Clear existing text and stop any ongoing animation
+    animatedText.textContent = '';
+    clearInterval(typeSentence.intervalId);
+    benchmarkInfo.style.display = 'block';
 
     function typeSentence() {
         if (currentChar < sentences[currentSentence].length) {
             animatedText.textContent += sentences[currentSentence].charAt(currentChar);
             currentChar++;
+            setTimeout(typeSentence, 100); // Delay between each character
         } else {
-            currentSentence = (currentSentence + 1) % sentences.length;
-            currentChar = 0;
-            animatedText.textContent = ''; // Clear the text for the next sentence
+            // Wait before starting the next sentence
+            setTimeout(() => {
+                currentSentence = (currentSentence + 1) % sentences.length;
+                animatedText.textContent = ''; // Clear the text
+                currentChar = 0; // Reset character position
+                typeSentence(); // Start typing the next sentence
+            }, 3000); // Delay between sentences
         }
     }
 
-    // Run the typing animation
-    typingInterval = setInterval(typeSentence, 100);
+    // Store the interval ID so it can be cleared later
+    typeSentence.intervalId = setInterval(typeSentence, 100);
 }
 
-// Call this function to stop the animation
+// Call this function to stop the animation when needed
 function stopBenchmarkInfoAnimation() {
-    clearInterval(typingInterval);
+    clearInterval(typeSentence.intervalId);
 }
 
