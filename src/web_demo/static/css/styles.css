@@ -99,13 +99,16 @@
 }
 
 .info-card-list {
-    list-style: none;
-    padding: 0;
+    list-style: decimal inside; /* Decimal list style inside the content flow */
+    margin: 0; /* Reset default margins */
+    padding: 0; /* Reset default padding */
 }
 
 .info-card-list li {
-    margin-bottom: 10px;
     font-size: 16px;
+    margin-bottom: 10px; /* Space between list items */
+    text-indent: -20px; /* Indent to align numbers properly */
+    padding-left: 20px; /* Padding to the left of the text */
 }
 
 .info-card-header {
@@ -156,19 +159,15 @@
 }
 
 .info-card {
-    background: linear-gradient(
-        135deg,
-        rgba(0, 123, 255, 0.8),
-        rgba(0, 176, 255, 0.8),
-        rgba(130, 212, 242, 0.8)
-    );
+    position: relative;
     border-radius: 5px;
-    padding: 20px;
+    padding: 20px; /* Padding for the outer card */
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #007bff, #00b0ff, #007bff, #82d4f2, #007bff);
+    background-size: 200% 200%;
+    animation: gradientAnimation 15s ease infinite;
     color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden; /* Ensure the inner card does not overflow the rounded corners */
 }
 
 .info-card-inner {
