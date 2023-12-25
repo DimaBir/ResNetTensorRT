@@ -177,6 +177,20 @@
     color: #007bff; /* Blue color for the text inside the inner card */
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1; /* Makes the container take up all available space */
+}
+
 .footer {
     background: linear-gradient(
         60deg,
@@ -186,31 +200,23 @@
     );
     background-size: 300% 300%;
     color: white;
-    text-align: center;
     padding: 15px 0;
     animation: gradientAnimation 15s ease infinite;
-    margin-top: 20px;
     border-top: 3px solid white;
 }
 
-.footer-text {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: bold;
+.footer-left, .footer-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.footer-text small {
-    display: block; /* Make it a separate line */
-    font-size: 0.8rem; /* Adjust the font size as needed */
-    margin-top: 5px; /* Add some space above the email address */
+.footer-left {
+    align-items: flex-start;
 }
 
-.footer-text small a {
-    color: white; /* Keep the link color consistent with the rest of the footer */
-}
-
-.footer-text small a:hover {
-    text-decoration: underline; /* Style for hover state */
+.footer-right {
+    align-items: flex-end;
 }
 
 .footer a {
@@ -228,8 +234,8 @@
     100% { background-position: 0% 50%; }
 }
 
-.info-card-line {
-    border-top: 3px solid white; /* Made the line wider */
-    margin-top: 0;
-    margin-bottom: 15px; /* Provide spacing between the line and the list */
+/* Additional styles for email and name */
+.footer-right small {
+    font-size: 0.8rem; /* Adjust the font size as needed */
+    margin-top: 5px; /* Add some space above the email address */
 }
