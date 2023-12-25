@@ -1,6 +1,5 @@
 import time
 import logging
-import hashlib
 
 from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
 from PIL import Image
@@ -151,17 +150,10 @@ def process_request():
         logging.error("Invalid file type: %s", image_file.filename)
         return jsonify({"error": "Invalid file format. Allowed formats are png, jpg, jpeg, gif."}), 400
 
-    # Generate a unique filename using a hash
-    file_content = image_file.read()
-    file_hash = hashlib.sha256(file_content).hexdigest()
-    ext = image_file.filename.rsplit(".", 1)[1].lower()
-    unique_filename = f"{file_hash}.{ext}"
+    # Generate a unique filename using UUID
+    ext = image_file.filename.rsplit(".", 1)[1].lower()  # Get the file extension
+    unique_filename = f"{uuid.uuid4().hex}.{ext}"
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
-
-    if not os.path.exists(file_path):
-        # Save the uploaded file with the unique name
-        with open(file_path, 'wb') as f:
-            f.write(file_content)
 
     # Save the uploaded file with the unique name
     image_file.seek(0)
