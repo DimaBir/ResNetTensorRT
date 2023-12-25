@@ -1,6 +1,5 @@
 let probChart = null; // Global variable to hold the chart instance
 let lastBenchmarkModel = null; // Keep track of the last benchmark model
-let typingInterval; // Global variable to keep track of the typing interval
 
 document.getElementById('image-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -360,12 +359,6 @@ function updateModelOptions() {
 }
 
 function updateBenchmarkInfo() {
-    // Clear any existing typing interval
-    if (typingInterval) {
-        clearInterval(typingInterval);
-        animatedText.textContent = '';
-    }
-
     const sentences = [
         "Analyzing model performance...",
         "Running benchmarks on different models...",
@@ -396,7 +389,5 @@ function updateBenchmarkInfo() {
     }
 
     typeSentence();
-    // Store the interval
-    typingInterval = setInterval(typeSentence, 100);
 }
 
