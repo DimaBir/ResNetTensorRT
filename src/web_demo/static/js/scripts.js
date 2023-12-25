@@ -1,4 +1,6 @@
 let probChart = null; // Global variable to hold the chart instance
+let lastBenchmarkModel = null; // Keep track of the last benchmark model
+let typingInterval; // Global variable to keep track of the typing interval
 
 document.getElementById('image-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -241,6 +243,16 @@ function randomRGB() {
 }
 
 function displayBenchmark(benchmarkResults) {
+    // Check if the model is the same as the last one
+    if (model === lastBenchmarkModel) {
+        // Replace the graph for the same model
+        document.getElementById('timeGraphContainer').innerHTML = '';
+        document.getElementById('throughputGraphContainer').innerHTML = '';
+    } else {
+        // For a different model, append the new graph
+        lastBenchmarkModel = model; // Update the last benchmark model
+    }
+
     // Hide prediction elements
     document.getElementById('processedImageContainer').style.display = 'none';
     document.getElementById('probGraphContainer').style.display = 'none';
@@ -348,6 +360,12 @@ function updateModelOptions() {
 }
 
 function updateBenchmarkInfo() {
+    // Clear any existing typing interval
+    if (typingInterval) {
+        clearInterval(typingInterval);
+        animatedText.textContent = '';
+    }
+
     const sentences = [
         "Analyzing model performance...",
         "Running benchmarks on different models...",
@@ -378,5 +396,7 @@ function updateBenchmarkInfo() {
     }
 
     typeSentence();
+    // Store the interval
+    typingInterval = setInterval(typeSentence, 100);
 }
 
