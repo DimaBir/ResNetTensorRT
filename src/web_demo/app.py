@@ -87,8 +87,7 @@ def get_inference_class(model_type, model_loader):
         return None  # Placeholder for 'all' models
 
 
-def run_all_benchmarks(img_batch, run_pytorch=True, run_onnx=True, run_openvino=True, run_tensorrt=True):
-    model_loader = ModelLoader(device="cpu")
+def run_all_benchmarks(model_loader, img_batch, run_pytorch=True, run_onnx=True, run_openvino=True, run_tensorrt=True):
     benchmark_results = {}
 
     def run_benchmark(benchmark_name, inference_instance):
@@ -191,7 +190,7 @@ def process_request():
 
         # Benchmark mode logic
         logging.info("Running all benchmarks")
-        results = run_all_benchmarks(img_batch)
+        results = run_all_benchmarks(model_loader, img_batch)
         return jsonify({"benchmark": results})
 
     elif mode == "predict":
