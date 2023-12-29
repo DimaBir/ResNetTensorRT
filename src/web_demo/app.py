@@ -26,7 +26,7 @@ from src.tensorrt_inference import TensorRTInference
 
 app = Flask(__name__)
 
-app.config['SERVER_NAME'] = 'birenbaum.co'
+
 UPLOAD_FOLDER = "static/user_files"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 MAX_CONTENT_LENGTH = 500 * 1024 * 1024  # 500MB
@@ -120,9 +120,9 @@ def handle_file_too_large(e):
     return "File is too large", 413
 
 
-@app.route("/", subdomain='infer')
+@app.route("/demo")
 def index():
-    return render_template("index.html")
+    return render_template("demo.html")
 
 
 @app.route("/process", methods=["POST"])
@@ -205,5 +205,5 @@ if __name__ == "__main__":
     # Configure logging
     logging.basicConfig(level=logging.INFO)
     app.run(
-        host="0.0.0.0", port=8080, ssl_context=(SSL_CERT_PATH, SSL_KEY_PATH), debug=True
+        host="0.0.0.0", port=5000, ssl_context=(SSL_CERT_PATH, SSL_KEY_PATH), debug=True
     )
