@@ -22,5 +22,7 @@ class ModelLoader:
             return models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2).to(self.device)
         elif model_type == "efficientnet":
             return models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.IMAGENET1K_V1).to(self.device)
+        elif model_type == "efficientnet_b7":
+            return models.efficientnet_b7(weights=models.EfficientNet_B7_Weights.IMAGENET1K_V1).to(self.device)
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
