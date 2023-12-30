@@ -4,7 +4,6 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import openvino as ov
-import openvino.properties.hint as hints
 
 from common.utils import OV_PRECISION_FP32, OV_PRECISION_FP16
 from src.inference_base import InferenceBase
