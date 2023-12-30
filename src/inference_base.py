@@ -52,54 +52,57 @@ class InferenceBase:
             if self.debug_mode:
                 print(f"Running prediction for {self.__class__.__name__} model")
 
-    def _benchmark_single_process(self, args):
+    def benchmark(self, input_data, num_runs=100, warmup_runs=50):
         """
-        Single process benchmarking function.
-        """
-        input_batch, num_runs = args
-        start_time = time.time()
-        for _ in range(num_runs):
-            # Ensure input is correctly reshaped for each run if necessary
-            self.predict(input_batch, is_benchmark=True)
-        return time.time() - start_time
+        Benchmark the prediction performance.
 
-    def benchmark(self, input_data, num_runs=100, warmup_runs=50, num_processes=4):
+        :param input_data: Data to run the benchmark on.
+        :param num_runs: Number of runs for the benchmark.
+        :param warmup_runs: Number of warmup runs before the benchmark.
+        :return: Average inference time in milliseconds.
         """
-        Parallelized benchmark method.
-        """
-        # Prepare batch data once
-        # Ensure input_data is in the correct shape
-        if len(input_data.shape) == 3:  # Assuming input_data is in shape [channels, height, width]
-            input_data = input_data.unsqueeze(0)  # Add batch dimension if missing
-
+        # Expand batch size to stack identical images to load the system for benchmark
+        if len(input_data.shape) == 4:
+            input_data = input_data.squeeze(0)
         input_batch = torch.stack([input_data] * self.batch_size)
 
         # Warmup
+        logging.info(f"Starting warmup for {self.__class__.__name__} inference...")
         for _ in range(warmup_runs):
-            # Ensure input is correctly reshaped for each run if necessary
-            self.predict(input_batch, is_benchmark=True)
+            for img in input_batch:
+                self.predict(img.unsqueeze(0), is_benchmark=True)
 
-        # Parallel Benchmark
-        with Pool(processes=num_processes) as pool:
-            num_runs_per_process = num_runs // num_processes
-            process_args = [(input_batch, num_runs_per_process) for _ in range(num_processes)]
-            times = pool.map(self._benchmark_single_process, process_args)
+        # Benchmark
+        logging.info(f"Starting benchmark for {self.__class__.__name__} inference...")
+        start_time = time.time()
+        for _ in range(num_runs):
+            for img in input_batch:
+                self.predict(img.unsqueeze(0), is_benchmark=True)
+        avg_time = (
+            (time.time() - start_time) / (num_runs * self.batch_size)
+        ) * 1000  # Convert to ms
 
-        total_time = sum(times)
-        avg_time = (total_time / (num_runs_per_process * num_processes)) * 1000  # Convert to ms
-
-        # Log only final results
+        logging.info(f"Average inference time for {num_runs} runs: {avg_time:.4f} ms")
         if self.debug_mode:
-            logging.info(f"Average inference time for {self.__class__.__name__}: {avg_time:.4f} ms")
+            print(
+                f"Average inference time for {self.__class__.__name__} and {num_runs} runs: {avg_time:.4f} ms"
+            )
 
         # Calculate throughput
-        total_samples = self.batch_size * num_runs
-        throughput = total_samples / total_time
+        total_samples = input_data.size(0) * num_runs
+        total_time_seconds = time.time() - start_time
+        throughput = total_samples / total_time_seconds
 
+        logging.info(
+            f"Throughput for {self.__class__.__name__}: {throughput:.2f} samples/sec"
+        )
         if self.debug_mode:
-            logging.info(f"Throughput for {self.__class__.__name__}: {throughput:.2f} samples/sec")
+            print(
+                f"Throughput for {self.__class__.__name__}: {throughput:.2f} samples/sec"
+            )
 
         return avg_time, throughput
 
     def get_top_predictions(self, logits: np.ndarray, is_benchmark=False):
         raise NotImplementedError
+
