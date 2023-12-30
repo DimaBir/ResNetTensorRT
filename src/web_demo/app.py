@@ -82,7 +82,6 @@ def get_inference_class(model_type, model_loader):
     elif model_type == "ov":
         return OVInference(model_loader, "./models/model.ov")
     elif model_type == "ov_fp16":
-        logging.error("Received correct OV FP 16 code")
         return OVInference(model_loader, "./models/model.ov", precision=OV_PRECISION_FP16)
     elif model_type == "tensorrt":
         return TensorRTInference(model_loader, device="cpu")
