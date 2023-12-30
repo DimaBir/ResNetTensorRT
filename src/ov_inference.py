@@ -72,6 +72,10 @@ class OVInference(InferenceBase):
         prob_key = next(iter(outputs))
         prob = outputs[prob_key]
 
+        # Convert to FP32 if the model precision is FP16
+        if self.precision == OV_PRECISION_FP16:
+            prob = prob.astype(np.float32)
+
         # Apply softmax to the probabilities
         prob = F.softmax(torch.from_numpy(prob[0]), dim=0).numpy()
 
