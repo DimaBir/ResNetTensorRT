@@ -4,6 +4,7 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import openvino as ov
+import openvino.properties.hint as hints
 
 from common.utils import OV_PRECISION_FP32, OV_PRECISION_FP16
 from src.inference_base import InferenceBase
@@ -12,18 +13,21 @@ from src.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):
-    def __init__(self, model_loader, model_path, precision=OV_PRECISION_FP32, debug_mode=False):
+    def __init__(self, model_loader, model_path, precision=OV_PRECISION_FP32, execution_mode=hints.ExecutionMode.PERFORMANCE, debug_mode=False):
         """
         Initialize the OVInference object.
 
         :param model_loader: Object responsible for loading the model and categories.
         :param model_path: Path to the OpenVINO model.
         :param precision: Precision type for the model ('FP32', 'FP16').
+        :param execution_mode: Execution mode for inference (ACCURACY or PERFORMANCE).
         :param debug_mode: If True, print additional debug information.
         """
         super().__init__(model_loader, ov_path=model_path, debug_mode=debug_mode)
         self.core = ov.Core()
         self.precision = precision
+        self.execution_mode = execution_mode
+        self.core.set_property("CPU", {hints.execution_mode: self.execution_mode})
         self.ov_model = self.load_model()
         self.compiled_model = self.compile_model()
 
