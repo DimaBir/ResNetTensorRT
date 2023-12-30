@@ -52,13 +52,11 @@ class OVInference(InferenceBase):
 
         :return: Compiled OpenVINO model.
         """
-        try:
-            if self.precision == OV_PRECISION_FP16:
-                self.ov_model = self.core.convert_model_precision(self.ov_model, OV_PRECISION_FP16)
-            return self.core.compile_model(self.ov_model, "AUTO")
-        except Exception as e:
-            logging.error(f"Error during model compilation: {e}")
-            raise
+        if self.precision == OV_PRECISION_FP16:
+            self.ov_model = self.core.convert_model_precision(self.ov_model, OV_PRECISION_FP16)
+
+        logging.info("Compiled model")
+        return self.core.compile_model(self.ov_model, "AUTO")
 
     def predict(self, input_data, is_benchmark=False):
         """
