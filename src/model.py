@@ -24,5 +24,7 @@ class ModelLoader:
             return models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.IMAGENET1K_V1).to(self.device)
         elif model_type == "efficientnet_b7":
             return models.efficientnet_b7(weights=models.EfficientNet_B7_Weights.IMAGENET1K_V1).to(self.device)
+        elif model_type == "mobilenet_v2":
+            return models.mobilenet_v2(weights=models.MobileNet_V2_Weights.IMAGENET1K_V1).to(self.device)
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
