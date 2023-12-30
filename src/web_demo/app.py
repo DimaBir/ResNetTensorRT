@@ -87,46 +87,31 @@ def get_inference_class(model_type, model_loader):
         return None  # Placeholder for 'all' models
 
 
-def run_all_benchmarks(model_loader, img_batch, run_pytorch=True, run_onnx=True, run_openvino=True, run_tensorrt=True):
+def run_all_benchmarks(img_batch):
+    model_loader = ModelLoader(device="cpu")
     benchmark_results = {}
 
-    def run_benchmark(benchmark_name, inference_instance):
-        try:
-            return benchmark_name, inference_instance.benchmark(img_batch)
-        except Exception as e:
-            return benchmark_name, f"Error during benchmark: {e}"
+    # PyTorch CPU Benchmark
+    pytorch_cpu_inference = PyTorchInference(model_loader, device="cpu")
+    benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark(img_batch)
 
-    with ThreadPoolExecutor() as executor:
-        futures = []
+    # PyTorch GPU Benchmark
+    if cuda_is_available():
+        pytorch_gpu_inference = PyTorchInference(model_loader, device="cuda")
+        benchmark_results["PyTorch (GPU)"] = pytorch_gpu_inference.benchmark(img_batch)
 
-        if run_pytorch:
-            # PyTorch CPU Benchmark
-            pytorch_cpu_inference = PyTorchInference(model_loader, device="cpu")
-            futures.append(executor.submit(run_benchmark, "PyTorch (CPU)", pytorch_cpu_inference))
+    # ONNX CPU Benchmark
+    onnx_inference = ONNXInference(model_loader, "path_to_onnx_model")
+    benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark(img_batch)
 
-            # PyTorch GPU Benchmark
-            if cuda_is_available():
-                pytorch_gpu_inference = PyTorchInference(model_loader, device="cuda")
-                futures.append(executor.submit(run_benchmark, "PyTorch (GPU)", pytorch_gpu_inference))
+    # OpenVINO CPU Benchmark
+    ov_inference = OVInference(model_loader, "path_to_ov_model")
+    benchmark_results["OpenVINO (CPU)"] = ov_inference.benchmark(img_batch)
 
-        if run_onnx:
-            # ONNX CPU Benchmark
-            onnx_inference = ONNXInference(model_loader, "path_to_onnx_model")
-            futures.append(executor.submit(run_benchmark, "ONNX (CPU)", onnx_inference))
-
-        if run_openvino:
-            # OpenVINO CPU Benchmark
-            ov_inference = OVInference(model_loader, "path_to_ov_model")
-            futures.append(executor.submit(run_benchmark, "OpenVINO (CPU)", ov_inference))
-
-        if run_tensorrt and cuda_is_available():
-            # TensorRT GPU Benchmark
-            tensorrt_inference = TensorRTInference(model_loader, device="cuda")
-            futures.append(executor.submit(run_benchmark, "TensorRT (GPU)", tensorrt_inference))
-
-        for future in as_completed(futures):
-            benchmark_name, result = future.result()
-            benchmark_results[benchmark_name] = result
+    # TensorRT CPU Benchmark
+    if cuda_is_available():
+        tensorrt_inference = TensorRTInference(model_loader, device="cpu")
+        benchmark_results["TensorRT (CPU)"] = tensorrt_inference.benchmark(img_batch)
 
     return benchmark_results
 
@@ -193,7 +178,7 @@ def process_request():
 
         # Benchmark mode logic
         logging.info("Running all benchmarks")
-        results = run_all_benchmarks(model_loader, img_batch)
+        results = run_all_benchmarks(img_batch)
         return jsonify({"benchmark": results})
 
     elif mode == "predict":
