@@ -332,7 +332,7 @@ function updateModelOptions() {
 
     if (modeSelect.value === 'predict') {
         // Options for 'Predict' mode
-        const options = ['ov', 'ov_fp16', 'pytorch', 'onnx'];
+        const options = ['ov', 'pytorch', 'onnx'];
         options.forEach(opt => {
             let option = document.createElement('option');
             option.value = opt;
