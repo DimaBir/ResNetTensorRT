@@ -4,24 +4,28 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import openvino as ov
+
+from common.utils import OV_PRECISION_FP32, OV_PRECISION_FP16
 from src.inference_base import InferenceBase
 from src.onnx_exporter import ONNXExporter
 from src.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):
-    def __init__(self, model_loader, model_path, debug_mode=False):
+    def __init__(self, model_loader, model_path, precision=OV_PRECISION_FP32, debug_mode=False):
         """
         Initialize the OVInference object.
 
         :param model_loader: Object responsible for loading the model and categories.
         :param model_path: Path to the OpenVINO model.
+        :param precision: Precision type for the model ('FP32', 'FP16', 'INT8').
         :param debug_mode: If True, print additional debug information.
         """
         super().__init__(model_loader, ov_path=model_path, debug_mode=debug_mode)
         self.core = ov.Core()
+        self.precision = precision
         self.ov_model = self.load_model()
-        self.compiled_model = self.core.compile_model(self.ov_model, "AUTO")
+        self.compiled_model = self.compile_model()
 
     def load_model(self):
         """
@@ -29,10 +33,8 @@ class OVInference(InferenceBase):
 
         :return: Loaded OpenVINO model.
         """
-        # Determine the path for the ONNX model
         self.onnx_path = self.ov_path.replace(".ov", ".onnx")
 
-        # Export ONNX model if it doesn't exist
         if not os.path.exists(self.onnx_path):
             onnx_exporter = ONNXExporter(
                 self.model_loader.model, self.model_loader.device, self.onnx_path
@@ -41,6 +43,17 @@ class OVInference(InferenceBase):
 
         ov_exporter = OVExporter(self.onnx_path)
         return ov_exporter.export_model()
+
+    def compile_model(self):
+        """
+        Compile the OpenVINO model with the specified precision.
+
+        :return: Compiled OpenVINO model.
+        """
+        if self.precision == OV_PRECISION_FP16:
+            self.ov_model = self.core.convert_model_precision(self.ov_model, 'FP16')
+
+        return self.core.compile_model(self.ov_model, "AUTO")
 
     def predict(self, input_data, is_benchmark=False):
         """

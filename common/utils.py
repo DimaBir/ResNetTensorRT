@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, Tuple
 
+OV_PRECISION_FP32 = 'FP32'
+OV_PRECISION_FP16 = 'FP16'
+
 
 def plot_benchmark_results(results: Dict[str, Tuple[float, float]]):
     """
