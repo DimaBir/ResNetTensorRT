@@ -241,6 +241,7 @@ function randomRGB() {
 }
 
 function displayBenchmark(benchmarkResults) {
+    console.log(benchmarkResults)
     // Hide prediction elements
     document.getElementById('processedImageContainer').style.display = 'none';
     document.getElementById('probGraphContainer').style.display = 'none';
