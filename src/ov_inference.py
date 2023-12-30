@@ -18,7 +18,7 @@ class OVInference(InferenceBase):
 
         :param model_loader: Object responsible for loading the model and categories.
         :param model_path: Path to the OpenVINO model.
-        :param precision: Precision type for the model ('FP32', 'FP16', 'INT8').
+        :param precision: Precision type for the model ('FP32', 'FP16').
         :param debug_mode: If True, print additional debug information.
         """
         super().__init__(model_loader, ov_path=model_path, debug_mode=debug_mode)
@@ -40,10 +40,8 @@ class OVInference(InferenceBase):
                 self.model_loader.model, self.model_loader.device, self.onnx_path
             )
             onnx_exporter.export_model()
-        logging.error("Loaded model")
 
         ov_exporter = OVExporter(self.onnx_path)
-        logging.error("Exported model")
         return ov_exporter.export_model()
 
     def compile_model(self):
@@ -53,8 +51,7 @@ class OVInference(InferenceBase):
         :return: Compiled OpenVINO model.
         """
         if self.precision == OV_PRECISION_FP16:
-            logging.error("Compiled model")
-            self.ov_model = self.core.convert_model_precision(self.ov_model, 'FP16')
+            self.ov_model = self.core.convert_model_precision(self.ov_model, OV_PRECISION_FP16)
 
         return self.core.compile_model(self.ov_model, "AUTO")
 
