@@ -13,21 +13,26 @@ from src.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):
-    def __init__(self, model_loader, model_path, precision=OV_PRECISION_FP32, execution_mode=hints.ExecutionMode.PERFORMANCE, debug_mode=False):
+    def __init__(self, model_loader, model_path, precision=OV_PRECISION_FP32, execution_mode='PERFORMANCE', debug_mode=False):
         """
         Initialize the OVInference object.
 
         :param model_loader: Object responsible for loading the model and categories.
         :param model_path: Path to the OpenVINO model.
         :param precision: Precision type for the model ('FP32', 'FP16').
-        :param execution_mode: Execution mode for inference (ACCURACY or PERFORMANCE).
+        :param execution_mode: Execution mode for inference ('ACCURACY' or 'PERFORMANCE').
         :param debug_mode: If True, print additional debug information.
         """
         super().__init__(model_loader, ov_path=model_path, debug_mode=debug_mode)
         self.core = ov.Core()
+
+        # Set execution mode
+        if execution_mode == 'ACCURACY':
+            self.core.set_property("CPU", {ov.properties.hint.execution_mode(): ov.properties.hint.ExecutionMode.ACCURACY})
+        else:
+            self.core.set_property("CPU", {ov.properties.hint.execution_mode(): ov.properties.hint.ExecutionMode.PERFORMANCE})
+
         self.precision = precision
-        self.execution_mode = execution_mode
-        self.core.set_property("CPU", {hints.execution_mode: self.execution_mode})
         self.ov_model = self.load_model()
         self.compiled_model = self.compile_model()
 
@@ -57,8 +62,12 @@ class OVInference(InferenceBase):
         :return: Compiled OpenVINO model.
         """
         try:
+            # Set inference precision
             if self.precision == OV_PRECISION_FP16:
-                self.ov_model = self.core.convert_model_precision(self.ov_model, OV_PRECISION_FP16)
+                self.core.set_property("CPU", {hints.inference_precision: hints.Precision.FP16})
+            elif self.precision == OV_PRECISION_FP32:
+                self.core.set_property("CPU", {hints.inference_precision: hints.Precision.FP32})
+
             return self.core.compile_model(self.ov_model, "AUTO")
         except Exception as e:
             logging.error(f"Error during model compilation: {e}")
