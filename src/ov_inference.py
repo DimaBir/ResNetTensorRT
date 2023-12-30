@@ -4,7 +4,6 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 import openvino as ov
-from openvino.tools import mo
 
 from common.utils import OV_PRECISION_FP32, OV_PRECISION_FP16
 from src.inference_base import InferenceBase
@@ -43,19 +42,20 @@ class OVInference(InferenceBase):
                 self.model_loader.model, self.model_loader.device, self.onnx_path
             )
             onnx_exporter.export_model()
+        logging.info("Loaded model")
 
-        # ov_exporter = OVExporter(self.onnx_path)
-        # logging.info("Exported model")
-        # return ov_exporter.export_model()
-        if self.precision == OV_PRECISION_FP16:
-            ov_model = mo.convert_model(self.onnx_path, compress_to_fp16=True)
-        else:
-            ov_model = mo.convert_model(self.onnx_path, compress_to_fp16=False)
-
-        return ov_model
+        ov_exporter = OVExporter(self.onnx_path)
+        logging.info("Exported model")
+        return ov_exporter.export_model()
 
     def compile_model(self):
         try:
+            # Check and set the precision hint if applicable
+            if self.precision == OV_PRECISION_FP16:
+                config = {
+                    ov.runtime.properties.hint.inference_precision: ov.runtime.Type.f16}
+                return self.core.compile_model(self.ov_model, "CPU", config)
+
             return self.core.compile_model(model=self.ov_model, device_name="CPU")
         except Exception as e:
             logging.error(f"Error during model compilation: {e}")
