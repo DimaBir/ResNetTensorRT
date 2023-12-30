@@ -63,18 +63,14 @@ class OVInference(InferenceBase):
         :param is_benchmark: If True, the prediction is part of a benchmark run.
         :return: Top predictions based on the probabilities.
         """
-        logging.info(f"Entered predict")
         super().predict(input_data, is_benchmark=is_benchmark)
 
         input_name = next(iter(self.compiled_model.inputs))
-        logging.info(f"Compiled inputs ")
         outputs = self.compiled_model(inputs={input_name: input_data.cpu().numpy()})
-        logging.info(f"Compiled model ")
 
         # Extract probabilities from the output
         prob_key = next(iter(outputs))
         prob = outputs[prob_key]
-        logging.info(f"Extract probabilities")
 
         # Convert to FP32 if the model precision is FP16
         if self.precision == OV_PRECISION_FP16:
