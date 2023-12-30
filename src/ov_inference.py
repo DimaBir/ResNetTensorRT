@@ -49,15 +49,25 @@ class OVInference(InferenceBase):
         return ov_exporter.export_model()
 
     def compile_model(self):
-        try:
-            # Check and set the precision hint if applicable
-            if self.precision == OV_PRECISION_FP16:
-                config = {
-                    ov.runtime.properties.hint.performance_mode: ov.runtime.properties.hint.PerformanceMode.THROUGHPUT,
-                    ov.runtime.properties.hint.inference_precision: ov.runtime.Type.f16}
-                return self.core.compile_model(self.ov_model, "CPU", config)
+        """
+        Compile the OpenVINO model with performance hints.
 
-            return self.core.compile_model(model=self.ov_model, device_name="CPU")
+        :return: Compiled OpenVINO model.
+        """
+        try:
+            # Prepare the configuration
+            config = {
+                "PERFORMANCE_HINT": "THROUGHPUT",  # Set as a string
+                "PERFORMANCE_HINT_NUM_REQUESTS": "AUTO"
+            }
+
+            # Add inference precision setting if applicable
+            if self.precision == OV_PRECISION_FP16:
+                config["INFERENCE_PRECISION"] = "FP16"
+            else:
+                config["INFERENCE_PRECISION"] = "FP32"
+
+            return self.core.compile_model(model=self.ov_model, device_name="CPU", config=config)
         except Exception as e:
             logging.error(f"Error during model compilation: {e}")
             raise
