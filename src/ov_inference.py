@@ -83,14 +83,14 @@ class OVInference(InferenceBase):
                 self.core.set_property(
                     "CPU",
                     {
-                        ov.properties.hint.inference_precision: ov.Type.f16
+                        ov.properties.hint.inference_precision: ov.properties.hint.Precision.FP16
                     },
                 )
             elif self.precision == OV_PRECISION_FP32:
                 self.core.set_property(
                     "CPU",
                     {
-                        ov.properties.hint.inference_precision: ov.Type.f32
+                        ov.properties.hint.inference_precision: ov.properties.hint.Precision.FP32
                     },
                 )
 
