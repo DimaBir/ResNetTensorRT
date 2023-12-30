@@ -91,7 +91,10 @@ def run_all_benchmarks(model_loader, img_batch, run_pytorch=True, run_onnx=True,
     benchmark_results = {}
 
     def run_benchmark(benchmark_name, inference_instance):
-        return benchmark_name, inference_instance.benchmark(img_batch)
+        try:
+            return benchmark_name, inference_instance.benchmark(img_batch)
+        except Exception as e:
+            return benchmark_name, f"Error during benchmark: {e}"
 
     with ThreadPoolExecutor() as executor:
         futures = []
@@ -117,9 +120,9 @@ def run_all_benchmarks(model_loader, img_batch, run_pytorch=True, run_onnx=True,
             futures.append(executor.submit(run_benchmark, "OpenVINO (CPU)", ov_inference))
 
         if run_tensorrt and cuda_is_available():
-            # TensorRT CPU Benchmark
-            tensorrt_inference = TensorRTInference(model_loader, device="cpu")
-            futures.append(executor.submit(run_benchmark, "TensorRT (CPU)", tensorrt_inference))
+            # TensorRT GPU Benchmark
+            tensorrt_inference = TensorRTInference(model_loader, device="cuda")
+            futures.append(executor.submit(run_benchmark, "TensorRT (GPU)", tensorrt_inference))
 
         for future in as_completed(futures):
             benchmark_name, result = future.result()
