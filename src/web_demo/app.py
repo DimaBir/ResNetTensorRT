@@ -128,6 +128,7 @@ def run_all_benchmarks(model_loader, img_batch, run_pytorch=True, run_onnx=True,
             benchmark_name, result = future.result()
             benchmark_results[benchmark_name] = result
 
+    print(benchmark_results)
     return benchmark_results
 
 
