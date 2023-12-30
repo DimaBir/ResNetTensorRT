@@ -15,7 +15,7 @@ import uuid
 import sys
 
 sys.path.append("/usr/src/app")
-from common.utils import cuda_is_available, OV_PRECISION_FP16
+from common.utils import cuda_is_available
 
 # Importing model and inference classes
 from src.image_processor import ImageProcessor
@@ -81,8 +81,6 @@ def get_inference_class(model_type, model_loader):
         return ONNXInference(model_loader, "./models/model.onnx")
     elif model_type == "ov":
         return OVInference(model_loader, "./models/model.ov")
-    elif model_type == "ov_fp16":
-        return OVInference(model_loader, "./models/model.ov", precision=OV_PRECISION_FP16)
     elif model_type == "tensorrt":
         return TensorRTInference(model_loader, device="cpu")
     elif model_type == "all":
@@ -103,16 +101,12 @@ def run_all_benchmarks(img_batch):
         benchmark_results["PyTorch (GPU)"] = pytorch_gpu_inference.benchmark(img_batch)
 
     # ONNX CPU Benchmark
-    onnx_inference = ONNXInference(model_loader, "./models/model.onnx")
+    onnx_inference = ONNXInference(model_loader, "path_to_onnx_model")
     benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark(img_batch)
 
-    # OpenVINO FP32 CPU Benchmark
-    ov_inference = OVInference(model_loader, "./models/model.ov")
-    benchmark_results["OpenVINO_FP32 (CPU)"] = ov_inference.benchmark(img_batch)
-
-    # OpenVINO FP16 CPU Benchmark
-    ov_fp16_inference = OVInference(model_loader, "./models/model.ov", precision=OV_PRECISION_FP16)
-    benchmark_results["OpenVINO_FP16 (CPU)"] = ov_fp16_inference.benchmark(img_batch)
+    # OpenVINO CPU Benchmark
+    ov_inference = OVInference(model_loader, "path_to_ov_model")
+    benchmark_results["OpenVINO (CPU)"] = ov_inference.benchmark(img_batch)
 
     # TensorRT CPU Benchmark
     if cuda_is_available():
