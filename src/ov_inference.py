@@ -40,8 +40,10 @@ class OVInference(InferenceBase):
                 self.model_loader.model, self.model_loader.device, self.onnx_path
             )
             onnx_exporter.export_model()
+        logging.info("Loaded model")
 
         ov_exporter = OVExporter(self.onnx_path)
+        logging.info("Exported model")
         return ov_exporter.export_model()
 
     def compile_model(self):
@@ -51,6 +53,7 @@ class OVInference(InferenceBase):
         :return: Compiled OpenVINO model.
         """
         if self.precision == OV_PRECISION_FP16:
+            logging.info("Compiled model")
             self.ov_model = self.core.convert_model_precision(self.ov_model, OV_PRECISION_FP16)
 
         return self.core.compile_model(self.ov_model, "AUTO")
