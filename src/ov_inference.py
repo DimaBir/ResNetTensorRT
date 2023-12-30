@@ -53,7 +53,6 @@ class OVInference(InferenceBase):
             # Check and set the precision hint if applicable
             if self.precision == OV_PRECISION_FP16:
                 config = {
-                    ov.runtime.properties.hint.performance_mode: ov.runtime.properties.hint.PerformanceMode.THROUGHPUT,
                     ov.runtime.properties.hint.inference_precision: ov.runtime.Type.f16}
                 return self.core.compile_model(self.ov_model, "CPU", config)
 
