@@ -12,14 +12,7 @@ from src.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):
-    def __init__(
-        self,
-        model_loader,
-        model_path,
-        precision=OV_PRECISION_FP32,
-        execution_mode="PERFORMANCE",
-        debug_mode=False,
-    ):
+    def __init__(self, model_loader, model_path, precision=OV_PRECISION_FP32, execution_mode='PERFORMANCE', debug_mode=False):
         """
         Initialize the OVInference object.
 
@@ -33,20 +26,10 @@ class OVInference(InferenceBase):
         self.core = ov.Core()
 
         # Set execution mode
-        if execution_mode == "ACCURACY":
-            self.core.set_property(
-                "CPU",
-                {
-                    ov.properties.hint.execution_mode(): ov.properties.hint.ExecutionMode.ACCURACY
-                },
-            )
+        if execution_mode == 'ACCURACY':
+            self.core.set_property("CPU", {ov.properties.hint.execution_mode(): ov.properties.hint.ExecutionMode.ACCURACY})
         else:
-            self.core.set_property(
-                "CPU",
-                {
-                    ov.properties.hint.execution_mode(): ov.properties.hint.ExecutionMode.PERFORMANCE
-                },
-            )
+            self.core.set_property("CPU", {ov.properties.hint.execution_mode(): ov.properties.hint.ExecutionMode.PERFORMANCE})
 
         self.precision = precision
         self.ov_model = self.load_model()
@@ -80,19 +63,9 @@ class OVInference(InferenceBase):
         try:
             # Set inference precision
             if self.precision == OV_PRECISION_FP16:
-                self.core.set_property(
-                    "CPU",
-                    {
-                        ov.properties.hints.inference_precision: ov.properties.hints.Precision.FP16
-                    },
-                )
+                self.core.set_property("CPU", {hints.inference_precision: hints.Precision.FP16})
             elif self.precision == OV_PRECISION_FP32:
-                self.core.set_property(
-                    "CPU",
-                    {
-                        ov.properties.hints.inference_precision: ov.properties.hints.Precision.FP32
-                    },
-                )
+                self.core.set_property("CPU", {hints.inference_precision: hints.Precision.FP32})
 
             return self.core.compile_model(self.ov_model, "AUTO")
         except Exception as e:
