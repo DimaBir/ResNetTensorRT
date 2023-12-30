@@ -53,9 +53,9 @@ class OVInference(InferenceBase):
         :return: Compiled OpenVINO model.
         """
         if self.precision == OV_PRECISION_FP16:
+            logging.info("Compiled model")
             self.ov_model = self.core.convert_model_precision(self.ov_model, OV_PRECISION_FP16)
 
-        logging.info("Compiled model")
         return self.core.compile_model(self.ov_model, "AUTO")
 
     def predict(self, input_data, is_benchmark=False):
