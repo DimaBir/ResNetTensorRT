@@ -59,6 +59,7 @@ class InferenceBase:
         input_batch, num_runs = args
         start_time = time.time()
         for _ in range(num_runs):
+            # Ensure input is correctly reshaped for each run if necessary
             self.predict(input_batch, is_benchmark=True)
         return time.time() - start_time
 
@@ -67,19 +68,25 @@ class InferenceBase:
         Parallelized benchmark method.
         """
         # Prepare batch data once
+        # Ensure input_data is in the correct shape
+        if len(input_data.shape) == 3:  # Assuming input_data is in shape [channels, height, width]
+            input_data = input_data.unsqueeze(0)  # Add batch dimension if missing
+
         input_batch = torch.stack([input_data] * self.batch_size)
 
-        # Warmup (not parallelized to avoid CUDA context issues)
+        # Warmup
         for _ in range(warmup_runs):
+            # Ensure input is correctly reshaped for each run if necessary
             self.predict(input_batch, is_benchmark=True)
 
         # Parallel Benchmark
         with Pool(processes=num_processes) as pool:
-            process_args = [(input_batch, num_runs // num_processes) for _ in range(num_processes)]
+            num_runs_per_process = num_runs // num_processes
+            process_args = [(input_batch, num_runs_per_process) for _ in range(num_processes)]
             times = pool.map(self._benchmark_single_process, process_args)
 
         total_time = sum(times)
-        avg_time = (total_time / num_runs) * 1000  # Convert to ms
+        avg_time = (total_time / (num_runs_per_process * num_processes)) * 1000  # Convert to ms
 
         # Log only final results
         if self.debug_mode:
