@@ -18,7 +18,6 @@ class OVInference(InferenceBase):
         :param model_path: Path to the OpenVINO model.
         :param debug_mode: If True, print additional debug information.
         """
-        model_path = "ov_" + f"_{model_loader.model_type}_" + model_path
         super().__init__(model_loader, ov_path=model_path, debug_mode=debug_mode)
         self.core = ov.Core()
         self.ov_model = self.load_model()
