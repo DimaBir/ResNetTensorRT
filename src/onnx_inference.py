@@ -17,6 +17,7 @@ class ONNXInference(InferenceBase):
         :param model_path: Path to the ONNX model.
         :param debug_mode: If True, print additional debug information.
         """
+        model_path = "onnx_" + f"_{model_loader.model_type}_" + model_path
         super().__init__(model_loader, onnx_path=model_path, debug_mode=debug_mode)
 
     def load_model(self):
