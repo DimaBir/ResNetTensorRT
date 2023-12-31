@@ -75,16 +75,29 @@ def manage_file_limit(upload_folder):
 
 
 def get_inference_class(model_type, model_loader):
+    model_path_prefix = "./models/"  # Base path for models
+
     if model_type == "pytorch":
+        # For PyTorch, no specific model file is needed, but you can modify as needed
         return PyTorchInference(model_loader, device="cpu")
+
     elif model_type == "onnx":
-        return ONNXInference(model_loader, "./models/model.onnx")
+        model_path = model_path_prefix + model_loader.model_type + "_onnx_model.onnx"  # Prefix for ONNX models
+        return ONNXInference(model_loader, model_path)
+
     elif model_type == "ov":
-        return OVInference(model_loader, "./models/model.ov")
+        model_path = model_path_prefix + model_loader.model_type + "_ov_model.ov"  # Prefix for OpenVINO models
+        return OVInference(model_loader, model_path)
+
     elif model_type == "tensorrt":
+        # For TensorRT, no specific model file is needed, but you can modify as needed
         return TensorRTInference(model_loader, device="cpu")
+
     elif model_type == "all":
-        return None  # Placeholder for 'all' models
+        return None  # Placeholder for handling 'all' models
+
+    else:
+        raise ValueError(f"Unsupported model type: {model_type}")
 
 
 def run_all_benchmarks(img_batch):

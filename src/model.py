@@ -12,6 +12,7 @@ class ModelLoader:
         """
         self.device = device
         self.model = self.load_model(model_type)
+        self.model_type = model_type
         self.categories: pd.DataFrame = pd.read_csv(
             "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt",
             header=None,
