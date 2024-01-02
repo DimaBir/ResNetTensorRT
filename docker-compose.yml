@@ -4,14 +4,16 @@ services:
   core_logic_service:
     build:
       context: .
-      dockerfile: ./core_logic_service/Dockerfile
+      dockerfile: core_logic_service/Dockerfile
     ports:
       - "5000:5000"
     networks:
       - inference_network
 
   pytorch_inference_service:
-    build: ./pytorch_inference_service
+    build:
+      context: .
+      dockerfile: pytorch_inference_service/Dockerfile
     ports:
       - "5001:5000"
     networks:
