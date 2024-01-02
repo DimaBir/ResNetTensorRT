@@ -1,6 +1,6 @@
 FROM python:3.8-slim
 WORKDIR /app
-COPY ./core_logic_service/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY core_logic_service/app /app
 EXPOSE 5000
