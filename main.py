@@ -3,7 +3,7 @@ import torch
 
 from src.onnx_inference import ONNXInference
 from src.ov_inference import OVInference
-from src.pytorch_inference import PyTorchInference
+from pytorch_inference_service.app.pytorch_inference import PyTorchInference
 
 from src.tensorrt_inference import TensorRTInference
 
@@ -17,8 +17,8 @@ if torch.cuda.is_available():
         print("torch-tensorrt is not installed. Running on CPU mode only.")
 
 from common.utils import parse_arguments, plot_benchmark_results
-from src.image_processor import ImageProcessor
-from src.model import ModelLoader
+from core_logic_service.app.utils import ImageProcessor
+from core_logic_service.app.utils import ModelLoader
 import warnings
 
 # Filter out the specific warning from torchvision

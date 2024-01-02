@@ -1,0 +1,16 @@
+# Dockerfile.tests
+FROM python:3.9
+
+# Set the working directory
+WORKDIR /tests
+
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install pytest
+
+# Copy the application code
+COPY . /tests
+
+# Command to run tests
+CMD ["pytest", "tests/"]

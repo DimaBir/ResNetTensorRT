@@ -1,0 +1,7 @@
+flask
+torch
+torchvision
+Pillow
+numpy
+pandas
+redis
