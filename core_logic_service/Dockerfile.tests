@@ -10,8 +10,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pytest
 
 # Copy the application code and tests into the Docker image
-COPY /app /app
-COPY /tests /app/tests
+COPY app /app
+COPY tests /app/tests
 
 # Set the command to run tests
 CMD ["pytest", "/app/tests"]
