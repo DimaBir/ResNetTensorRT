@@ -3,14 +3,16 @@
 
 ## Table of Contents
 1. [Overview](#overview)
-2. [Requirements](#requirements)
+2. [Live Demo](#live-demo) ![New](https://img.shields.io/badge/-New-842E5B)
+3. [Modularity and Extended Model Support](#modularity-and-extended-model-support) ![New](https://img.shields.io/badge/-New-842E5B)
+4. [Requirements](#requirements)
     - [Steps to Run](#steps-to-run)
     - [Example Command](#example-command)
-3. [Results](#results)
-   - [CPU Results](#cpu-results) ![Static Badge](https://img.shields.io/badge/update-orange)
-   - [GPU (CUDA) Results](#gpu-cuda-results) ![Static Badge](https://img.shields.io/badge/update-orange)
-   - [CPU Results M1 Pro](#cpu-results-m1-pro) ![New](https://img.shields.io/badge/-New-842E5B)
-6. [Benchmark Implementation Details](#benchmark-implementation-details) ![New](https://img.shields.io/badge/-New-842E5B)
+5. [Results](#results)
+   - [CPU Results](#cpu-results)
+   - [GPU (CUDA) Results](#gpu-cuda-results)
+   - [CPU Results M1 Pro](#cpu-results-m1-pro)
+6. [Benchmark Implementation Details](#benchmark-implementation-details)
     - [PyTorch CPU & CUDA](#pytorch-cpu--cuda)
     - [TensorRT FP32 & FP16](#tensorrt-fp32--fp16)
     - [ONNX](#onnx)
@@ -30,6 +32,16 @@ The project is Dockerized for easy deployment:
 
 Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
 
+## Live Demo
+We have added a live demo feature to the project, allowing users to interact with the model through a web interface. The demo is built using Flask and can be easily accessed and used for real-time inference.
+
+- [Live Demo](https://birenbaum.co:5000/demo)
+
+## Modularity and Extended Model Support
+The project now supports a range of models beyond the original ResNet-50. This modularity allows users to easily integrate and test different models for their specific use cases.
+
+- Supported models include EfficientNet, MobileNet, and more.
+- For details on adding new models, refer to [Model Loader](src/model.py).
 
 ## Requirements
 - This repo cloned
