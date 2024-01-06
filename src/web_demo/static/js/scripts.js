@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('File type: ', file.type);
 
             // Check file type
-            var allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/pjpeg'];
             if (!allowedTypes.includes(file.type)) {
                 alert('Error: File format invalid. Please use: JPG, JPEG, PNG, GIF.');
                 return;
