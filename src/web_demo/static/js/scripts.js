@@ -425,20 +425,6 @@ document.addEventListener('DOMContentLoaded', function() {
             var file = files[0];
             console.log('File type: ', file.type);
 
-            // Check file type
-            var allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/pjpeg'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Error: File format invalid. Please use: JPG, JPEG, PNG, GIF.');
-                return;
-            }
-
-            // Check file size (500MB in bytes)
-            var maxSize = 500 * 1024 * 1024;
-            if (file.size > maxSize) {
-                alert('Error: File too large. Max 500MB.');
-                return;
-            }
-
             var reader = new FileReader();
             reader.onload = function(e) {
                 var img = document.createElement('img');
