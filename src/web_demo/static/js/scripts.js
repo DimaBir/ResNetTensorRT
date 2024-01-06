@@ -381,3 +381,49 @@ function updateBenchmarkInfo() {
     typeSentence();
 }
 
+document.getElementById('drop-zone').addEventListener('click', function() {
+    document.getElementById('image').click();
+});
+
+document.getElementById('image').addEventListener('change', function(event) {
+    handleFiles(event.target.files);
+});
+
+document.getElementById('drop-zone').addEventListener('dragover', function(event) {
+    event.preventDefault();
+    event.currentTarget.style.backgroundColor = '#f0f0f0'; // Visual feedback for drag over
+});
+
+document.getElementById('drop-zone').addEventListener('dragleave', function(event) {
+    event.currentTarget.style.backgroundColor = ''; // Reset background color when drag leaves
+});
+
+document.getElementById('drop-zone').addEventListener('drop', function(event) {
+    event.preventDefault();
+    event.currentTarget.style.backgroundColor = ''; // Reset background color on drop
+    if (event.dataTransfer.files.length) {
+        document.getElementById('image').files = event.dataTransfer.files;
+        handleFiles(event.dataTransfer.files);
+    }
+});
+
+function handleFiles(files) {
+    if (files.length > 0) {
+        var file = files[0];
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '200px'; // Set a max width for the preview image
+            img.style.maxHeight = '200px'; // Set a max height for the preview image
+            img.style.marginTop = '10px';
+            var preview = document.getElementById('drop-zone');
+            preview.innerHTML = ''; // Clear the current content
+            preview.appendChild(img); // Add the image to the drop zone
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+
+
