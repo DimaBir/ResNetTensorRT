@@ -423,7 +423,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleFiles(files) {
         if (files.length > 0) {
             var file = files[0];
-            console.log('File type: ', file.type);
 
             // Check file type
             var allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
