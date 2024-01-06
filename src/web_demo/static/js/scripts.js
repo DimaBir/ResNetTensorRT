@@ -386,25 +386,27 @@ document.getElementById('drop-zone').addEventListener('click', function() {
 });
 
 document.getElementById('image').addEventListener('change', function(event) {
-    handleFiles(event.target.files);
+    if (event.target.files.length) {
+        handleFiles(event.target.files);
+        document.getElementById('clear-btn').style.display = 'block'; // Show clear button
+    }
 });
 
 document.getElementById('drop-zone').addEventListener('dragover', function(event) {
     event.preventDefault();
-    event.currentTarget.style.backgroundColor = '#f0f0f0'; // Visual feedback for drag over
-});
-
-document.getElementById('drop-zone').addEventListener('dragleave', function(event) {
-    event.currentTarget.style.backgroundColor = ''; // Reset background color when drag leaves
 });
 
 document.getElementById('drop-zone').addEventListener('drop', function(event) {
     event.preventDefault();
-    event.currentTarget.style.backgroundColor = ''; // Reset background color on drop
     if (event.dataTransfer.files.length) {
         document.getElementById('image').files = event.dataTransfer.files;
         handleFiles(event.dataTransfer.files);
+        document.getElementById('clear-btn').style.display = 'block'; // Show clear button
     }
+});
+
+document.getElementById('clear-btn').addEventListener('click', function() {
+    resetDropZone();
 });
 
 function handleFiles(files) {
@@ -414,8 +416,8 @@ function handleFiles(files) {
         reader.onload = function(e) {
             var img = document.createElement('img');
             img.src = e.target.result;
-            img.style.maxWidth = '200px'; // Set a max width for the preview image
-            img.style.maxHeight = '200px'; // Set a max height for the preview image
+            img.style.maxWidth = '100px'; // Set a max width for the preview image
+            img.style.maxHeight = '100px'; // Set a max height for the preview image
             img.style.marginTop = '10px';
             var preview = document.getElementById('drop-zone');
             preview.innerHTML = ''; // Clear the current content
@@ -423,6 +425,19 @@ function handleFiles(files) {
         };
         reader.readAsDataURL(file);
     }
+}
+
+function resetDropZone() {
+    document.getElementById('image').value = ''; // Clear the file input
+    document.getElementById('drop-zone').innerHTML = '<span>Drag and drop an image here or click to select a file</span>'; // Reset drop zone content
+    document.getElementById('clear-btn').style.display = 'none'; // Hide clear button
+}
+
+
+function resetDropZone() {
+    document.getElementById('image').value = ''; // Clear the file input
+    document.getElementById('drop-zone').innerHTML = '<span>Drag and drop an image here or click to select a file</span>'; // Reset drop zone content
+    document.getElementById('clear-btn').style.display = 'none'; // Hide clear button
 }
 
 

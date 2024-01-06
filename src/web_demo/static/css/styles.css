@@ -171,11 +171,14 @@
 }
 
 .info-card-inner {
-    background-color: white; /* White background for inner card */
+    background: linear-gradient(to bottom, #d3d3d3, #ffffff); /* Grey to white vertical gradient */
+    color: black; /* Black text color */
+    font-size: 14px; /* Smaller text size */
     border-radius: 5px; /* Match the border-radius of the outer card */
     padding: 20px;
-    color: #007bff; /* Blue color for the text inside the inner card */
+    text-align: left; /* Align text to the left */
 }
+
 
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
