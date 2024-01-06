@@ -3,6 +3,7 @@ from ..app import create_app
 from io import BytesIO
 import shutil
 import os
+from ..config import Config
 
 
 @pytest.fixture(scope="session")

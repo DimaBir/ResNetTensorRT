@@ -1,17 +1,11 @@
 # Dockerfile.tests
 FROM python:3.9
-
-# Set the working directory in the Docker image
 WORKDIR /app
-
-# Copy the requirements file from your project and install dependencies
 COPY core_logic_service/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pytest
-
-# Copy the application code and tests into the Docker image
 COPY core_logic_service/app /app
 COPY core_logic_service/tests /app/tests
-
-# Set the command to run tests
+COPY core_logic_service/config.py /app
 CMD ["pytest", "/app/tests"]
+
