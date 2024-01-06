@@ -171,7 +171,7 @@
 }
 
 .info-card-inner {
-    background: linear-gradient(to bottom, #e3e3e3, #ffffff); /* Grey to white vertical gradient */
+    background: linear-gradient(to bottom, #d3d3d3, #ffffff); /* Grey to white vertical gradient */
     color: black; /* Black text color */
     font-size: 14px; /* Smaller text size */
     border-radius: 5px; /* Match the border-radius of the outer card */
