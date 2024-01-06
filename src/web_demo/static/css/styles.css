@@ -188,16 +188,3 @@
     margin-top: 0;
     margin-bottom: 15px; /* Provide spacing between the line and the list */
 }
-
-.drop-zone {
-    border: 2px dashed #0087F7;
-    border-radius: 5px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-}
-
-.drop-zone:hover {
-    background-color: #f8f8f8;
-}
-

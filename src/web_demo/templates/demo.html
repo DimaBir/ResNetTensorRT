@@ -31,9 +31,10 @@
                     <div class="info-card-inner">
                         <ol class="info-card-list">
                             <li>Choose and upload an image in PNG, JPG, JPEG, or GIF format.</li>
-                            <li>Choose CNN model for inference (ResNet50, EfficientNet_B0, EN_B7, MobileNet).</li>
-                            <li>Choose inference optimization mode: PyTorch CPU (None), OV or ONNX.</li>
-                            <li>Benchmark mode - will run all the models on uploaded image and compare models performance.</li>
+                            <li>Choose between ResNet50 or EfficientNet for image processing.</li>
+                            <li>Run the model to get predictions on your uploaded image.</li>
+                            <li>Choose between OV, PyTorch CPU, or ONNX for model inference.</li>
+                            <li>Compare performance across different models and inference settings.</li>
                         </ol>
                     </div>
                 </div>
@@ -43,10 +44,7 @@
                     <form id="image-form" method="post" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="image">Upload Image:</label>
-                            <div class="drop-zone" id="drop-zone">
-                                <span>Drag and drop an image here or click to select a file</span>
-                                <input type="file" class="form-control-file" id="image" name="image" required style="display: none;">
-                            </div>
+                            <input type="file" class="form-control-file" id="image" name="image" required>
                         </div>
                         <div class="form-group">
                             <label for="cnnModel">Select CNN Model:</label>
