@@ -146,19 +146,20 @@ def process_request():
     mode = request.form.get("mode")
     cnn_model = request.form.get("cnnModel")  # Retrieve the selected CNN model
 
-    # Add logging statements
-    logging.info(
-        "Received request with model_type: %s, mode: %s, image_file: %s",
-        model_type,
-        mode,
-        image_file.filename,
-    )
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
 
     if image_file is None or image_file.filename == "":
         logging.error("No file part or no selected file")
         return jsonify({"error": "No file part or no selected file"}), 400
+
+    # Log after checking that image_file is not None
+    logging.info(
+        "Received request with model_type: %s, mode: %s, image_file: %s",
+        model_type,
+        mode,
+        image_file.filename,
+    )
 
     if not allowed_file(image_file.filename):
         logging.error("Invalid file type: %s", image_file.filename)
@@ -170,16 +171,13 @@ def process_request():
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
 
     # Save the uploaded file with the unique name
-    image_file.seek(0)
     image_file.save(file_path)
-
     logging.info("Saved file: %s", file_path)
 
     # Process the uploaded image using ImageProcessor
     device = "cuda" if cuda_is_available() else "cpu"
     img_processor = ImageProcessor(img_path=file_path, device=device)
     img_batch = img_processor.process_image()
-    # img_batch = img_processor.process_image_official()
 
     if img_batch is None:
         return jsonify({"error": "Invalid file type"}), 400
@@ -188,15 +186,11 @@ def process_request():
     model_loader = ModelLoader(model_type=cnn_model, device=device)
 
     if mode == "benchmark":
-
-        # Benchmark mode logic
         logging.info("Running all benchmarks")
         results = run_all_benchmarks(img_batch)
         return jsonify({"benchmark": results})
 
     elif mode == "predict":
-
-        # Predict mode logic
         logging.info("Running prediction for model type: %s", model_type)
         inference_class = get_inference_class(model_type, model_loader)
         if inference_class is None:
@@ -210,7 +204,6 @@ def process_request():
 
         return jsonify({"predictions": predictions, "inference_time": inference_time})
     else:
-        # Handle unexpected mode
         logging.error("Invalid mode selected: %s", mode)
         return jsonify({"error": "Invalid mode selected"}), 400
 
