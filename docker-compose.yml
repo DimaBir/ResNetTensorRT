@@ -21,22 +21,22 @@ services:
     depends_on:
       - core_logic_service
 
+  onnx_exporter_service:
+    build: ./onnx_exporter_service
+    ports:
+      - "5002:5002"
+    networks:
+      - inference_network
+    depends_on:
+      - core_logic_service
+      - redis
+
   redis:
     image: "redis:alpine"
     ports:
       - "6379:6379"
     networks:
       - inference_network
-
-  tests:
-    build:
-      context: .
-      dockerfile: core_logic_service/Dockerfile.tests
-    networks:
-      - inference_network
-    depends_on:
-      - core_logic_service
-      - redis
 
 networks:
   inference_network:

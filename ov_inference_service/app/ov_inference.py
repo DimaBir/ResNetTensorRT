@@ -2,8 +2,8 @@ import os
 import numpy as np
 import openvino as ov
 from src.inference_base import InferenceBase
-from src.onnx_exporter import ONNXExporter
-from src.ov_exporter import OVExporter
+from onnx_exporter_service.app.onnx_exporter import ONNXExporter
+from ov_exporter_service.app.ov_exporter import OVExporter
 
 
 class OVInference(InferenceBase):

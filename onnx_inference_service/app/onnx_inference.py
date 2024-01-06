@@ -1,9 +1,8 @@
 import os
-import logging
 import onnxruntime as ort
 import numpy as np
 from src.inference_base import InferenceBase
-from src.onnx_exporter import ONNXExporter
+from onnx_exporter_service.app.onnx_exporter import ONNXExporter
 
 
 class ONNXInference(InferenceBase):

@@ -1,8 +1,8 @@
 import logging
 import torch
 
-from src.onnx_inference import ONNXInference
-from src.ov_inference import OVInference
+from onnx_inference_service.app.onnx_inference import ONNXInference
+from ov_inference_service.app.ov_inference import OVInference
 from pytorch_inference_service.app.pytorch_inference import PyTorchInference
 
 from src.tensorrt_inference import TensorRTInference
