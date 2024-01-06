@@ -141,71 +141,107 @@ def index():
 
 @app.route("/process", methods=["POST"])
 def process_request():
+    if not is_upload_folder_ready():
+        create_upload_folder()
+
     image_file = request.files.get("image")
-    model_type = request.form.get("inferenceMode")
-    mode = request.form.get("mode")
-    cnn_model = request.form.get("cnnModel")  # Retrieve the selected CNN model
+    if not is_valid_image_file(image_file):
+        return respond_with_error("No file part or no selected file", 400)
 
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
+    log_received_request(image_file)
 
-    if image_file is None or image_file.filename == "":
-        logging.error("No file part or no selected file")
-        return jsonify({"error": "No file part or no selected file"}), 400
+    if not is_allowed_file_type(image_file.filename):
+        return respond_with_error("Invalid file format. Allowed formats are png, jpg, jpeg, gif.", 400)
 
-    # Log after checking that image_file is not None
-    logging.info(
-        "Received request with model_type: %s, mode: %s, image_file: %s",
-        model_type,
-        mode,
-        image_file.filename,
-    )
-
-    if not allowed_file(image_file.filename):
-        logging.error("Invalid file type: %s", image_file.filename)
-        return jsonify({"error": "Invalid file format. Allowed formats are png, jpg, jpeg, gif."}), 400
-
-    # Generate a unique filename using UUID
-    ext = image_file.filename.rsplit(".", 1)[1].lower()  # Get the file extension
-    unique_filename = f"{uuid.uuid4().hex}.{ext}"
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
-
-    # Save the uploaded file with the unique name
-    image_file.save(file_path)
-    logging.info("Saved file: %s", file_path)
-
-    # Process the uploaded image using ImageProcessor
-    device = "cuda" if cuda_is_available() else "cpu"
-    img_processor = ImageProcessor(img_path=file_path, device=device)
-    img_batch = img_processor.process_image()
+    file_path = save_image_file(image_file)
+    img_batch = process_uploaded_image(file_path)
 
     if img_batch is None:
-        return jsonify({"error": "Invalid file type"}), 400
+        return respond_with_error("Invalid file type", 400)
 
-    logging.info("Loading pre-trained model, for %s", cnn_model)
+    return handle_request_based_on_mode(img_batch)
+
+
+def is_upload_folder_ready():
+    return os.path.exists(UPLOAD_FOLDER)
+
+
+def create_upload_folder():
+    os.makedirs(UPLOAD_FOLDER)
+
+
+def is_valid_image_file(image_file):
+    return image_file and image_file.filename
+
+
+def log_received_request(image_file):
+    model_type = request.form.get("inferenceMode")
+    mode = request.form.get("mode")
+    logging.info(
+        "Received request with model_type: %s, mode: %s, image_file: %s",
+        model_type, mode, image_file.filename
+    )
+
+
+def is_allowed_file_type(filename):
+    return allowed_file(filename)
+
+
+def save_image_file(image_file):
+    ext = image_file.filename.rsplit(".", 1)[1].lower()
+    unique_filename = f"{uuid.uuid4().hex}.{ext}"
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
+    image_file.save(file_path)
+    logging.info("Saved file: %s", file_path)
+    return file_path
+
+
+def process_uploaded_image(file_path):
+    device = "cuda" if cuda_is_available() else "cpu"
+    img_processor = ImageProcessor(img_path=file_path, device=device)
+    return img_processor.process_image()
+
+
+def handle_request_based_on_mode(img_batch):
+    mode = request.form.get("mode")
+    cnn_model = request.form.get("cnnModel")
     model_loader = ModelLoader(model_type=cnn_model, device=device)
 
     if mode == "benchmark":
-        logging.info("Running all benchmarks")
-        results = run_all_benchmarks(img_batch)
-        return jsonify({"benchmark": results})
-
+        return handle_benchmark_mode(img_batch)
     elif mode == "predict":
-        logging.info("Running prediction for model type: %s", model_type)
-        inference_class = get_inference_class(model_type, model_loader)
-        if inference_class is None:
-            logging.error("Invalid model type selected: %s", model_type)
-            return jsonify({"error": "Invalid model type selected"}), 400
-
-        start_time = time.time()
-        predictions = inference_class.predict(img_batch)
-        end_time = time.time()
-        inference_time = (end_time - start_time) * 1000
-
-        return jsonify({"predictions": predictions, "inference_time": inference_time})
+        return handle_predict_mode(img_batch, model_loader)
     else:
         logging.error("Invalid mode selected: %s", mode)
-        return jsonify({"error": "Invalid mode selected"}), 400
+        return respond_with_error("Invalid mode selected", 400)
+
+
+def handle_benchmark_mode(img_batch):
+    logging.info("Running all benchmarks")
+    results = run_all_benchmarks(img_batch)
+    return jsonify({"benchmark": results})
+
+
+def handle_predict_mode(img_batch, model_loader):
+    model_type = request.form.get("inferenceMode")
+    logging.info("Running prediction for model type: %s", model_type)
+    inference_class = get_inference_class(model_type, model_loader)
+
+    if inference_class is None:
+        logging.error("Invalid model type selected: %s", model_type)
+        return respond_with_error("Invalid model type selected", 400)
+
+    start_time = time.time()
+    predictions = inference_class.predict(img_batch)
+    end_time = time.time()
+    inference_time = (end_time - start_time) * 1000
+
+    return jsonify({"predictions": predictions, "inference_time": inference_time})
+
+
+def respond_with_error(message, status_code):
+    logging.error(message)
+    return jsonify({"error": message}), status_code
 
 
 if __name__ == "__main__":
