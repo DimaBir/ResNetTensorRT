@@ -188,7 +188,3 @@
     margin-top: 0;
     margin-bottom: 15px; /* Provide spacing between the line and the list */
 }
-
-#drop-area.highlight {
-  background-color: rgba(0, 123, 255, 0.3);
-}
