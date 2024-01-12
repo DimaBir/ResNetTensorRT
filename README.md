@@ -22,33 +22,35 @@
 <img src="./inference/plot_trt.png" width="100%">
 
 ## Overview
-This project showcases inference with a PyTorch ResNet-50 model and its optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
+This project showcases inference with PyTorch CNN models, such as ResNet50, EfficientNet, and MobileNet, and their optimization using ONNX, OpenVINO, and NVIDIA TensorRT. The script infers a user-specified image and displays top-K predictions. Benchmarking covers configurations like PyTorch CPU, ONNX CPU, OpenVINO CPU, PyTorch CUDA, TensorRT-FP32, and TensorRT-FP16.
 
 The project is Dockerized for easy deployment:
 1. **CPU-only Deployment** - Suitable for non-GPU systems (supports `PyTorch CPU`, `ONNX CPU`, and `OpenVINO CPU` models only).
 2. **GPU Deployment** - Optimized for NVIDIA GPUs (supports all models: `PyTorch CPU`, `ONNX CPU`, `OpenVINO CPU`, `PyTorch CUDA`, `TensorRT-FP32`, and `TensorRT-FP16`).
 
-Refer to the [Steps to Run](#steps-to-run) section for Docker instructions.
+Please look at the [Steps to Run](#steps-to-run) section for Docker instructions.
 
 
 ## Requirements
-- This repo cloned
-- Docker
-- NVIDIA GPU (for CUDA and TensorRT benchmarks and optimizations)
+- Clone this repo:
+  ```bash
+   git clone https://github.com/DimaBir/ResNetTensorRT.git
+   ```
 - Python 3.x
+- Verify that your system has Docker support
+- NVIDIA GPU (for CUDA and TensorRT benchmarks and optimizations)
 - NVIDIA drivers installed on the host machine.
-- [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide) (for running the Docker container with GPU support). Pre-installed within the GPU docker image.
 
 ## Steps to Run
 ### Building the Docker Image
 
-1. **CPU Deployment**:
+1. **CPU-only Deployment**:
    For systems without a GPU or CUDA support, simply use the default base image.
    ```bash
    docker build -t cpu_img .
    ```
    
-2. **GPU Deployment**:
+2. **GPU (CUDA) Deployment**:
    If your system has GPU and CUDA support, you can use the TensorRT base image to leverage GPU acceleration.
    ```bash
    docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t gpu_img .
