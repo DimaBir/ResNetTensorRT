@@ -45,24 +45,20 @@ Please look at the [Steps to Run](#steps-to-run) section for Docker instructions
 ### Building the Docker Image
 
 1. **CPU-only Deployment**:
-   For systems without a GPU or CUDA support, simply use the default base image.
    ```bash
    docker build -t cpu_img .
    ```
+   **Running**:
+   ```bash
+   docker run -it --rm cpu_img /bin/bash
+   ```
    
 2. **GPU (CUDA) Deployment**:
-   If your system has GPU and CUDA support, you can use the TensorRT base image to leverage GPU acceleration.
    ```bash
    docker build --build-arg ENVIRONMENT=gpu --build-arg BASE_IMAGE=nvcr.io/nvidia/tensorrt:23.08-py3 -t gpu_img .
    ```
 
-### Running the Docker Container
-1. **CPU Version**:
-   ```bash
-   docker run -it --rm cpu_img /bin/bash
-   ```
-
-2. **GPU Version**:
+   **Running**:
    ```bash
    docker run --gpus all -it --rm gpu_img
    ```
