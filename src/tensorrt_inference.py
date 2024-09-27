@@ -41,9 +41,9 @@ class TensorRTInference(InferenceBase):
 
         # Compile the TorchScript model with TensorRT
         if CUDA_AVAILABLE:
-            self.model = torch_tensorrt.compile(
+            self.model = trt.compile(
                 scripted_model,
-                inputs=[torch_tensorrt.Input((1, 3, 224, 224), dtype=self.precision)],
+                inputs=[trt.Input((1, 3, 224, 224), dtype=self.precision)],
                 enabled_precisions={self.precision},
             )
 
