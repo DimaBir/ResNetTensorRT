@@ -1,27 +1,28 @@
 import os
+from typing import Union
+
 import torch
 from torch.onnx import export, TrainingMode
 
+DUMMY_INPUT_SHAPE = (1, 3, 224, 224)
+MODELS_DIR = "models"
+
 
 class ONNXExporter:
-    def __init__(self, model, device, onnx_path: str):
+    def __init__(self, model: torch.nn.Module, device: Union[str, torch.device], onnx_path: str):
         self.model = model
         self.onnx_path = onnx_path
-        self.device = device
+        self.device = device if isinstance(device, torch.device) else torch.device(device)
 
     def export_model(self):
         self.model.eval()
+        dummy_input = torch.randn(*DUMMY_INPUT_SHAPE).to(self.device)
 
-        # Define dummy input tensor
-        x = torch.randn(1, 3, 224, 224).to(self.device)
+        os.makedirs(MODELS_DIR, exist_ok=True)
 
-        if not os.path.exists(self.onnx_path):
-            os.makedirs("models", exist_ok=True)
-
-        # Export model as ONNX
         export(
             self.model,
-            x,
+            dummy_input,
             self.onnx_path,
             training=TrainingMode.EVAL,
             verbose=True,

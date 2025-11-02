@@ -1,5 +1,5 @@
 # Argument for base image. Default is a neutral Python image.
-ARG BASE_IMAGE=python:3.8-slim
+ARG BASE_IMAGE=python:3.12-slim
 
 # Use the base image specified by the BASE_IMAGE argument
 FROM $BASE_IMAGE

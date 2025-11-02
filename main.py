@@ -1,106 +1,102 @@
 import logging
+import warnings
+from typing import Dict, Tuple
+
 import torch
 
+from common.utils import parse_arguments, plot_benchmark_results
+from src.image_processor import ImageProcessor
+from src.model import ModelLoader
 from src.onnx_inference import ONNXInference
 from src.ov_inference import OVInference
 from src.pytorch_inference import PyTorchInference
-
 from src.tensorrt_inference import TensorRTInference
+
+warnings.filterwarnings("ignore", category=UserWarning, module="torchvision.io.image")
+logging.basicConfig(filename="inference.log", level=logging.INFO)
 
 CUDA_AVAILABLE = False
 if torch.cuda.is_available():
     try:
         import torch_tensorrt
-
         CUDA_AVAILABLE = True
     except ImportError:
-        print("torch-tensorrt is not installed. Running on CPU mode only.")
+        print("torch-tensorrt not installed. Running in CPU mode only.")
 
-from common.utils import parse_arguments, plot_benchmark_results
-from src.image_processor import ImageProcessor
-from src.model import ModelLoader
-import warnings
 
-# Filter out the specific warning from torchvision
-warnings.filterwarnings("ignore", category=UserWarning, module="torchvision.io.image")
+def _run_onnx_inference(args, model_loader, img_batch) -> Dict[str, Tuple[float, float]]:
+    onnx_inference = ONNXInference(model_loader, args.onnx_path, debug_mode=args.DEBUG)
+    benchmark_result = onnx_inference.benchmark(img_batch)
+    onnx_inference.predict(img_batch)
+    return {"ONNX (CPU)": benchmark_result}
 
-# Configure logging
-logging.basicConfig(filename="inference.log", level=logging.INFO)
+
+def _run_openvino_inference(args, model_loader, img_batch) -> Dict[str, Tuple[float, float]]:
+    ov_inference = OVInference(model_loader, args.ov_path, debug_mode=args.DEBUG)
+    benchmark_result = ov_inference.benchmark(img_batch)
+    ov_inference.predict(img_batch)
+    return {"OpenVINO (CPU)": benchmark_result}
+
+
+def _run_pytorch_cpu_inference(args, model_loader, img_batch) -> Dict[str, Tuple[float, float]]:
+    pytorch_cpu_inference = PyTorchInference(model_loader, device="cpu", debug_mode=args.DEBUG)
+    benchmark_result = pytorch_cpu_inference.benchmark(img_batch)
+    pytorch_cpu_inference.predict(img_batch)
+    return {"PyTorch (CPU)": benchmark_result}
+
+
+def _run_pytorch_cuda_inference(args, model_loader, device, img_batch) -> Dict[str, Tuple[float, float]]:
+    print("Running CUDA inference...")
+    pytorch_cuda_inference = PyTorchInference(model_loader, device=device, debug_mode=args.DEBUG)
+    benchmark_result = pytorch_cuda_inference.benchmark(img_batch)
+    pytorch_cuda_inference.predict(img_batch)
+    return {"PyTorch (CUDA)": benchmark_result}
+
+
+def _run_tensorrt_inference(args, model_loader, device, img_batch) -> Dict[str, Tuple[float, float]]:
+    results = {}
+    precisions = [torch.float16, torch.float32]
+    
+    for precision in precisions:
+        tensorrt_inference = TensorRTInference(
+            model_loader, device=device, precision=precision, debug_mode=args.DEBUG
+        )
+        benchmark_result = tensorrt_inference.benchmark(img_batch)
+        tensorrt_inference.predict(img_batch)
+        results[f"TRT_{precision}"] = benchmark_result
+    
+    return results
 
 
 def main():
-    """
-    Main function to run inference, benchmarks, and predictions on the model
-    using provided image and optional parameters.
-    """
     args = parse_arguments()
 
     if args.DEBUG:
-        print("Debug mode is enabled")
+        print("Debug mode enabled")
 
-    # Model and Image Initialization
     benchmark_results = {}
-
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    
     model_loader = ModelLoader(device=device)
     img_processor = ImageProcessor(img_path=args.image_path, device=device)
     img_batch = img_processor.process_image()
 
-    # ONNX
     if args.mode in ["onnx", "all"]:
-        onnx_inference = ONNXInference(
-            model_loader, args.onnx_path, debug_mode=args.DEBUG
-        )
+        benchmark_results.update(_run_onnx_inference(args, model_loader, img_batch))
 
-        benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark(img_batch)
-        onnx_inference.predict(img_batch)
-
-    # OpenVINO
     if args.mode in ["ov", "all"]:
-        ov_inference = OVInference(model_loader, args.ov_path, debug_mode=args.DEBUG)
+        benchmark_results.update(_run_openvino_inference(args, model_loader, img_batch))
 
-        benchmark_results["OpenVINO (CPU)"] = ov_inference.benchmark(img_batch)
-        ov_inference.predict(img_batch)
-
-    # PyTorch CPU
     if args.mode in ["cpu", "all"]:
-        pytorch_cpu_inference = PyTorchInference(
-            model_loader, device="cpu", debug_mode=args.DEBUG
-        )
+        benchmark_results.update(_run_pytorch_cpu_inference(args, model_loader, img_batch))
 
-        benchmark_results["PyTorch (CPU)"] = pytorch_cpu_inference.benchmark(img_batch)
-        pytorch_cpu_inference.predict(img_batch)
-
-    # PyTorch CUDA + TRT
     if torch.cuda.is_available():
         if args.mode in ["cuda", "all"]:
-            print("Inside inference for CUDA...")
-            pytorch_cuda_inference = PyTorchInference(
-                model_loader, device=device, debug_mode=args.DEBUG
-            )
+            benchmark_results.update(_run_pytorch_cuda_inference(args, model_loader, device, img_batch))
 
-            benchmark_results["PyTorch (CUDA)"] = pytorch_cuda_inference.benchmark(
-                img_batch
-            )
-            pytorch_cuda_inference.predict(img_batch)
-
-        # TensorRT
         if args.mode in ["tensorrt", "all"]:
-            precisions = [torch.float16, torch.float32]
-            for precision in precisions:
-                tensorrt_inference = TensorRTInference(
-                    model_loader,
-                    device=device,
-                    precision=precision,
-                    debug_mode=args.DEBUG,
-                )
+            benchmark_results.update(_run_tensorrt_inference(args, model_loader, device, img_batch))
 
-                benchmark_results[f"TRT_{precision}"] = tensorrt_inference.benchmark(
-                    img_batch
-                )
-                tensorrt_inference.predict(img_batch)
-
-    # Plot graph combining all results
     if args.mode == "all":
         plot_benchmark_results(benchmark_results)
 
