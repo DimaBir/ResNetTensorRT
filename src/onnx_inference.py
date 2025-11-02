@@ -28,6 +28,7 @@ class ONNXInference(InferenceBase):
         ort_inputs = {input_name: input_data.cpu().numpy()}
         ort_outs = self.model.run(None, ort_inputs)
 
+        prob = np.zeros(1000)
         if len(ort_outs) > 0:
             prob = ort_outs[0]
             if prob.ndim > 1:
