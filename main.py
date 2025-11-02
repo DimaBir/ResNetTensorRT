@@ -4,7 +4,7 @@ import torch
 from src.onnx_inference import ONNXInference
 from src.ov_inference import OVInference
 from src.pytorch_inference import PyTorchInference
-
+from src.onnx_cuda_inferece import ONNXInferenceCUDA
 from src.tensorrt_inference import TensorRTInference
 
 CUDA_AVAILABLE = False
@@ -55,6 +55,14 @@ def main():
         benchmark_results["ONNX (CPU)"] = onnx_inference.benchmark(img_batch)
         onnx_inference.predict(img_batch)
 
+    if args.mode in ["onnxcuda","all"]:
+        onnx_inference = ONNXInferenceCUDA(
+            model_loader, args.onnx_path, debug_mode=args.DEBUG
+        )
+
+        benchmark_results["ONNX (CUDA)"] = onnx_inference.benchmark(img_batch)
+        onnx_inference.predict(img_batch)
+        
     # OpenVINO
     if args.mode in ["ov", "all"]:
         ov_inference = OVInference(model_loader, args.ov_path, debug_mode=args.DEBUG)
