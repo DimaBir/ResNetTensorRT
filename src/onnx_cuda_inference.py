@@ -1,7 +1,10 @@
-from src.onnx_inference import ONNXInference
-from src.onnx_exporter import ONNXExporter
-import onnxruntime as ort
 import os
+
+import onnxruntime as ort
+
+from src.onnx_exporter import ONNXExporter
+from src.onnx_inference import ONNXInference
+
 
 class ONNXInferenceCUDA(ONNXInference):
     def __init__(self, model_loader, model_path, debug_mode=False):

@@ -1,40 +1,31 @@
-from torchvision import transforms
-from PIL import Image
 import torch
+from PIL import Image
+from torchvision import transforms
+
+IMAGENET_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_STD = (0.229, 0.224, 0.225)
+IMAGE_SIZE = 256
+CROP_SIZE = 224
 
 
 class ImageProcessor:
-    def __init__(self, img_path: str, device: str = "cuda") -> None:
-        """
-        Initialize the ImageProcessor object.
-
-        :param img_path: Path to the image to be processed.
-        :param device: The device to process the image on ("cpu" or "cuda").
-        """
+    def __init__(self, img_path: str, device: str | torch.device = "cuda") -> None:
         self.img_path = img_path
-        self.device = device
+        self.device = device if isinstance(device, torch.device) else torch.device(device)
+        self.transform = self._create_transform()
 
-    def process_image(self) -> torch.Tensor:
-        """
-        Process the image with the specified transformations: Resize, CenterCrop, ToTensor, and Normalize.
-
-        :return: A batch of the transformed image tensor on the specified device.
-        """
-        # Open the image file
-        img = Image.open(self.img_path)
-
-        # Define the transformation pipeline
-        transform = transforms.Compose(
+    @staticmethod
+    def _create_transform() -> transforms.Compose:
+        return transforms.Compose(
             [
-                transforms.Resize(256),
-                transforms.CenterCrop(224),
+                transforms.Resize(IMAGE_SIZE),
+                transforms.CenterCrop(CROP_SIZE),
                 transforms.ToTensor(),
-                transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+                transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
             ]
         )
 
-        # Apply transformations and prepare a batch
-        img_transformed = transform(img)
-        img_batch = torch.unsqueeze(img_transformed, 0).to(self.device)
-
-        return img_batch
+    def process_image(self) -> torch.Tensor:
+        img = Image.open(self.img_path)
+        img_transformed = self.transform(img)
+        return torch.unsqueeze(img_transformed, 0).to(self.device)
