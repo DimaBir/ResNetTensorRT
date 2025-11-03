@@ -12,6 +12,7 @@ import os
 import tempfile
 from pathlib import Path
 
+import pandas as pd
 import streamlit as st
 import torch
 from PIL import Image
@@ -75,9 +76,6 @@ def run_inference(
     model_loader = ModelLoader(device=device)
     img_processor = ImageProcessor(img_path=image_path, device=device)
     img_batch = img_processor.process_image()
-
-    # Create a placeholder for predictions
-    predictions_placeholder = st.empty()
 
     # ONNX inference
     if mode in ["onnx", "all"]:
@@ -169,8 +167,6 @@ def display_benchmark_results(results: dict[str, tuple[float, float]]):
     st.subheader("Benchmark Results")
 
     # Create DataFrame for display
-    import pandas as pd
-
     data = {
         "Model": list(results.keys()),
         "Avg Time (ms)": [f"{results[model][0]:.2f}" for model in results.keys()],
@@ -211,6 +207,7 @@ def main():
     image_source = st.sidebar.radio("Select image source:", ["Sample Images", "Upload Image"])
 
     image_path = None
+    is_temp_file = False  # Track if file should be cleaned up
     if image_source == "Sample Images":
         sample_images = []
         inference_dir = Path("./inference")
@@ -232,6 +229,7 @@ def main():
             with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp_file:
                 tmp_file.write(uploaded_file.read())
                 image_path = tmp_file.name
+                is_temp_file = True
 
     # Inference mode selection
     st.sidebar.subheader("Inference Settings")
@@ -304,7 +302,7 @@ def main():
                     display_benchmark_results(results)
 
                     # Clean up temporary file if uploaded
-                    if image_source == "Upload Image" and image_path.startswith("/tmp"):
+                    if is_temp_file:
                         try:
                             os.unlink(image_path)
                         except Exception:
