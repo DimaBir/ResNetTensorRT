@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = {file = "LICENSE"}
 authors = [
-    {name = "DimaBir", email = ""}
+    {name = "DimaBir"}
 ]
 keywords = ["pytorch", "tensorrt", "onnx", "openvino", "inference", "deep-learning"]
 classifiers = [
@@ -30,9 +30,11 @@ dependencies = [
     "numpy>=1.26.0",
     "onnx>=1.16.0",
     "onnxruntime>=1.18.0",
+    "onnxscript>=0.5.0",
     "openvino>=2024.5.0",
     "seaborn>=0.13.0",
     "matplotlib>=3.8.0",
+    "streamlit>=1.41.0",
 ]
 
 [project.optional-dependencies]
