@@ -5,7 +5,6 @@ import torch
 from torch.onnx import export, TrainingMode
 
 DUMMY_INPUT_SHAPE = (1, 3, 224, 224)
-MODELS_DIR = "models"
 
 
 class ONNXExporter:
@@ -18,7 +17,9 @@ class ONNXExporter:
         self.model.eval()
         dummy_input = torch.randn(*DUMMY_INPUT_SHAPE).to(self.device)
 
-        os.makedirs(MODELS_DIR, exist_ok=True)
+        model_dir = os.path.dirname(self.onnx_path)
+        if model_dir:
+            os.makedirs(model_dir, exist_ok=True)
 
         export(
             self.model,

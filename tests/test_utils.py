@@ -1,7 +1,4 @@
-import argparse
 from unittest.mock import patch
-
-import pytest
 
 from common.utils import parse_arguments, INFERENCE_MODES, DEFAULT_TOPK
 

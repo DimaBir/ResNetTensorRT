@@ -5,10 +5,11 @@ from typing import Optional, Tuple
 import numpy as np
 import torch
 
+from common.utils import DEFAULT_TOPK
+
 DEFAULT_BATCH_SIZE = 8
 DEFAULT_NUM_RUNS = 100
 DEFAULT_WARMUP_RUNS = 50
-DEFAULT_TOPK = 5
 MS_PER_SECOND = 1000
 
 

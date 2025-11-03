@@ -2,7 +2,6 @@ import os
 import tempfile
 
 import pytest
-import torch
 
 from src.model import ModelLoader
 from src.onnx_exporter import ONNXExporter
@@ -17,8 +16,7 @@ class TestONNXExporter:
     def temp_onnx_path(self):
         with tempfile.NamedTemporaryFile(suffix=".onnx", delete=False) as tmp:
             yield tmp.name
-        if os.path.exists(tmp.name):
-            os.unlink(tmp.name)
+        os.unlink(tmp.name)
 
     def test_export_model(self, model_loader, temp_onnx_path):
         exporter = ONNXExporter(model_loader.model, "cpu", temp_onnx_path)
