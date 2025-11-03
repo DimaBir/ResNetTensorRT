@@ -18,12 +18,14 @@ class TestONNXExporter:
             yield tmp.name
         os.unlink(tmp.name)
 
+    @pytest.mark.slow
     def test_export_model(self, model_loader, temp_onnx_path):
         exporter = ONNXExporter(model_loader.model, "cpu", temp_onnx_path)
         exporter.export_model()
         assert os.path.exists(temp_onnx_path)
         assert os.path.getsize(temp_onnx_path) > 0
 
+    @pytest.mark.slow
     def test_export_creates_models_dir(self, model_loader):
         with tempfile.TemporaryDirectory() as tmpdir:
             onnx_path = os.path.join(tmpdir, "models", "test.onnx")

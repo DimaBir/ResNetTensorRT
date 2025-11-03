@@ -10,8 +10,11 @@ from src.ov_exporter import OVExporter
 
 class TestOVExporter:
     @pytest.fixture
-    def model_loader(self):
-        return ModelLoader(device="cpu")
+    def simple_onnx_path(self):
+        with tempfile.NamedTemporaryFile(suffix=".onnx", delete=False, mode="w") as tmp:
+            tmp.write("dummy")
+            yield tmp.name
+        os.unlink(tmp.name)
 
     @pytest.fixture
     def temp_onnx_path(self):
@@ -25,6 +28,7 @@ class TestOVExporter:
     @pytest.mark.xfail(
         reason="Known compatibility issue between PyTorch 2.9 ONNX export and OpenVINO 2025.3"
     )
+    @pytest.mark.slow
     def test_export_model(self, temp_onnx_path):
         exporter = OVExporter(temp_onnx_path)
         ov_model = exporter.export_model()
@@ -35,7 +39,7 @@ class TestOVExporter:
         with pytest.raises(ValueError, match="ONNX model not found"):
             exporter.export_model()
 
-    def test_exporter_init(self, temp_onnx_path):
-        exporter = OVExporter(temp_onnx_path)
-        assert exporter.onnx_path == temp_onnx_path
+    def test_exporter_init(self, simple_onnx_path):
+        exporter = OVExporter(simple_onnx_path)
+        assert exporter.onnx_path == simple_onnx_path
         assert exporter.core is not None
