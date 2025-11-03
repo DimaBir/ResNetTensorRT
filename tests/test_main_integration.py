@@ -15,6 +15,7 @@ class TestMainIntegration:
             yield tmp.name
         os.unlink(tmp.name)
 
+    @pytest.mark.slow
     @patch("main.torch.cuda.is_available")
     @patch("main.plot_benchmark_results")
     def test_main_cpu_mode(self, mock_plot, mock_cuda, temp_image):
@@ -27,6 +28,7 @@ class TestMainIntegration:
 
             main()
 
+    @pytest.mark.slow
     @patch("main.torch.cuda.is_available")
     def test_main_onnx_mode(self, mock_cuda, temp_image):
         mock_cuda.return_value = False
@@ -47,6 +49,7 @@ class TestMainIntegration:
 
         assert isinstance(CUDA_AVAILABLE, bool)
 
+    @pytest.mark.slow
     @patch("main.torch.cuda.is_available")
     def test_main_with_debug_mode(self, mock_cuda, temp_image):
         mock_cuda.return_value = False

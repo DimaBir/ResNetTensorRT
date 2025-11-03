@@ -47,6 +47,9 @@ minversion = "8.0"
 addopts = "-ra -q --strict-markers --cov=src --cov=common --cov-report=term-missing --cov-report=html --cov-fail-under=60"
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 
 [tool.coverage.run]
 source = ["src", "common"]

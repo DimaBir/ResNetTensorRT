@@ -22,6 +22,9 @@ class TestOVExporter:
             exporter.export_model()
             yield onnx_path
 
+    @pytest.mark.xfail(
+        reason="Known compatibility issue between PyTorch 2.9 ONNX export and OpenVINO 2025.3"
+    )
     def test_export_model(self, temp_onnx_path):
         exporter = OVExporter(temp_onnx_path)
         ov_model = exporter.export_model()
