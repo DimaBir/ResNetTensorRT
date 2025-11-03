@@ -64,21 +64,56 @@ Please look at the [Steps to Run](#steps-to-run) section for Docker instructions
    ```
 
 ### Run the Script inside the Container
+
+#### Option 1: Streamlit Web Interface (Recommended) ![New](https://img.shields.io/badge/-New-842E5B)
+Run the interactive web interface:
+```sh
+streamlit run streamlit_app.py
+```
+
+The Streamlit interface provides:
+- 🖼️ **Image Upload/Selection**: Choose from sample images or upload your own
+- ⚙️ **Easy Configuration**: Select inference mode, adjust top-K predictions via UI
+- 📊 **Real-time Results**: View predictions and benchmark metrics interactively
+- 📈 **Visual Feedback**: See benchmark results in an organized table format
+
+#### Option 2: Command Line Interface
 ```sh
 python main.py [--mode all]
 ```
 
-### Arguments
+### Arguments (CLI)
 - `--image_path`: (Optional) Specifies the path to the image you want to predict.
 - `--topk`: (Optional) Specifies the number of top predictions to show. Defaults to 5 if not provided.
 - `--mode`: (Optional) Specifies the model's mode for exporting and running. Choices are: `onnx`, `ov`, `cpu`, `cuda`, `tensorrt`, and `all`.  If not provided, it defaults to `all`.
 
-### Example Command
+### Example Command (CLI)
 ```sh
 python main.py --topk 3 --mode=all --image_path="./inference/cat3.jpg"
 ```
 
 This command will run predictions on the chosen image (`./inference/cat3.jpg`), show the top 3 predictions, and run all available models. Note: plot created only for `--mode=all` and results plotted and saved to `./inference/plot.png`
+
+## Streamlit Interface ![New](https://img.shields.io/badge/-New-842E5B)
+The project now includes a user-friendly Streamlit web interface for running benchmarks interactively.
+
+### Interface Preview
+<img src="https://github.com/user-attachments/assets/eaa57e73-97d9-4319-b120-f5a3324f21b7" width="100%">
+
+### Features
+- **Interactive Image Selection**: Choose from sample images or upload your own
+- **Flexible Configuration**: Select inference modes (ONNX, OpenVINO, PyTorch CPU/CUDA, TensorRT)
+- **Real-time Benchmarking**: Run benchmarks and see results instantly
+- **Visual Results**: View predictions and performance metrics in an organized format
+- **System Information**: Check available hardware (CPU/GPU) and capabilities
+
+### Benchmark Results Display
+<img src="https://github.com/user-attachments/assets/82314f1e-ac3c-495b-8b86-fc9dc6379aa4" width="100%">
+
+The interface displays:
+- Top-K predictions with confidence scores
+- Benchmark metrics (average inference time, throughput)
+- Clear visual organization of results
 
 ## Results
 ### Example Input
