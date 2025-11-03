@@ -30,14 +30,14 @@ class TestImageProcessor:
     def test_process_image_shape(self, temp_image_path, device):
         processor = ImageProcessor(temp_image_path, device)
         result = processor.process_image()
-        
+
         assert result.shape == (1, 3, 224, 224)
         assert result.device.type == device
 
     def test_process_image_normalization(self, temp_image_path, device):
         processor = ImageProcessor(temp_image_path, device)
         result = processor.process_image()
-        
+
         assert result.dtype == torch.float32
         assert result.min() >= -3.0
         assert result.max() <= 3.0

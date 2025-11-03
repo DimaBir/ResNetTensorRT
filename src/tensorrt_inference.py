@@ -1,5 +1,4 @@
 import logging
-from typing import Optional, Union
 
 import numpy as np
 import torch
@@ -19,11 +18,11 @@ DUMMY_INPUT_SHAPE = (1, 3, 224, 224)
 
 class TensorRTInference(InferenceBase):
     def __init__(
-        self, 
-        model_loader, 
-        device: Union[str, torch.device], 
-        precision: torch.dtype = torch.float32, 
-        debug_mode: bool = False
+        self,
+        model_loader,
+        device: str | torch.device,
+        precision: torch.dtype = torch.float32,
+        debug_mode: bool = False,
     ):
         self.precision = precision
         self.device = device if isinstance(device, torch.device) else torch.device(device)
@@ -33,7 +32,7 @@ class TensorRTInference(InferenceBase):
 
     def load_model(self):
         self.model = self.model_loader.model.to(self.device).eval()
-        
+
         scripted_model = torch.jit.trace(
             self.model, torch.randn(*DUMMY_INPUT_SHAPE).to(self.device)
         )
@@ -45,7 +44,7 @@ class TensorRTInference(InferenceBase):
                 enabled_precisions={self.precision},
             )
 
-    def predict(self, input_data: torch.Tensor, is_benchmark: bool = False) -> Optional[np.ndarray]:
+    def predict(self, input_data: torch.Tensor, is_benchmark: bool = False) -> np.ndarray | None:
         super().predict(input_data, is_benchmark=is_benchmark)
 
         with torch.no_grad():

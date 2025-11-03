@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 import numpy as np
 import onnxruntime as ort
@@ -21,7 +20,7 @@ class ONNXInference(InferenceBase):
             onnx_exporter.export_model()
         return ort.InferenceSession(self.onnx_path, providers=["CPUExecutionProvider"])
 
-    def predict(self, input_data: torch.Tensor, is_benchmark: bool = False) -> Optional[np.ndarray]:
+    def predict(self, input_data: torch.Tensor, is_benchmark: bool = False) -> np.ndarray | None:
         super().predict(input_data, is_benchmark)
 
         input_name = self.model.get_inputs()[0].name
@@ -34,5 +33,5 @@ class ONNXInference(InferenceBase):
             if prob.ndim > 1:
                 prob = prob[0]
             prob = np.exp(prob) / np.sum(np.exp(prob))
-        
+
         return self.get_top_predictions(prob, is_benchmark)

@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from common.utils import parse_arguments, INFERENCE_MODES, DEFAULT_TOPK
+from common.utils import DEFAULT_TOPK, INFERENCE_MODES, parse_arguments
 
 
 class TestParseArguments:

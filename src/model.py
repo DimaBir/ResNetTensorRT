@@ -1,5 +1,3 @@
-from typing import Union
-
 import pandas as pd
 import torch
 from torchvision import models
@@ -15,15 +13,17 @@ MODEL_REGISTRY = {
 
 
 class ModelLoader:
-    def __init__(self, model_type: str = "resnet50", device: Union[str, torch.device] = "cuda") -> None:
+    def __init__(self, model_type: str = "resnet50", device: str | torch.device = "cuda") -> None:
         self.device = device if isinstance(device, torch.device) else torch.device(device)
         self.model = self._load_model(model_type)
         self.categories: pd.DataFrame = self._load_categories()
 
     def _load_model(self, model_type: str) -> torch.nn.Module:
         if model_type not in MODEL_REGISTRY:
-            raise ValueError(f"Unsupported model type: {model_type}. Available: {list(MODEL_REGISTRY.keys())}")
-        
+            raise ValueError(
+                f"Unsupported model type: {model_type}. Available: {list(MODEL_REGISTRY.keys())}"
+            )
+
         model_fn, weights = MODEL_REGISTRY[model_type]
         return model_fn(weights=weights).to(self.device)
 

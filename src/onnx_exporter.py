@@ -1,14 +1,13 @@
 import os
-from typing import Union
 
 import torch
-from torch.onnx import export, TrainingMode
+from torch.onnx import TrainingMode, export
 
 DUMMY_INPUT_SHAPE = (1, 3, 224, 224)
 
 
 class ONNXExporter:
-    def __init__(self, model: torch.nn.Module, device: Union[str, torch.device], onnx_path: str):
+    def __init__(self, model: torch.nn.Module, device: str | torch.device, onnx_path: str):
         self.model = model
         self.onnx_path = onnx_path
         self.device = device if isinstance(device, torch.device) else torch.device(device)

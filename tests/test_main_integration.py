@@ -19,31 +19,39 @@ class TestMainIntegration:
     @patch("main.plot_benchmark_results")
     def test_main_cpu_mode(self, mock_plot, mock_cuda, temp_image):
         mock_cuda.return_value = False
-        
-        with patch("sys.argv", ["main.py", "--image_path", temp_image, "--mode", "cpu", "--topk", "3"]):
+
+        with patch(
+            "sys.argv", ["main.py", "--image_path", temp_image, "--mode", "cpu", "--topk", "3"]
+        ):
             from main import main
+
             main()
 
     @patch("main.torch.cuda.is_available")
     def test_main_onnx_mode(self, mock_cuda, temp_image):
         mock_cuda.return_value = False
-        
+
         with tempfile.TemporaryDirectory() as tmpdir:
             onnx_path = os.path.join(tmpdir, "test.onnx")
-            with patch("sys.argv", ["main.py", "--image_path", temp_image, "--mode", "onnx", 
-                                   "--onnx_path", onnx_path]):
+            with patch(
+                "sys.argv",
+                ["main.py", "--image_path", temp_image, "--mode", "onnx", "--onnx_path", onnx_path],
+            ):
                 from main import main
+
                 main()
                 assert os.path.exists(onnx_path)
 
     def test_cuda_availability_check(self):
         from main import CUDA_AVAILABLE
+
         assert isinstance(CUDA_AVAILABLE, bool)
 
     @patch("main.torch.cuda.is_available")
     def test_main_with_debug_mode(self, mock_cuda, temp_image):
         mock_cuda.return_value = False
-        
+
         with patch("sys.argv", ["main.py", "--image_path", temp_image, "--mode", "cpu", "-D"]):
             from main import main
+
             main()

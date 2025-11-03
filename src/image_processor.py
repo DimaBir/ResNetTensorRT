@@ -1,5 +1,3 @@
-from typing import Union
-
 import torch
 from PIL import Image
 from torchvision import transforms
@@ -11,19 +9,21 @@ CROP_SIZE = 224
 
 
 class ImageProcessor:
-    def __init__(self, img_path: str, device: Union[str, torch.device] = "cuda") -> None:
+    def __init__(self, img_path: str, device: str | torch.device = "cuda") -> None:
         self.img_path = img_path
         self.device = device if isinstance(device, torch.device) else torch.device(device)
         self.transform = self._create_transform()
 
     @staticmethod
     def _create_transform() -> transforms.Compose:
-        return transforms.Compose([
-            transforms.Resize(IMAGE_SIZE),
-            transforms.CenterCrop(CROP_SIZE),
-            transforms.ToTensor(),
-            transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-        ])
+        return transforms.Compose(
+            [
+                transforms.Resize(IMAGE_SIZE),
+                transforms.CenterCrop(CROP_SIZE),
+                transforms.ToTensor(),
+                transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
+            ]
+        )
 
     def process_image(self) -> torch.Tensor:
         img = Image.open(self.img_path)

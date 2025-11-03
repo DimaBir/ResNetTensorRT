@@ -1,5 +1,6 @@
 import pytest
 import torch
+
 from src.model import ModelLoader
 
 

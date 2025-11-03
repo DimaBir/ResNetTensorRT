@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 import numpy as np
 import openvino as ov
@@ -29,7 +28,7 @@ class OVInference(InferenceBase):
         ov_exporter = OVExporter(self.onnx_path)
         return ov_exporter.export_model()
 
-    def predict(self, input_data: torch.Tensor, is_benchmark: bool = False) -> Optional[np.ndarray]:
+    def predict(self, input_data: torch.Tensor, is_benchmark: bool = False) -> np.ndarray | None:
         super().predict(input_data, is_benchmark=is_benchmark)
 
         input_name = next(iter(self.compiled_model.inputs))
